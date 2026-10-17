@@ -1,26 +1,84 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ivory: #FAF9F5;
+  --color-cloud: #F0EEE6;
+  --color-cloud-hover: #E9E6DC;
+  --color-card-border: #E3DACC;
+  
+  --color-clay: #D97757;
+  --color-clay-hover: #C15F3C;
+  --color-clay-subtle: #F6EDE8;
+  --color-clay-focus: rgba(217, 119, 87, 0.25);
+  
+  --color-text-primary: #141413;
+  --color-text-secondary: #6B6A64;
+  --color-text-tertiary: #8A887F;
+
+  --color-status-confirmed: #5E8C61;
+  --color-status-confirmed-bg: #EBF2EB;
+  
+  --color-status-flaky: #D4A02A;
+  --color-status-flaky-bg: #FBF4E6;
+  
+  --color-status-failed: #C4473A;
+  --color-status-failed-bg: #FAEBE9;
+  
+  --color-status-neutral: #8A887F;
+  --color-status-neutral-bg: #F2F1EE;
+
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-page: #FAF9F5;
+  --bg-sidebar: #F0EEE6;
+  --border-card: #E3DACC;
+  --color-clay: #D97757;
+  --color-clay-hover: #C15F3C;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html, body {
+  background-color: #FAF9F5;
+  color: #141413;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Custom subtle scrollbar for code and logs */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D9D4C7;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C4BEAF;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Base focus styles */
+:focus-visible {
+  outline: 2px solid #D97757;
+  outline-offset: 2px;
+}
+
+/* Light mode card base */
+.card-base {
+  background-color: #FFFFFF;
+  border: 1px solid #E3DACC;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(20, 20, 19, 0.05);
+}
+
+/* Serif headings */
+.font-heading {
+  font-family: var(--font-newsreader), Georgia, serif;
 }
