@@ -1,0 +1,26 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	write_scripts(write_scripts)
+	run_tests(run_tests)
+	report_bugs(report_bugs)
+	verify(verify)
+	build_report(build_report)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> write_scripts;
+	report_bugs -. &nbsp;failed&nbsp; .-> __end__;
+	report_bugs -. &nbsp;ok&nbsp; .-> verify;
+	run_tests -. &nbsp;failed&nbsp; .-> __end__;
+	run_tests -. &nbsp;ok&nbsp; .-> report_bugs;
+	verify -. &nbsp;failed&nbsp; .-> __end__;
+	verify -. &nbsp;ok&nbsp; .-> build_report;
+	write_scripts -. &nbsp;failed&nbsp; .-> __end__;
+	write_scripts -. &nbsp;ok&nbsp; .-> run_tests;
+	build_report --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
