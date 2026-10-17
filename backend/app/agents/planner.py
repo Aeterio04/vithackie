@@ -286,6 +286,32 @@ def plan_single_test(run_id: str, user_prompt: str) -> TestCase:
     if catalog is None:
         catalog = Catalog(runId=run_id, generatedAt=_now_iso(), tests=[])
 
+    if settings.STUB_MODE:
+        max_num = 0
+        for t in catalog.tests:
+            match = re.match(r"^T(\d+)$", t.id)
+            if match:
+                max_num = max(max_num, int(match.group(1)))
+        next_id = f"T{max_num + 1:02d}"
+
+        new_test = TestCase(
+            id=next_id,
+            title=f"{next_id}: {user_prompt.strip()[:80]}",
+            description=user_prompt.strip(),
+            specRef=[],
+            priority="medium",
+            steps=[Step(n=1, action=user_prompt.strip(), expected="Verify expected behaviour")],
+            status="proposed",
+            origin="human",
+            script=None,
+            scriptStatus="pending",
+            scriptError=None,
+        )
+        catalog.tests.append(new_test)
+        catalog.generatedAt = _now_iso()
+        storage.save_model(run_id, "catalog.json", catalog)
+        return new_test
+
     run_input = storage.load_model(run_id, "input.json", RunInput)
     app_map = storage.load_model(run_id, "app_map.json", AppMap)
 

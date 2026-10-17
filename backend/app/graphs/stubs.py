@@ -198,14 +198,19 @@ def stub_build_report(run_id: str) -> None:
     storage.set_stage(run_id, "reporting", step="Compiling metrics and report (stub)", done=10, total=10)
     time.sleep(1.0)
 
-    metrics_sample = SAMPLES_DIR / "metrics.sample.json"
-    if metrics_sample.exists():
-        with open(metrics_sample, "r", encoding="utf-8") as f:
-            m_data = json.load(f)
-        m_data["runId"] = run_id
-        storage.write_json(run_id, "metrics.json", m_data)
+    from app import report
+    try:
+        report.build_report(run_id)
+    except Exception:
+        metrics_sample = SAMPLES_DIR / "metrics.sample.json"
+        if metrics_sample.exists():
+            with open(metrics_sample, "r", encoding="utf-8") as f:
+                m_data = json.load(f)
+            m_data["runId"] = run_id
+            storage.write_json(run_id, "metrics.json", m_data)
 
-    report_sample = SAMPLES_DIR / "files" / "report.md"
-    if report_sample.exists():
-        target_md = storage.run_dir(run_id) / "report.md"
-        shutil.copy2(report_sample, target_md)
+        report_sample = SAMPLES_DIR / "files" / "report.md"
+        if report_sample.exists():
+            target_md = storage.run_dir(run_id) / "report.md"
+            shutil.copy2(report_sample, target_md)
+
