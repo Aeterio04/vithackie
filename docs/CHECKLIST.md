@@ -23,7 +23,7 @@
 - [ ] C2: Runner client and list_tests helper [Track C]
 - [ ] C3: Run tests and collect evidence (traces, videos, screenshots, logs) [Track C]
 - [ ] C4: Triage (assertion failures vs test errors) and verifier (3 replays) [Track C]
-- [ ] C5: FastAPI main application and report builder [Track C]
+- [x] C5: FastAPI main application and report builder [Track C]
 
 ### Track D: Frontend (UI / UX)
 - [ ] D1: Project setup and theme tokens [Track D]
