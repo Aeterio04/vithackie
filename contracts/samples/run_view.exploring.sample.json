@@ -1,0 +1,96 @@
+{
+  "run": {
+    "runId": "20261018-020000-a1b2",
+    "createdAt": "2026-10-18T02:00:00Z",
+    "updatedAt": "2026-10-18T02:00:30Z",
+    "stage": "exploring",
+    "mode": "autonomous",
+    "targetUrl": "http://localhost:4000",
+    "error": null,
+    "progress": {
+      "step": "Crawling /dashboard",
+      "done": 3,
+      "total": 10
+    },
+    "stageTimes": {
+      "created": {
+        "startedAt": "2026-10-18T02:00:00Z",
+        "endedAt": "2026-10-18T02:00:05Z"
+      },
+      "exploring": {
+        "startedAt": "2026-10-18T02:00:05Z",
+        "endedAt": null
+      }
+    },
+    "golden": false
+  },
+  "input": {
+    "runId": "20261018-020000-a1b2",
+    "createdAt": "2026-10-18T02:00:00Z",
+    "targetUrl": "http://localhost:4000",
+    "prompt": "TaskBoard is a collaboration to-do app with auth, items list, and profile settings.",
+    "specRaw": "S1: Signing up with a valid email and a password of at least 8 characters creates the account and lands the user on the dashboard.\nS2: Signing up with an invalid email address (for example \"not-an-email\") is rejected with the message \"Enter a valid email address\".\nS3: Signing up with a password shorter than 8 characters is rejected with the message \"Password must be at least 8 characters\".\nS4: Logging in with a correct email and password lands the user on the dashboard.\nS5: Logging in with a wrong password shows the message \"Invalid email or password\" and the user stays on the login page.\nS6: Logging in is case-insensitive for the email address (QA.Tester@Example.com works the same as qa.tester@example.com).\nS7: On the dashboard, adding an item with a non-empty title shows that item in the list.\nS8: On the dashboard, adding an item with an empty title is rejected with the message \"Title is required\" and no item is added.\nS9: With several items in the list, clicking Delete on an item removes only that item.\nS10: On the settings page, saving a display name shows \"Settings saved\" every time, and the page loads without console errors.\nS11: Logging out returns the user to the login page, and pressing the browser Back button afterwards does not show the dashboard.",
+    "spec": [
+      {
+        "id": "S1",
+        "text": "Signing up with a valid email and a password of at least 8 characters creates the account and lands the user on the dashboard."
+      },
+      {
+        "id": "S2",
+        "text": "Signing up with an invalid email address (for example \"not-an-email\") is rejected with the message \"Enter a valid email address\"."
+      },
+      {
+        "id": "S3",
+        "text": "Signing up with a password shorter than 8 characters is rejected with the message \"Password must be at least 8 characters\"."
+      },
+      {
+        "id": "S4",
+        "text": "Logging in with a correct email and password lands the user on the dashboard."
+      },
+      {
+        "id": "S5",
+        "text": "Logging in with a wrong password shows the message \"Invalid email or password\" and the user stays on the login page."
+      },
+      {
+        "id": "S6",
+        "text": "Logging in is case-insensitive for the email address (QA.Tester@Example.com works the same as qa.tester@example.com)."
+      },
+      {
+        "id": "S7",
+        "text": "On the dashboard, adding an item with a non-empty title shows that item in the list."
+      },
+      {
+        "id": "S8",
+        "text": "On the dashboard, adding an item with an empty title is rejected with the message \"Title is required\" and no item is added."
+      },
+      {
+        "id": "S9",
+        "text": "With several items in the list, clicking Delete on an item removes only that item."
+      },
+      {
+        "id": "S10",
+        "text": "On the settings page, saving a display name shows \"Settings saved\" every time, and the page loads without console errors."
+      },
+      {
+        "id": "S11",
+        "text": "Logging out returns the user to the login page, and pressing the browser Back button afterwards does not show the dashboard."
+      }
+    ],
+    "username": "qa.tester@example.com",
+    "mode": "autonomous",
+    "budgets": {
+      "maxPages": 10,
+      "exploreSeconds": 90,
+      "maxTests": 12,
+      "testTimeoutMs": 30000
+    }
+  },
+  "appMap": null,
+  "catalog": null,
+  "reviewLog": null,
+  "results": null,
+  "bugs": [],
+  "verifications": [],
+  "metrics": null,
+  "hasReport": false
+}

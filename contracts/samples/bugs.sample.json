@@ -1,0 +1,352 @@
+{
+  "runId": "20261018-020000-a1b2",
+  "bugs": [
+    {
+      "id": "B01",
+      "testId": "T02",
+      "source": "planned",
+      "title": "T02: Signup accepts an invalid email",
+      "grep": "T02:",
+      "file": "scripts/T02.spec.ts",
+      "category": "validation",
+      "severity": "medium",
+      "specRef": [
+        "S2"
+      ],
+      "steps": [
+        "Navigate to /signup",
+        "Enter invalid email 'not-an-email'",
+        "Enter password",
+        "Submit"
+      ],
+      "expected": "Rejected with message \"Enter a valid email address\"",
+      "actual": "Account created and user redirected to dashboard",
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"",
+      "signature": "a1b2c3d4e5",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": "evidence/T02/screenshot.png",
+        "video": "evidence/T02/video.webm",
+        "trace": null,
+        "console": "evidence/T02/console.json",
+        "network": "evidence/T02/network.json"
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B02",
+      "testId": "T03",
+      "source": "planned",
+      "title": "T03: Signup accepts passwords shorter than 8 characters",
+      "grep": "T03:",
+      "file": "scripts/T03.spec.ts",
+      "category": "validation",
+      "severity": "medium",
+      "specRef": [
+        "S3"
+      ],
+      "steps": [
+        "Navigate to /signup",
+        "Enter valid email",
+        "Enter 7-character password '1234567'",
+        "Submit"
+      ],
+      "expected": "Rejected with message \"Password must be at least 8 characters\"",
+      "actual": "Account created successfully",
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Password must be at least 8 characters\"",
+      "signature": "b2c3d4e5f6",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B03",
+      "testId": "T05",
+      "source": "planned",
+      "title": "T05: Wrong password shows no error message",
+      "grep": "T05:",
+      "file": "scripts/T05.spec.ts",
+      "category": "auth",
+      "severity": "high",
+      "specRef": [
+        "S5"
+      ],
+      "steps": [
+        "Navigate to /login",
+        "Enter valid email",
+        "Enter wrong password",
+        "Click Log in"
+      ],
+      "expected": "Shows message \"Invalid email or password\"",
+      "actual": "Page remains blank with no alert or message",
+      "errorMessage": "expect(received).toBeVisible()\nExpected: visible alert",
+      "signature": "c3d4e5f6a1",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B04",
+      "testId": "T06",
+      "source": "planned",
+      "title": "T06: Login fails when the email has capital letters",
+      "grep": "T06:",
+      "file": "scripts/T06.spec.ts",
+      "category": "auth",
+      "severity": "high",
+      "specRef": [
+        "S6"
+      ],
+      "steps": [
+        "Navigate to /login",
+        "Enter email with uppercase letters",
+        "Enter correct password",
+        "Submit"
+      ],
+      "expected": "Successful login lands on dashboard",
+      "actual": "Login rejected with error",
+      "errorMessage": "expect(received).toHaveURL(expected)",
+      "signature": "d4e5f6a1b2",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B05",
+      "testId": "T08",
+      "source": "planned",
+      "title": "T08: Dashboard accepts an empty item title",
+      "grep": "T08:",
+      "file": "scripts/T08.spec.ts",
+      "category": "validation",
+      "severity": "medium",
+      "specRef": [
+        "S8"
+      ],
+      "steps": [
+        "Open /dashboard",
+        "Submit empty title form"
+      ],
+      "expected": "Rejected with message \"Title is required\"",
+      "actual": "Empty item added to task list",
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Title is required\"",
+      "signature": "e5f6a1b2c3",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B06",
+      "testId": "T09",
+      "source": "planned",
+      "title": "T09: Delete removes the first item instead of clicked one",
+      "grep": "T09:",
+      "file": "scripts/T09.spec.ts",
+      "category": "data",
+      "severity": "high",
+      "specRef": [
+        "S9"
+      ],
+      "steps": [
+        "Create two items",
+        "Click Delete on second item"
+      ],
+      "expected": "Second item is deleted",
+      "actual": "First item in the list is deleted instead",
+      "errorMessage": "expect(items.first()).toHaveText(expected)",
+      "signature": "f6a1b2c3d4",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B07",
+      "testId": "T11",
+      "source": "planned",
+      "title": "T11: After logout, Back shows cached dashboard",
+      "grep": "T11:",
+      "file": "scripts/T11.spec.ts",
+      "category": "auth",
+      "severity": "high",
+      "specRef": [
+        "S11"
+      ],
+      "steps": [
+        "Log in to dashboard",
+        "Log out",
+        "Press browser Back button"
+      ],
+      "expected": "Redirected to login or 401 unauthenticated",
+      "actual": "Cached dashboard displays sensitive task data",
+      "errorMessage": "expect(received).toHaveURL(expected)",
+      "signature": "a2b3c4d5e6",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B08",
+      "testId": "T10",
+      "source": "planned",
+      "title": "T10: The settings page throws an uncaught TypeError on load",
+      "grep": "T10:",
+      "file": "scripts/T10.spec.ts",
+      "category": "console",
+      "severity": "low",
+      "specRef": [
+        "S10"
+      ],
+      "steps": [
+        "Navigate to /settings"
+      ],
+      "expected": "Loads without console errors",
+      "actual": "Throws TypeError: Cannot read properties of undefined (reading 'theme')",
+      "errorMessage": "expect(consoleErrors).toHaveLength(0)",
+      "signature": "b3c4d5e6f7",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "not_reproduced",
+      "replay": {
+        "reproduced": 0,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B09",
+      "testId": "T10",
+      "source": "planned",
+      "title": "T10: Every second settings save fails with HTTP 500",
+      "grep": "T10:",
+      "file": "scripts/T10.spec.ts",
+      "category": "network",
+      "severity": "medium",
+      "specRef": [
+        "S10"
+      ],
+      "steps": [
+        "Open /settings",
+        "Save display name consecutively"
+      ],
+      "expected": "Status 200 and 'Settings saved' every time",
+      "actual": "Second save attempt returns HTTP 500",
+      "errorMessage": "expect(response.status()).toBe(200)",
+      "signature": "c4d5e6f7a2",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "flaky",
+      "replay": {
+        "reproduced": 2,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B10",
+      "testId": "X02",
+      "source": "exploratory",
+      "title": "X02: Unhandled 500 Internal Server Error on special character input",
+      "grep": "X02:",
+      "file": "scripts/probes/X02.spec.ts",
+      "category": "other",
+      "severity": "medium",
+      "specRef": [
+        "S7"
+      ],
+      "steps": [
+        "Submit probe payload into dashboard search"
+      ],
+      "expected": "Handled with 400 or graceful validation error",
+      "actual": "Server crashes with HTTP 500",
+      "errorMessage": "expect(response.status()).not.toBe(500)",
+      "signature": "d5e6f7a2b3",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    }
+  ]
+}

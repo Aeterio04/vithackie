@@ -1,0 +1,23 @@
+{
+  "properties": {
+    "workers1Seconds": {
+      "title": "Workers1Seconds",
+      "type": "number"
+    },
+    "workers4Seconds": {
+      "title": "Workers4Seconds",
+      "type": "number"
+    },
+    "speedup": {
+      "title": "Speedup",
+      "type": "number"
+    }
+  },
+  "required": [
+    "workers1Seconds",
+    "workers4Seconds",
+    "speedup"
+  ],
+  "title": "ParallelTiming",
+  "type": "object"
+}

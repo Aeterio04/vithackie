@@ -1,0 +1,713 @@
+{
+  "run": {
+    "runId": "20261018-020000-a1b2",
+    "createdAt": "2026-10-18T02:00:00Z",
+    "updatedAt": "2026-10-18T02:02:20Z",
+    "stage": "awaiting_review",
+    "mode": "manual",
+    "targetUrl": "http://localhost:4000",
+    "error": null,
+    "progress": null,
+    "stageTimes": {
+      "created": {
+        "startedAt": "2026-10-18T02:00:00Z",
+        "endedAt": "2026-10-18T02:00:05Z"
+      },
+      "exploring": {
+        "startedAt": "2026-10-18T02:00:05Z",
+        "endedAt": "2026-10-18T02:01:30Z"
+      },
+      "planning": {
+        "startedAt": "2026-10-18T02:01:30Z",
+        "endedAt": "2026-10-18T02:02:20Z"
+      },
+      "awaiting_review": {
+        "startedAt": "2026-10-18T02:02:20Z",
+        "endedAt": null
+      }
+    },
+    "golden": false
+  },
+  "input": {
+    "runId": "20261018-020000-a1b2",
+    "createdAt": "2026-10-18T02:00:00Z",
+    "targetUrl": "http://localhost:4000",
+    "prompt": "TaskBoard is a collaboration to-do app with auth, items list, and profile settings.",
+    "specRaw": "S1: Signing up with a valid email and a password of at least 8 characters creates the account and lands the user on the dashboard.\nS2: Signing up with an invalid email address (for example \"not-an-email\") is rejected with the message \"Enter a valid email address\".\nS3: Signing up with a password shorter than 8 characters is rejected with the message \"Password must be at least 8 characters\".\nS4: Logging in with a correct email and password lands the user on the dashboard.\nS5: Logging in with a wrong password shows the message \"Invalid email or password\" and the user stays on the login page.\nS6: Logging in is case-insensitive for the email address (QA.Tester@Example.com works the same as qa.tester@example.com).\nS7: On the dashboard, adding an item with a non-empty title shows that item in the list.\nS8: On the dashboard, adding an item with an empty title is rejected with the message \"Title is required\" and no item is added.\nS9: With several items in the list, clicking Delete on an item removes only that item.\nS10: On the settings page, saving a display name shows \"Settings saved\" every time, and the page loads without console errors.\nS11: Logging out returns the user to the login page, and pressing the browser Back button afterwards does not show the dashboard.",
+    "spec": [
+      {
+        "id": "S1",
+        "text": "Signing up with a valid email and a password of at least 8 characters creates the account and lands the user on the dashboard."
+      },
+      {
+        "id": "S2",
+        "text": "Signing up with an invalid email address (for example \"not-an-email\") is rejected with the message \"Enter a valid email address\"."
+      },
+      {
+        "id": "S3",
+        "text": "Signing up with a password shorter than 8 characters is rejected with the message \"Password must be at least 8 characters\"."
+      },
+      {
+        "id": "S4",
+        "text": "Logging in with a correct email and password lands the user on the dashboard."
+      },
+      {
+        "id": "S5",
+        "text": "Logging in with a wrong password shows the message \"Invalid email or password\" and the user stays on the login page."
+      },
+      {
+        "id": "S6",
+        "text": "Logging in is case-insensitive for the email address (QA.Tester@Example.com works the same as qa.tester@example.com)."
+      },
+      {
+        "id": "S7",
+        "text": "On the dashboard, adding an item with a non-empty title shows that item in the list."
+      },
+      {
+        "id": "S8",
+        "text": "On the dashboard, adding an item with an empty title is rejected with the message \"Title is required\" and no item is added."
+      },
+      {
+        "id": "S9",
+        "text": "With several items in the list, clicking Delete on an item removes only that item."
+      },
+      {
+        "id": "S10",
+        "text": "On the settings page, saving a display name shows \"Settings saved\" every time, and the page loads without console errors."
+      },
+      {
+        "id": "S11",
+        "text": "Logging out returns the user to the login page, and pressing the browser Back button afterwards does not show the dashboard."
+      }
+    ],
+    "username": "qa.tester@example.com",
+    "mode": "autonomous",
+    "budgets": {
+      "maxPages": 10,
+      "exploreSeconds": 90,
+      "maxTests": 12,
+      "testTimeoutMs": 30000
+    }
+  },
+  "appMap": {
+    "baseUrl": "http://localhost:4000",
+    "generatedAt": "2026-10-18T02:01:30Z",
+    "login": {
+      "attempted": true,
+      "success": true,
+      "url": "http://localhost:4000/login",
+      "note": "Authenticated as qa.tester@example.com"
+    },
+    "pages": [
+      {
+        "url": "http://localhost:4000/login",
+        "path": "/login",
+        "title": "Log in - TaskBoard",
+        "status": 200,
+        "requiresAuth": false,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Log in"
+          }
+        ],
+        "links": [
+          {
+            "text": "Sign up",
+            "href": "/signup"
+          }
+        ],
+        "buttons": [
+          {
+            "text": "Log in"
+          }
+        ],
+        "forms": [
+          {
+            "id": "/login#form0",
+            "action": "/login",
+            "method": "POST",
+            "submitText": "Log in",
+            "fields": [
+              {
+                "role": "textbox",
+                "label": "Email",
+                "type": "email",
+                "name": "email",
+                "required": true
+              },
+              {
+                "role": "textbox",
+                "label": "Password",
+                "type": "password",
+                "name": "password",
+                "required": true
+              }
+            ]
+          }
+        ],
+        "consoleErrors": []
+      },
+      {
+        "url": "http://localhost:4000/signup",
+        "path": "/signup",
+        "title": "Sign up - TaskBoard",
+        "status": 200,
+        "requiresAuth": false,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Create Account"
+          }
+        ],
+        "links": [
+          {
+            "text": "Log in",
+            "href": "/login"
+          }
+        ],
+        "buttons": [
+          {
+            "text": "Sign up"
+          }
+        ],
+        "forms": [
+          {
+            "id": "/signup#form0",
+            "action": "/signup",
+            "method": "POST",
+            "submitText": "Sign up",
+            "fields": [
+              {
+                "role": "textbox",
+                "label": "Email",
+                "type": "email",
+                "name": "email",
+                "required": true
+              },
+              {
+                "role": "textbox",
+                "label": "Password",
+                "type": "password",
+                "name": "password",
+                "required": true
+              }
+            ]
+          }
+        ],
+        "consoleErrors": []
+      },
+      {
+        "url": "http://localhost:4000/dashboard",
+        "path": "/dashboard",
+        "title": "Dashboard - TaskBoard",
+        "status": 200,
+        "requiresAuth": true,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Dashboard"
+          },
+          {
+            "level": 2,
+            "text": "Your Tasks"
+          }
+        ],
+        "links": [
+          {
+            "text": "Settings",
+            "href": "/settings"
+          },
+          {
+            "text": "Log out",
+            "href": "/logout"
+          }
+        ],
+        "buttons": [
+          {
+            "text": "Add item"
+          },
+          {
+            "text": "Delete"
+          }
+        ],
+        "forms": [
+          {
+            "id": "/dashboard#form0",
+            "action": "/dashboard/items",
+            "method": "POST",
+            "submitText": "Add item",
+            "fields": [
+              {
+                "role": "textbox",
+                "label": "Item title",
+                "type": "text",
+                "name": "title",
+                "required": true
+              }
+            ]
+          }
+        ],
+        "consoleErrors": []
+      },
+      {
+        "url": "http://localhost:4000/settings",
+        "path": "/settings",
+        "title": "Settings - TaskBoard",
+        "status": 200,
+        "requiresAuth": true,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Account Settings"
+          }
+        ],
+        "links": [
+          {
+            "text": "Dashboard",
+            "href": "/dashboard"
+          },
+          {
+            "text": "Log out",
+            "href": "/logout"
+          }
+        ],
+        "buttons": [
+          {
+            "text": "Save settings"
+          }
+        ],
+        "forms": [
+          {
+            "id": "/settings#form0",
+            "action": "/settings",
+            "method": "POST",
+            "submitText": "Save settings",
+            "fields": [
+              {
+                "role": "textbox",
+                "label": "Display name",
+                "type": "text",
+                "name": "displayName",
+                "required": true
+              }
+            ]
+          }
+        ],
+        "consoleErrors": [
+          "TypeError: Cannot read properties of undefined (reading 'theme')"
+        ]
+      }
+    ],
+    "summary": "TaskBoard is a streamlined task management application with user registration, authentication, dashboard task CRUD, and profile customization.",
+    "features": [
+      {
+        "name": "Authentication",
+        "description": "User registration and session management",
+        "pages": [
+          "/login",
+          "/signup",
+          "/logout"
+        ]
+      },
+      {
+        "name": "Task Management",
+        "description": "Adding, viewing and deleting tasks",
+        "pages": [
+          "/dashboard"
+        ]
+      },
+      {
+        "name": "User Settings",
+        "description": "Updating display name and preferences",
+        "pages": [
+          "/settings"
+        ]
+      }
+    ],
+    "stats": {
+      "pagesVisited": 4,
+      "durationSeconds": 12.4,
+      "budgetHit": null
+    },
+    "error": null
+  },
+  "catalog": {
+    "runId": "20261018-020000-a1b2",
+    "generatedAt": "2026-10-18T02:02:15Z",
+    "tests": [
+      {
+        "id": "T01",
+        "title": "T01: Signing up with valid credentials lands on dashboard",
+        "description": "Verify valid account creation flow",
+        "specRef": [
+          "S1"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /signup",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with unique('user')@example.com",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'Passw0rd!123'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Sign up' button",
+            "expected": "User lands on /dashboard"
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T02",
+        "title": "T02: Signing up with invalid email is rejected",
+        "description": "Verify rejection of malformed email address",
+        "specRef": [
+          "S2"
+        ],
+        "priority": "medium",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /signup",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with 'not-an-email'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'ValidPass123'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Sign up' button",
+            "expected": "Shows message \"Enter a valid email address\""
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T03",
+        "title": "T03: Signing up with short password is rejected",
+        "description": "Verify password length validation (< 8 characters)",
+        "specRef": [
+          "S3"
+        ],
+        "priority": "medium",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /signup",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with unique('user')@example.com",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with '1234567'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Sign up' button",
+            "expected": "Shows message \"Password must be at least 8 characters\""
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T04",
+        "title": "T04: Logging in with valid credentials lands on dashboard",
+        "description": "Verify happy path login",
+        "specRef": [
+          "S4"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /login",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with 'qa.tester@example.com'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'Passw0rd!23'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Log in' button",
+            "expected": "User lands on /dashboard"
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T05",
+        "title": "T05: Logging in with wrong password shows error",
+        "description": "Verify rejection of incorrect password",
+        "specRef": [
+          "S5"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /login",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with 'qa.tester@example.com'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'WrongPassword!'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Log in' button",
+            "expected": "Shows message \"Invalid email or password\" and remains on /login"
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T06",
+        "title": "T06: Logging in email is case-insensitive",
+        "description": "Verify uppercase email login",
+        "specRef": [
+          "S6"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /login",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with 'QA.Tester@Example.com'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'Passw0rd!23'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Log in' button",
+            "expected": "User lands on /dashboard"
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T07",
+        "title": "T07: Adding item with non-empty title shows in list",
+        "description": "Verify task addition",
+        "specRef": [
+          "S7"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in as qa.tester@example.com and open /dashboard",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Item title with unique('Task')",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Click 'Add item' button",
+            "expected": "Item appears in task list"
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T08",
+        "title": "T08: Adding item with empty title is rejected",
+        "description": "Verify title required validation",
+        "specRef": [
+          "S8"
+        ],
+        "priority": "medium",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in as qa.tester@example.com and open /dashboard",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Clear Item title",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Click 'Add item' button",
+            "expected": "Shows message \"Title is required\" and no item is added"
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T09",
+        "title": "T09: Deleting an item removes only that item",
+        "description": "Verify item deletion target",
+        "specRef": [
+          "S9"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in and ensure two distinct items exist on /dashboard",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Click 'Delete' on the second item",
+            "expected": "Only the second item is removed; first remains"
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T10",
+        "title": "T10: Saving display name shows success and page has no errors",
+        "description": "Verify settings save and console health",
+        "specRef": [
+          "S10"
+        ],
+        "priority": "medium",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in and navigate to /settings",
+            "expected": "Page loads without console errors"
+          },
+          {
+            "n": 2,
+            "action": "Fill Display name with 'Quality Tester'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Click 'Save settings'",
+            "expected": "Shows status \"Settings saved\""
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      },
+      {
+        "id": "T11",
+        "title": "T11: Logging out returns to login and Back does not show dashboard",
+        "description": "Verify logout and cache invalidation",
+        "specRef": [
+          "S11"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in and navigate to /dashboard",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Click 'Log out'",
+            "expected": "Navigates to /login"
+          },
+          {
+            "n": 3,
+            "action": "Click browser Back button",
+            "expected": "Dashboard is not displayed; redirected to /login"
+          }
+        ],
+        "status": "proposed",
+        "origin": "planner",
+        "script": null,
+        "scriptStatus": "pending",
+        "scriptError": null
+      }
+    ]
+  },
+  "reviewLog": null,
+  "results": null,
+  "bugs": [],
+  "verifications": [],
+  "metrics": null,
+  "hasReport": false
+}

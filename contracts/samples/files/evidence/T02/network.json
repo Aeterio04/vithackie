@@ -1,0 +1,7 @@
+[
+  {
+    "url": "http://localhost:4000/signup",
+    "status": 200,
+    "method": "POST"
+  }
+]

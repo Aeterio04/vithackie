@@ -1,0 +1,346 @@
+{
+  "$defs": {
+    "AppMapStats": {
+      "properties": {
+        "pagesVisited": {
+          "default": 0,
+          "title": "Pagesvisited",
+          "type": "integer"
+        },
+        "durationSeconds": {
+          "default": 0.0,
+          "title": "Durationseconds",
+          "type": "number"
+        },
+        "budgetHit": {
+          "anyOf": [
+            {
+              "enum": [
+                "pages",
+                "time"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budgethit"
+        }
+      },
+      "title": "AppMapStats",
+      "type": "object"
+    },
+    "ButtonInfo": {
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "ButtonInfo",
+      "type": "object"
+    },
+    "Feature": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "pages": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Pages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ],
+      "title": "Feature",
+      "type": "object"
+    },
+    "FieldInfo": {
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "role",
+        "label",
+        "type",
+        "name"
+      ],
+      "title": "FieldInfo",
+      "type": "object"
+    },
+    "FormInfo": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "action": {
+          "default": "",
+          "title": "Action",
+          "type": "string"
+        },
+        "method": {
+          "default": "GET",
+          "title": "Method",
+          "type": "string"
+        },
+        "submitText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submittext"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/FieldInfo"
+          },
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FormInfo",
+      "type": "object"
+    },
+    "HeadingInfo": {
+      "properties": {
+        "level": {
+          "title": "Level",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "text"
+      ],
+      "title": "HeadingInfo",
+      "type": "object"
+    },
+    "LinkInfo": {
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "href": {
+          "title": "Href",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "href"
+      ],
+      "title": "LinkInfo",
+      "type": "object"
+    },
+    "LoginInfo": {
+      "properties": {
+        "attempted": {
+          "default": false,
+          "title": "Attempted",
+          "type": "boolean"
+        },
+        "success": {
+          "default": false,
+          "title": "Success",
+          "type": "boolean"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "title": "LoginInfo",
+      "type": "object"
+    },
+    "PageInfo": {
+      "properties": {
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "integer"
+        },
+        "requiresAuth": {
+          "default": false,
+          "title": "Requiresauth",
+          "type": "boolean"
+        },
+        "headings": {
+          "items": {
+            "$ref": "#/$defs/HeadingInfo"
+          },
+          "title": "Headings",
+          "type": "array"
+        },
+        "links": {
+          "items": {
+            "$ref": "#/$defs/LinkInfo"
+          },
+          "title": "Links",
+          "type": "array"
+        },
+        "buttons": {
+          "items": {
+            "$ref": "#/$defs/ButtonInfo"
+          },
+          "title": "Buttons",
+          "type": "array"
+        },
+        "forms": {
+          "items": {
+            "$ref": "#/$defs/FormInfo"
+          },
+          "title": "Forms",
+          "type": "array"
+        },
+        "consoleErrors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Consoleerrors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "url",
+        "path",
+        "title",
+        "status"
+      ],
+      "title": "PageInfo",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "baseUrl": {
+      "title": "Baseurl",
+      "type": "string"
+    },
+    "generatedAt": {
+      "title": "Generatedat",
+      "type": "string"
+    },
+    "login": {
+      "$ref": "#/$defs/LoginInfo"
+    },
+    "pages": {
+      "items": {
+        "$ref": "#/$defs/PageInfo"
+      },
+      "title": "Pages",
+      "type": "array"
+    },
+    "summary": {
+      "default": "",
+      "title": "Summary",
+      "type": "string"
+    },
+    "features": {
+      "items": {
+        "$ref": "#/$defs/Feature"
+      },
+      "title": "Features",
+      "type": "array"
+    },
+    "stats": {
+      "$ref": "#/$defs/AppMapStats"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    }
+  },
+  "required": [
+    "baseUrl",
+    "generatedAt"
+  ],
+  "title": "AppMap",
+  "type": "object"
+}

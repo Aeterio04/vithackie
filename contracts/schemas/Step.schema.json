@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "n": {
+      "title": "N",
+      "type": "integer"
+    },
+    "action": {
+      "title": "Action",
+      "type": "string"
+    },
+    "expected": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected"
+    }
+  },
+  "required": [
+    "n",
+    "action"
+  ],
+  "title": "Step",
+  "type": "object"
+}

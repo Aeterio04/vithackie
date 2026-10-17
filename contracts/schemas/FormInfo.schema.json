@@ -1,0 +1,77 @@
+{
+  "$defs": {
+    "FieldInfo": {
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "role",
+        "label",
+        "type",
+        "name"
+      ],
+      "title": "FieldInfo",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "action": {
+      "default": "",
+      "title": "Action",
+      "type": "string"
+    },
+    "method": {
+      "default": "GET",
+      "title": "Method",
+      "type": "string"
+    },
+    "submitText": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Submittext"
+    },
+    "fields": {
+      "items": {
+        "$ref": "#/$defs/FieldInfo"
+      },
+      "title": "Fields",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "title": "FormInfo",
+  "type": "object"
+}

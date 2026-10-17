@@ -1,0 +1,33 @@
+{
+  "properties": {
+    "role": {
+      "title": "Role",
+      "type": "string"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "type": {
+      "title": "Type",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "required": {
+      "default": false,
+      "title": "Required",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "role",
+    "label",
+    "type",
+    "name"
+  ],
+  "title": "FieldInfo",
+  "type": "object"
+}

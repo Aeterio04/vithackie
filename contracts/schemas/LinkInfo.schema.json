@@ -1,0 +1,18 @@
+{
+  "properties": {
+    "text": {
+      "title": "Text",
+      "type": "string"
+    },
+    "href": {
+      "title": "Href",
+      "type": "string"
+    }
+  },
+  "required": [
+    "text",
+    "href"
+  ],
+  "title": "LinkInfo",
+  "type": "object"
+}

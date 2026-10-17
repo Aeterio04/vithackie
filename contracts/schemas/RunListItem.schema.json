@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "RunListItemCounts": {
+      "properties": {
+        "tests": {
+          "default": 0,
+          "title": "Tests",
+          "type": "integer"
+        },
+        "bugs": {
+          "default": 0,
+          "title": "Bugs",
+          "type": "integer"
+        },
+        "confirmed": {
+          "default": 0,
+          "title": "Confirmed",
+          "type": "integer"
+        },
+        "flaky": {
+          "default": 0,
+          "title": "Flaky",
+          "type": "integer"
+        }
+      },
+      "title": "RunListItemCounts",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "runId": {
+      "title": "Runid",
+      "type": "string"
+    },
+    "createdAt": {
+      "title": "Createdat",
+      "type": "string"
+    },
+    "stage": {
+      "enum": [
+        "created",
+        "exploring",
+        "planning",
+        "awaiting_review",
+        "scripting",
+        "running",
+        "verifying",
+        "reporting",
+        "done",
+        "failed"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "manual",
+        "autonomous"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "targetUrl": {
+      "title": "Targeturl",
+      "type": "string"
+    },
+    "counts": {
+      "$ref": "#/$defs/RunListItemCounts"
+    }
+  },
+  "required": [
+    "runId",
+    "createdAt",
+    "stage",
+    "mode",
+    "targetUrl"
+  ],
+  "title": "RunListItem",
+  "type": "object"
+}

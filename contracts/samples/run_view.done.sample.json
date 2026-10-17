@@ -1,0 +1,1623 @@
+{
+  "run": {
+    "runId": "20261018-020000-a1b2",
+    "createdAt": "2026-10-18T02:00:00Z",
+    "updatedAt": "2026-10-18T02:06:00Z",
+    "stage": "done",
+    "mode": "autonomous",
+    "targetUrl": "http://localhost:4000",
+    "error": null,
+    "progress": null,
+    "stageTimes": {
+      "created": {
+        "startedAt": "2026-10-18T02:00:00Z",
+        "endedAt": "2026-10-18T02:00:05Z"
+      },
+      "exploring": {
+        "startedAt": "2026-10-18T02:00:05Z",
+        "endedAt": "2026-10-18T02:01:30Z"
+      },
+      "planning": {
+        "startedAt": "2026-10-18T02:01:30Z",
+        "endedAt": "2026-10-18T02:02:20Z"
+      },
+      "awaiting_review": {
+        "startedAt": "2026-10-18T02:02:20Z",
+        "endedAt": "2026-10-18T02:02:45Z"
+      },
+      "scripting": {
+        "startedAt": "2026-10-18T02:02:45Z",
+        "endedAt": "2026-10-18T02:03:45Z"
+      },
+      "running": {
+        "startedAt": "2026-10-18T02:03:45Z",
+        "endedAt": "2026-10-18T02:04:30Z"
+      },
+      "verifying": {
+        "startedAt": "2026-10-18T02:04:30Z",
+        "endedAt": "2026-10-18T02:05:40Z"
+      },
+      "reporting": {
+        "startedAt": "2026-10-18T02:05:40Z",
+        "endedAt": "2026-10-18T02:06:00Z"
+      },
+      "done": {
+        "startedAt": "2026-10-18T02:06:00Z",
+        "endedAt": "2026-10-18T02:06:00Z"
+      }
+    },
+    "golden": true
+  },
+  "input": {
+    "runId": "20261018-020000-a1b2",
+    "createdAt": "2026-10-18T02:00:00Z",
+    "targetUrl": "http://localhost:4000",
+    "prompt": "TaskBoard is a collaboration to-do app with auth, items list, and profile settings.",
+    "specRaw": "S1: Signing up with a valid email and a password of at least 8 characters creates the account and lands the user on the dashboard.\nS2: Signing up with an invalid email address (for example \"not-an-email\") is rejected with the message \"Enter a valid email address\".\nS3: Signing up with a password shorter than 8 characters is rejected with the message \"Password must be at least 8 characters\".\nS4: Logging in with a correct email and password lands the user on the dashboard.\nS5: Logging in with a wrong password shows the message \"Invalid email or password\" and the user stays on the login page.\nS6: Logging in is case-insensitive for the email address (QA.Tester@Example.com works the same as qa.tester@example.com).\nS7: On the dashboard, adding an item with a non-empty title shows that item in the list.\nS8: On the dashboard, adding an item with an empty title is rejected with the message \"Title is required\" and no item is added.\nS9: With several items in the list, clicking Delete on an item removes only that item.\nS10: On the settings page, saving a display name shows \"Settings saved\" every time, and the page loads without console errors.\nS11: Logging out returns the user to the login page, and pressing the browser Back button afterwards does not show the dashboard.",
+    "spec": [
+      {
+        "id": "S1",
+        "text": "Signing up with a valid email and a password of at least 8 characters creates the account and lands the user on the dashboard."
+      },
+      {
+        "id": "S2",
+        "text": "Signing up with an invalid email address (for example \"not-an-email\") is rejected with the message \"Enter a valid email address\"."
+      },
+      {
+        "id": "S3",
+        "text": "Signing up with a password shorter than 8 characters is rejected with the message \"Password must be at least 8 characters\"."
+      },
+      {
+        "id": "S4",
+        "text": "Logging in with a correct email and password lands the user on the dashboard."
+      },
+      {
+        "id": "S5",
+        "text": "Logging in with a wrong password shows the message \"Invalid email or password\" and the user stays on the login page."
+      },
+      {
+        "id": "S6",
+        "text": "Logging in is case-insensitive for the email address (QA.Tester@Example.com works the same as qa.tester@example.com)."
+      },
+      {
+        "id": "S7",
+        "text": "On the dashboard, adding an item with a non-empty title shows that item in the list."
+      },
+      {
+        "id": "S8",
+        "text": "On the dashboard, adding an item with an empty title is rejected with the message \"Title is required\" and no item is added."
+      },
+      {
+        "id": "S9",
+        "text": "With several items in the list, clicking Delete on an item removes only that item."
+      },
+      {
+        "id": "S10",
+        "text": "On the settings page, saving a display name shows \"Settings saved\" every time, and the page loads without console errors."
+      },
+      {
+        "id": "S11",
+        "text": "Logging out returns the user to the login page, and pressing the browser Back button afterwards does not show the dashboard."
+      }
+    ],
+    "username": "qa.tester@example.com",
+    "mode": "autonomous",
+    "budgets": {
+      "maxPages": 10,
+      "exploreSeconds": 90,
+      "maxTests": 12,
+      "testTimeoutMs": 30000
+    }
+  },
+  "appMap": {
+    "baseUrl": "http://localhost:4000",
+    "generatedAt": "2026-10-18T02:01:30Z",
+    "login": {
+      "attempted": true,
+      "success": true,
+      "url": "http://localhost:4000/login",
+      "note": "Authenticated as qa.tester@example.com"
+    },
+    "pages": [
+      {
+        "url": "http://localhost:4000/login",
+        "path": "/login",
+        "title": "Log in - TaskBoard",
+        "status": 200,
+        "requiresAuth": false,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Log in"
+          }
+        ],
+        "links": [
+          {
+            "text": "Sign up",
+            "href": "/signup"
+          }
+        ],
+        "buttons": [
+          {
+            "text": "Log in"
+          }
+        ],
+        "forms": [
+          {
+            "id": "/login#form0",
+            "action": "/login",
+            "method": "POST",
+            "submitText": "Log in",
+            "fields": [
+              {
+                "role": "textbox",
+                "label": "Email",
+                "type": "email",
+                "name": "email",
+                "required": true
+              },
+              {
+                "role": "textbox",
+                "label": "Password",
+                "type": "password",
+                "name": "password",
+                "required": true
+              }
+            ]
+          }
+        ],
+        "consoleErrors": []
+      },
+      {
+        "url": "http://localhost:4000/signup",
+        "path": "/signup",
+        "title": "Sign up - TaskBoard",
+        "status": 200,
+        "requiresAuth": false,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Create Account"
+          }
+        ],
+        "links": [
+          {
+            "text": "Log in",
+            "href": "/login"
+          }
+        ],
+        "buttons": [
+          {
+            "text": "Sign up"
+          }
+        ],
+        "forms": [
+          {
+            "id": "/signup#form0",
+            "action": "/signup",
+            "method": "POST",
+            "submitText": "Sign up",
+            "fields": [
+              {
+                "role": "textbox",
+                "label": "Email",
+                "type": "email",
+                "name": "email",
+                "required": true
+              },
+              {
+                "role": "textbox",
+                "label": "Password",
+                "type": "password",
+                "name": "password",
+                "required": true
+              }
+            ]
+          }
+        ],
+        "consoleErrors": []
+      },
+      {
+        "url": "http://localhost:4000/dashboard",
+        "path": "/dashboard",
+        "title": "Dashboard - TaskBoard",
+        "status": 200,
+        "requiresAuth": true,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Dashboard"
+          },
+          {
+            "level": 2,
+            "text": "Your Tasks"
+          }
+        ],
+        "links": [
+          {
+            "text": "Settings",
+            "href": "/settings"
+          },
+          {
+            "text": "Log out",
+            "href": "/logout"
+          }
+        ],
+        "buttons": [
+          {
+            "text": "Add item"
+          },
+          {
+            "text": "Delete"
+          }
+        ],
+        "forms": [
+          {
+            "id": "/dashboard#form0",
+            "action": "/dashboard/items",
+            "method": "POST",
+            "submitText": "Add item",
+            "fields": [
+              {
+                "role": "textbox",
+                "label": "Item title",
+                "type": "text",
+                "name": "title",
+                "required": true
+              }
+            ]
+          }
+        ],
+        "consoleErrors": []
+      },
+      {
+        "url": "http://localhost:4000/settings",
+        "path": "/settings",
+        "title": "Settings - TaskBoard",
+        "status": 200,
+        "requiresAuth": true,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Account Settings"
+          }
+        ],
+        "links": [
+          {
+            "text": "Dashboard",
+            "href": "/dashboard"
+          },
+          {
+            "text": "Log out",
+            "href": "/logout"
+          }
+        ],
+        "buttons": [
+          {
+            "text": "Save settings"
+          }
+        ],
+        "forms": [
+          {
+            "id": "/settings#form0",
+            "action": "/settings",
+            "method": "POST",
+            "submitText": "Save settings",
+            "fields": [
+              {
+                "role": "textbox",
+                "label": "Display name",
+                "type": "text",
+                "name": "displayName",
+                "required": true
+              }
+            ]
+          }
+        ],
+        "consoleErrors": [
+          "TypeError: Cannot read properties of undefined (reading 'theme')"
+        ]
+      }
+    ],
+    "summary": "TaskBoard is a streamlined task management application with user registration, authentication, dashboard task CRUD, and profile customization.",
+    "features": [
+      {
+        "name": "Authentication",
+        "description": "User registration and session management",
+        "pages": [
+          "/login",
+          "/signup",
+          "/logout"
+        ]
+      },
+      {
+        "name": "Task Management",
+        "description": "Adding, viewing and deleting tasks",
+        "pages": [
+          "/dashboard"
+        ]
+      },
+      {
+        "name": "User Settings",
+        "description": "Updating display name and preferences",
+        "pages": [
+          "/settings"
+        ]
+      }
+    ],
+    "stats": {
+      "pagesVisited": 4,
+      "durationSeconds": 12.4,
+      "budgetHit": null
+    },
+    "error": null
+  },
+  "catalog": {
+    "runId": "20261018-020000-a1b2",
+    "generatedAt": "2026-10-18T02:03:00Z",
+    "tests": [
+      {
+        "id": "T01",
+        "title": "T01: Signing up with valid credentials lands on dashboard",
+        "description": "Verify valid account creation flow",
+        "specRef": [
+          "S1"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /signup",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with unique('user')@example.com",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'Passw0rd!123'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Sign up' button",
+            "expected": "User lands on /dashboard"
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T01.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T02",
+        "title": "T02: Signing up with invalid email is rejected",
+        "description": "Verify rejection of malformed email address",
+        "specRef": [
+          "S2"
+        ],
+        "priority": "medium",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /signup",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with 'not-an-email'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'ValidPass123'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Sign up' button",
+            "expected": "Shows message \"Enter a valid email address\""
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T02.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T03",
+        "title": "T03: Signing up with short password is rejected",
+        "description": "Verify password length validation (< 8 characters)",
+        "specRef": [
+          "S3"
+        ],
+        "priority": "medium",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /signup",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with unique('user')@example.com",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with '1234567'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Sign up' button",
+            "expected": "Shows message \"Password must be at least 8 characters\""
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T03.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T04",
+        "title": "T04: Logging in with valid credentials lands on dashboard",
+        "description": "Verify happy path login",
+        "specRef": [
+          "S4"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /login",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with 'qa.tester@example.com'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'Passw0rd!23'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Log in' button",
+            "expected": "User lands on /dashboard"
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T04.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T05",
+        "title": "T05: Logging in with wrong password shows error",
+        "description": "Verify rejection of incorrect password",
+        "specRef": [
+          "S5"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /login",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with 'qa.tester@example.com'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'WrongPassword!'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Log in' button",
+            "expected": "Shows message \"Invalid email or password\" and remains on /login"
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T05.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T06",
+        "title": "T06: Logging in email is case-insensitive",
+        "description": "Verify uppercase email login",
+        "specRef": [
+          "S6"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Navigate to /login",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Email with 'QA.Tester@Example.com'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Fill Password with 'Passw0rd!23'",
+            "expected": null
+          },
+          {
+            "n": 4,
+            "action": "Click 'Log in' button",
+            "expected": "User lands on /dashboard"
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T06.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T07",
+        "title": "T07: Adding item with non-empty title shows in list",
+        "description": "Verify task addition",
+        "specRef": [
+          "S7"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in as qa.tester@example.com and open /dashboard",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Fill Item title with unique('Task')",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Click 'Add item' button",
+            "expected": "Item appears in task list"
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T07.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T08",
+        "title": "T08: Adding item with empty title is rejected",
+        "description": "Verify title required validation",
+        "specRef": [
+          "S8"
+        ],
+        "priority": "medium",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in as qa.tester@example.com and open /dashboard",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Clear Item title",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Click 'Add item' button",
+            "expected": "Shows message \"Title is required\" and no item is added"
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T08.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T09",
+        "title": "T09: Deleting an item removes only that item",
+        "description": "Verify item deletion target",
+        "specRef": [
+          "S9"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in and ensure two distinct items exist on /dashboard",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Click 'Delete' on the second item",
+            "expected": "Only the second item is removed; first remains"
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T09.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T10",
+        "title": "T10: Saving display name shows success and page has no errors",
+        "description": "Verify settings save and console health",
+        "specRef": [
+          "S10"
+        ],
+        "priority": "medium",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in and navigate to /settings",
+            "expected": "Page loads without console errors"
+          },
+          {
+            "n": 2,
+            "action": "Fill Display name with 'Quality Tester'",
+            "expected": null
+          },
+          {
+            "n": 3,
+            "action": "Click 'Save settings'",
+            "expected": "Shows status \"Settings saved\""
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T10.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      },
+      {
+        "id": "T11",
+        "title": "T11: Logging out returns to login and Back does not show dashboard",
+        "description": "Verify logout and cache invalidation",
+        "specRef": [
+          "S11"
+        ],
+        "priority": "high",
+        "steps": [
+          {
+            "n": 1,
+            "action": "Log in and navigate to /dashboard",
+            "expected": null
+          },
+          {
+            "n": 2,
+            "action": "Click 'Log out'",
+            "expected": "Navigates to /login"
+          },
+          {
+            "n": 3,
+            "action": "Click browser Back button",
+            "expected": "Dashboard is not displayed; redirected to /login"
+          }
+        ],
+        "status": "approved",
+        "origin": "planner",
+        "script": "scripts/T11.spec.ts",
+        "scriptStatus": "ok",
+        "scriptError": null
+      }
+    ]
+  },
+  "reviewLog": {
+    "runId": "20261018-020000-a1b2",
+    "reviewedAt": "2026-10-18T02:02:45Z",
+    "decisions": [
+      {
+        "testId": "T01",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S1"
+      },
+      {
+        "testId": "T02",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S2"
+      },
+      {
+        "testId": "T03",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S3"
+      },
+      {
+        "testId": "T04",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S4"
+      },
+      {
+        "testId": "T05",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S5"
+      },
+      {
+        "testId": "T06",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S6"
+      },
+      {
+        "testId": "T07",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S7"
+      },
+      {
+        "testId": "T08",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S8"
+      },
+      {
+        "testId": "T09",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S9"
+      },
+      {
+        "testId": "T10",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S10"
+      },
+      {
+        "testId": "T11",
+        "decision": "approve",
+        "reason": "Valid test verifying spec requirement S11"
+      }
+    ]
+  },
+  "results": {
+    "runId": "20261018-020000-a1b2",
+    "startedAt": "2026-10-18T02:04:00Z",
+    "durationSeconds": 18.5,
+    "workers": 4,
+    "tests": [
+      {
+        "testId": "T01",
+        "title": "T01: Signing up with valid credentials lands on dashboard",
+        "file": "scripts/T01.spec.ts",
+        "source": "planned",
+        "outcome": "passed",
+        "durationMs": 1200,
+        "errorMessage": null,
+        "evidenceDir": null
+      },
+      {
+        "testId": "T02",
+        "title": "T02: Signing up with invalid email is rejected",
+        "file": "scripts/T02.spec.ts",
+        "source": "planned",
+        "outcome": "assertion_failure",
+        "durationMs": 950,
+        "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"\nReceived: \"Welcome to dashboard\"",
+        "evidenceDir": "evidence/T02"
+      },
+      {
+        "testId": "T03",
+        "title": "T03: Signing up with short password is rejected",
+        "file": "scripts/T03.spec.ts",
+        "source": "planned",
+        "outcome": "assertion_failure",
+        "durationMs": 850,
+        "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Password must be at least 8 characters\"\nReceived: \"Welcome to dashboard\"",
+        "evidenceDir": null
+      },
+      {
+        "testId": "T04",
+        "title": "T04: Logging in with valid credentials lands on dashboard",
+        "file": "scripts/T04.spec.ts",
+        "source": "planned",
+        "outcome": "passed",
+        "durationMs": 1100,
+        "errorMessage": null,
+        "evidenceDir": null
+      },
+      {
+        "testId": "T05",
+        "title": "T05: Logging in with wrong password shows error",
+        "file": "scripts/T05.spec.ts",
+        "source": "planned",
+        "outcome": "assertion_failure",
+        "durationMs": 900,
+        "errorMessage": "expect(received).toBeVisible()\nExpected: visible alert\nReceived: not visible",
+        "evidenceDir": null
+      },
+      {
+        "testId": "T06",
+        "title": "T06: Logging in email is case-insensitive",
+        "file": "scripts/T06.spec.ts",
+        "source": "planned",
+        "outcome": "assertion_failure",
+        "durationMs": 920,
+        "errorMessage": "expect(received).toHaveURL(expected)\nExpected: /dashboard\nReceived: /login?error=invalid_user",
+        "evidenceDir": null
+      },
+      {
+        "testId": "T07",
+        "title": "T07: Adding item with non-empty title shows in list",
+        "file": "scripts/T07.spec.ts",
+        "source": "planned",
+        "outcome": "passed",
+        "durationMs": 1400,
+        "errorMessage": null,
+        "evidenceDir": null
+      },
+      {
+        "testId": "T08",
+        "title": "T08: Adding item with empty title is rejected",
+        "file": "scripts/T08.spec.ts",
+        "source": "planned",
+        "outcome": "assertion_failure",
+        "durationMs": 880,
+        "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Title is required\"\nReceived: item created successfully",
+        "evidenceDir": null
+      },
+      {
+        "testId": "T09",
+        "title": "T09: Deleting an item removes only that item",
+        "file": "scripts/T09.spec.ts",
+        "source": "planned",
+        "outcome": "assertion_failure",
+        "durationMs": 1300,
+        "errorMessage": "expect(items.first()).toHaveText(expected)\nExpected: \"Task Alpha\"\nReceived: \"Task Beta\"",
+        "evidenceDir": null
+      },
+      {
+        "testId": "T10",
+        "title": "T10: Saving display name shows success and page has no errors",
+        "file": "scripts/T10.spec.ts",
+        "source": "planned",
+        "outcome": "assertion_failure",
+        "durationMs": 1050,
+        "errorMessage": "expect(consoleErrors).toHaveLength(0)\nExpected: 0 errors\nReceived: 1 error (TypeError)",
+        "evidenceDir": null
+      },
+      {
+        "testId": "T11",
+        "title": "T11: Logging out returns to login and Back does not show dashboard",
+        "file": "scripts/T11.spec.ts",
+        "source": "planned",
+        "outcome": "assertion_failure",
+        "durationMs": 1600,
+        "errorMessage": "expect(received).toHaveURL(expected)\nExpected: /login\nReceived: /dashboard (cached page)",
+        "evidenceDir": null
+      },
+      {
+        "testId": "T12",
+        "title": "T12: External navigation test",
+        "file": "scripts/T12.spec.ts",
+        "source": "planned",
+        "outcome": "test_error",
+        "durationMs": 5200,
+        "errorMessage": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9999",
+        "evidenceDir": null
+      },
+      {
+        "testId": "X02",
+        "title": "X02: Exploratory SQL injection probe on search input",
+        "file": "scripts/probes/X02.spec.ts",
+        "source": "exploratory",
+        "outcome": "assertion_failure",
+        "durationMs": 780,
+        "errorMessage": "expect(response.status()).not.toBe(500)\nExpected: not 500\nReceived: 500 Internal Server Error",
+        "evidenceDir": null
+      }
+    ],
+    "summary": {
+      "total": 13,
+      "passed": 3,
+      "assertionFailures": 9,
+      "testErrors": 1
+    }
+  },
+  "bugs": [
+    {
+      "id": "B01",
+      "testId": "T02",
+      "source": "planned",
+      "title": "T02: Signup accepts an invalid email",
+      "grep": "T02:",
+      "file": "scripts/T02.spec.ts",
+      "category": "validation",
+      "severity": "medium",
+      "specRef": [
+        "S2"
+      ],
+      "steps": [
+        "Navigate to /signup",
+        "Enter invalid email 'not-an-email'",
+        "Enter password",
+        "Submit"
+      ],
+      "expected": "Rejected with message \"Enter a valid email address\"",
+      "actual": "Account created and user redirected to dashboard",
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"",
+      "signature": "a1b2c3d4e5",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": "evidence/T02/screenshot.png",
+        "video": "evidence/T02/video.webm",
+        "trace": null,
+        "console": "evidence/T02/console.json",
+        "network": "evidence/T02/network.json"
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B02",
+      "testId": "T03",
+      "source": "planned",
+      "title": "T03: Signup accepts passwords shorter than 8 characters",
+      "grep": "T03:",
+      "file": "scripts/T03.spec.ts",
+      "category": "validation",
+      "severity": "medium",
+      "specRef": [
+        "S3"
+      ],
+      "steps": [
+        "Navigate to /signup",
+        "Enter valid email",
+        "Enter 7-character password '1234567'",
+        "Submit"
+      ],
+      "expected": "Rejected with message \"Password must be at least 8 characters\"",
+      "actual": "Account created successfully",
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Password must be at least 8 characters\"",
+      "signature": "b2c3d4e5f6",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B03",
+      "testId": "T05",
+      "source": "planned",
+      "title": "T05: Wrong password shows no error message",
+      "grep": "T05:",
+      "file": "scripts/T05.spec.ts",
+      "category": "auth",
+      "severity": "high",
+      "specRef": [
+        "S5"
+      ],
+      "steps": [
+        "Navigate to /login",
+        "Enter valid email",
+        "Enter wrong password",
+        "Click Log in"
+      ],
+      "expected": "Shows message \"Invalid email or password\"",
+      "actual": "Page remains blank with no alert or message",
+      "errorMessage": "expect(received).toBeVisible()\nExpected: visible alert",
+      "signature": "c3d4e5f6a1",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B04",
+      "testId": "T06",
+      "source": "planned",
+      "title": "T06: Login fails when the email has capital letters",
+      "grep": "T06:",
+      "file": "scripts/T06.spec.ts",
+      "category": "auth",
+      "severity": "high",
+      "specRef": [
+        "S6"
+      ],
+      "steps": [
+        "Navigate to /login",
+        "Enter email with uppercase letters",
+        "Enter correct password",
+        "Submit"
+      ],
+      "expected": "Successful login lands on dashboard",
+      "actual": "Login rejected with error",
+      "errorMessage": "expect(received).toHaveURL(expected)",
+      "signature": "d4e5f6a1b2",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B05",
+      "testId": "T08",
+      "source": "planned",
+      "title": "T08: Dashboard accepts an empty item title",
+      "grep": "T08:",
+      "file": "scripts/T08.spec.ts",
+      "category": "validation",
+      "severity": "medium",
+      "specRef": [
+        "S8"
+      ],
+      "steps": [
+        "Open /dashboard",
+        "Submit empty title form"
+      ],
+      "expected": "Rejected with message \"Title is required\"",
+      "actual": "Empty item added to task list",
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Title is required\"",
+      "signature": "e5f6a1b2c3",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B06",
+      "testId": "T09",
+      "source": "planned",
+      "title": "T09: Delete removes the first item instead of clicked one",
+      "grep": "T09:",
+      "file": "scripts/T09.spec.ts",
+      "category": "data",
+      "severity": "high",
+      "specRef": [
+        "S9"
+      ],
+      "steps": [
+        "Create two items",
+        "Click Delete on second item"
+      ],
+      "expected": "Second item is deleted",
+      "actual": "First item in the list is deleted instead",
+      "errorMessage": "expect(items.first()).toHaveText(expected)",
+      "signature": "f6a1b2c3d4",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B07",
+      "testId": "T11",
+      "source": "planned",
+      "title": "T11: After logout, Back shows cached dashboard",
+      "grep": "T11:",
+      "file": "scripts/T11.spec.ts",
+      "category": "auth",
+      "severity": "high",
+      "specRef": [
+        "S11"
+      ],
+      "steps": [
+        "Log in to dashboard",
+        "Log out",
+        "Press browser Back button"
+      ],
+      "expected": "Redirected to login or 401 unauthenticated",
+      "actual": "Cached dashboard displays sensitive task data",
+      "errorMessage": "expect(received).toHaveURL(expected)",
+      "signature": "a2b3c4d5e6",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B08",
+      "testId": "T10",
+      "source": "planned",
+      "title": "T10: The settings page throws an uncaught TypeError on load",
+      "grep": "T10:",
+      "file": "scripts/T10.spec.ts",
+      "category": "console",
+      "severity": "low",
+      "specRef": [
+        "S10"
+      ],
+      "steps": [
+        "Navigate to /settings"
+      ],
+      "expected": "Loads without console errors",
+      "actual": "Throws TypeError: Cannot read properties of undefined (reading 'theme')",
+      "errorMessage": "expect(consoleErrors).toHaveLength(0)",
+      "signature": "b3c4d5e6f7",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "not_reproduced",
+      "replay": {
+        "reproduced": 0,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B09",
+      "testId": "T10",
+      "source": "planned",
+      "title": "T10: Every second settings save fails with HTTP 500",
+      "grep": "T10:",
+      "file": "scripts/T10.spec.ts",
+      "category": "network",
+      "severity": "medium",
+      "specRef": [
+        "S10"
+      ],
+      "steps": [
+        "Open /settings",
+        "Save display name consecutively"
+      ],
+      "expected": "Status 200 and 'Settings saved' every time",
+      "actual": "Second save attempt returns HTTP 500",
+      "errorMessage": "expect(response.status()).toBe(200)",
+      "signature": "c4d5e6f7a2",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "flaky",
+      "replay": {
+        "reproduced": 2,
+        "attempts": 3
+      }
+    },
+    {
+      "id": "B10",
+      "testId": "X02",
+      "source": "exploratory",
+      "title": "X02: Unhandled 500 Internal Server Error on special character input",
+      "grep": "X02:",
+      "file": "scripts/probes/X02.spec.ts",
+      "category": "other",
+      "severity": "medium",
+      "specRef": [
+        "S7"
+      ],
+      "steps": [
+        "Submit probe payload into dashboard search"
+      ],
+      "expected": "Handled with 400 or graceful validation error",
+      "actual": "Server crashes with HTTP 500",
+      "errorMessage": "expect(response.status()).not.toBe(500)",
+      "signature": "d5e6f7a2b3",
+      "duplicates": [],
+      "evidence": {
+        "screenshot": null,
+        "video": null,
+        "trace": null,
+        "console": null,
+        "network": null
+      },
+      "status": "confirmed",
+      "replay": {
+        "reproduced": 3,
+        "attempts": 3
+      }
+    }
+  ],
+  "verifications": [
+    {
+      "bugId": "B01",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"",
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"",
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"",
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 3,
+      "status": "confirmed"
+    },
+    {
+      "bugId": "B02",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Password must be at least 8 characters\"",
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Password must be at least 8 characters\"",
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Password must be at least 8 characters\"",
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 3,
+      "status": "confirmed"
+    },
+    {
+      "bugId": "B03",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toBeVisible()\nExpected: visible alert",
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toBeVisible()\nExpected: visible alert",
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toBeVisible()\nExpected: visible alert",
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 3,
+      "status": "confirmed"
+    },
+    {
+      "bugId": "B04",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveURL(expected)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveURL(expected)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveURL(expected)",
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 3,
+      "status": "confirmed"
+    },
+    {
+      "bugId": "B05",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Title is required\"",
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Title is required\"",
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Title is required\"",
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 3,
+      "status": "confirmed"
+    },
+    {
+      "bugId": "B06",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(items.first()).toHaveText(expected)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(items.first()).toHaveText(expected)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(items.first()).toHaveText(expected)",
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 3,
+      "status": "confirmed"
+    },
+    {
+      "bugId": "B07",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveURL(expected)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveURL(expected)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(received).toHaveURL(expected)",
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 3,
+      "status": "confirmed"
+    },
+    {
+      "bugId": "B08",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": false,
+          "outcome": "passed",
+          "errorMessage": null,
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": false,
+          "outcome": "passed",
+          "errorMessage": null,
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": false,
+          "outcome": "passed",
+          "errorMessage": null,
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 0,
+      "status": "not_reproduced"
+    },
+    {
+      "bugId": "B09",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(response.status()).toBe(200)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(response.status()).toBe(200)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": false,
+          "outcome": "passed",
+          "errorMessage": null,
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 2,
+      "status": "flaky"
+    },
+    {
+      "bugId": "B10",
+      "verifiedAt": "2026-10-18T02:05:30Z",
+      "attempts": [
+        {
+          "attempt": 1,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(response.status()).not.toBe(500)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 2,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(response.status()).not.toBe(500)",
+          "durationMs": 920
+        },
+        {
+          "attempt": 3,
+          "reproduced": true,
+          "outcome": "assertion_failure",
+          "errorMessage": "expect(response.status()).not.toBe(500)",
+          "durationMs": 920
+        }
+      ],
+      "reproduced": 3,
+      "status": "confirmed"
+    }
+  ],
+  "metrics": {
+    "runId": "20261018-020000-a1b2",
+    "wallClockSeconds": 84.2,
+    "stageSeconds": {
+      "exploring": 14.5,
+      "planning": 10.2,
+      "awaiting_review": 5.0,
+      "scripting": 22.1,
+      "running": 18.5,
+      "verifying": 11.4,
+      "reporting": 2.5
+    },
+    "tests": {
+      "planned": 11,
+      "approved": 11,
+      "passed": 3,
+      "failed": 9,
+      "errored": 1
+    },
+    "bugs": {
+      "candidates": 10,
+      "confirmed": 8,
+      "flaky": 1,
+      "notReproduced": 1
+    },
+    "coverage": {
+      "pagesInMap": 4,
+      "pagesExercised": 4,
+      "formsInMap": 4,
+      "formsExercised": 4,
+      "specItems": 11,
+      "specItemsCovered": 11
+    },
+    "llm": {
+      "calls": 14,
+      "cacheHits": 6,
+      "inputTokens": 24500,
+      "outputTokens": 4800,
+      "costUsd": 0.14
+    },
+    "parallel": {
+      "workers1Seconds": 45.2,
+      "workers4Seconds": 18.5,
+      "speedup": 2.44
+    },
+    "safety": {
+      "blockedRequests": 0
+    }
+  },
+  "hasReport": true
+}

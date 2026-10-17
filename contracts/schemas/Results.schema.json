@@ -1,0 +1,137 @@
+{
+  "$defs": {
+    "ResultsSummary": {
+      "properties": {
+        "total": {
+          "default": 0,
+          "title": "Total",
+          "type": "integer"
+        },
+        "passed": {
+          "default": 0,
+          "title": "Passed",
+          "type": "integer"
+        },
+        "assertionFailures": {
+          "default": 0,
+          "title": "Assertionfailures",
+          "type": "integer"
+        },
+        "testErrors": {
+          "default": 0,
+          "title": "Testerrors",
+          "type": "integer"
+        }
+      },
+      "title": "ResultsSummary",
+      "type": "object"
+    },
+    "TestResult": {
+      "properties": {
+        "testId": {
+          "title": "Testid",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "planned",
+            "exploratory"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "passed",
+            "assertion_failure",
+            "test_error"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "durationMs": {
+          "title": "Durationms",
+          "type": "integer"
+        },
+        "errorMessage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Errormessage"
+        },
+        "evidenceDir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidencedir"
+        }
+      },
+      "required": [
+        "testId",
+        "title",
+        "file",
+        "source",
+        "outcome",
+        "durationMs"
+      ],
+      "title": "TestResult",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "runId": {
+      "title": "Runid",
+      "type": "string"
+    },
+    "startedAt": {
+      "title": "Startedat",
+      "type": "string"
+    },
+    "durationSeconds": {
+      "title": "Durationseconds",
+      "type": "number"
+    },
+    "workers": {
+      "title": "Workers",
+      "type": "integer"
+    },
+    "tests": {
+      "items": {
+        "$ref": "#/$defs/TestResult"
+      },
+      "title": "Tests",
+      "type": "array"
+    },
+    "summary": {
+      "$ref": "#/$defs/ResultsSummary"
+    }
+  },
+  "required": [
+    "runId",
+    "startedAt",
+    "durationSeconds",
+    "workers"
+  ],
+  "title": "Results",
+  "type": "object"
+}

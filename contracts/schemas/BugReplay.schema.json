@@ -1,0 +1,18 @@
+{
+  "properties": {
+    "reproduced": {
+      "title": "Reproduced",
+      "type": "integer"
+    },
+    "attempts": {
+      "title": "Attempts",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "reproduced",
+    "attempts"
+  ],
+  "title": "BugReplay",
+  "type": "object"
+}

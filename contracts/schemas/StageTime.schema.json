@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "startedAt": {
+      "title": "Startedat",
+      "type": "string"
+    },
+    "endedAt": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Endedat"
+    }
+  },
+  "required": [
+    "startedAt"
+  ],
+  "title": "StageTime",
+  "type": "object"
+}

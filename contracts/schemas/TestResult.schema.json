@@ -1,0 +1,71 @@
+{
+  "properties": {
+    "testId": {
+      "title": "Testid",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "file": {
+      "title": "File",
+      "type": "string"
+    },
+    "source": {
+      "enum": [
+        "planned",
+        "exploratory"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "passed",
+        "assertion_failure",
+        "test_error"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "durationMs": {
+      "title": "Durationms",
+      "type": "integer"
+    },
+    "errorMessage": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Errormessage"
+    },
+    "evidenceDir": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evidencedir"
+    }
+  },
+  "required": [
+    "testId",
+    "title",
+    "file",
+    "source",
+    "outcome",
+    "durationMs"
+  ],
+  "title": "TestResult",
+  "type": "object"
+}

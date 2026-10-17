@@ -1,0 +1,32 @@
+{
+  "properties": {
+    "pagesVisited": {
+      "default": 0,
+      "title": "Pagesvisited",
+      "type": "integer"
+    },
+    "durationSeconds": {
+      "default": 0.0,
+      "title": "Durationseconds",
+      "type": "number"
+    },
+    "budgetHit": {
+      "anyOf": [
+        {
+          "enum": [
+            "pages",
+            "time"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budgethit"
+    }
+  },
+  "title": "AppMapStats",
+  "type": "object"
+}

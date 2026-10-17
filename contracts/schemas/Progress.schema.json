@@ -1,0 +1,23 @@
+{
+  "properties": {
+    "step": {
+      "title": "Step",
+      "type": "string"
+    },
+    "done": {
+      "title": "Done",
+      "type": "integer"
+    },
+    "total": {
+      "title": "Total",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "step",
+    "done",
+    "total"
+  ],
+  "title": "Progress",
+  "type": "object"
+}

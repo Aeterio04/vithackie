@@ -1,0 +1,18 @@
+{
+  "properties": {
+    "level": {
+      "title": "Level",
+      "type": "integer"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "level",
+    "text"
+  ],
+  "title": "HeadingInfo",
+  "type": "object"
+}

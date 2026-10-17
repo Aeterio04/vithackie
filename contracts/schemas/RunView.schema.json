@@ -1,0 +1,1529 @@
+{
+  "$defs": {
+    "AppMap": {
+      "properties": {
+        "baseUrl": {
+          "title": "Baseurl",
+          "type": "string"
+        },
+        "generatedAt": {
+          "title": "Generatedat",
+          "type": "string"
+        },
+        "login": {
+          "$ref": "#/$defs/LoginInfo"
+        },
+        "pages": {
+          "items": {
+            "$ref": "#/$defs/PageInfo"
+          },
+          "title": "Pages",
+          "type": "array"
+        },
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "features": {
+          "items": {
+            "$ref": "#/$defs/Feature"
+          },
+          "title": "Features",
+          "type": "array"
+        },
+        "stats": {
+          "$ref": "#/$defs/AppMapStats"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        }
+      },
+      "required": [
+        "baseUrl",
+        "generatedAt"
+      ],
+      "title": "AppMap",
+      "type": "object"
+    },
+    "AppMapStats": {
+      "properties": {
+        "pagesVisited": {
+          "default": 0,
+          "title": "Pagesvisited",
+          "type": "integer"
+        },
+        "durationSeconds": {
+          "default": 0.0,
+          "title": "Durationseconds",
+          "type": "number"
+        },
+        "budgetHit": {
+          "anyOf": [
+            {
+              "enum": [
+                "pages",
+                "time"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budgethit"
+        }
+      },
+      "title": "AppMapStats",
+      "type": "object"
+    },
+    "Budgets": {
+      "properties": {
+        "maxPages": {
+          "default": 10,
+          "title": "Maxpages",
+          "type": "integer"
+        },
+        "exploreSeconds": {
+          "default": 90,
+          "title": "Exploreseconds",
+          "type": "integer"
+        },
+        "maxTests": {
+          "default": 12,
+          "title": "Maxtests",
+          "type": "integer"
+        },
+        "testTimeoutMs": {
+          "default": 30000,
+          "title": "Testtimeoutms",
+          "type": "integer"
+        }
+      },
+      "title": "Budgets",
+      "type": "object"
+    },
+    "Bug": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "testId": {
+          "title": "Testid",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "planned",
+            "exploratory"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "grep": {
+          "title": "Grep",
+          "type": "string"
+        },
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "validation",
+            "auth",
+            "data",
+            "navigation",
+            "console",
+            "network",
+            "ui",
+            "other"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "specRef": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Specref",
+          "type": "array"
+        },
+        "steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "expected": {
+          "title": "Expected",
+          "type": "string"
+        },
+        "actual": {
+          "title": "Actual",
+          "type": "string"
+        },
+        "errorMessage": {
+          "title": "Errormessage",
+          "type": "string"
+        },
+        "signature": {
+          "title": "Signature",
+          "type": "string"
+        },
+        "duplicates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Duplicates",
+          "type": "array"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "status": {
+          "enum": [
+            "candidate",
+            "confirmed",
+            "flaky",
+            "not_reproduced"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "replay": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BugReplay"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "testId",
+        "source",
+        "title",
+        "grep",
+        "file",
+        "category",
+        "severity",
+        "expected",
+        "actual",
+        "errorMessage",
+        "signature",
+        "status"
+      ],
+      "title": "Bug",
+      "type": "object"
+    },
+    "BugReplay": {
+      "properties": {
+        "reproduced": {
+          "title": "Reproduced",
+          "type": "integer"
+        },
+        "attempts": {
+          "title": "Attempts",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "reproduced",
+        "attempts"
+      ],
+      "title": "BugReplay",
+      "type": "object"
+    },
+    "ButtonInfo": {
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "ButtonInfo",
+      "type": "object"
+    },
+    "Catalog": {
+      "properties": {
+        "runId": {
+          "title": "Runid",
+          "type": "string"
+        },
+        "generatedAt": {
+          "title": "Generatedat",
+          "type": "string"
+        },
+        "tests": {
+          "items": {
+            "$ref": "#/$defs/TestCase"
+          },
+          "title": "Tests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "runId",
+        "generatedAt"
+      ],
+      "title": "Catalog",
+      "type": "object"
+    },
+    "Evidence": {
+      "properties": {
+        "screenshot": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Screenshot"
+        },
+        "video": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Video"
+        },
+        "trace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace"
+        },
+        "console": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Console"
+        },
+        "network": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Network"
+        }
+      },
+      "title": "Evidence",
+      "type": "object"
+    },
+    "Feature": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "pages": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Pages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ],
+      "title": "Feature",
+      "type": "object"
+    },
+    "FieldInfo": {
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "role",
+        "label",
+        "type",
+        "name"
+      ],
+      "title": "FieldInfo",
+      "type": "object"
+    },
+    "FormInfo": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "action": {
+          "default": "",
+          "title": "Action",
+          "type": "string"
+        },
+        "method": {
+          "default": "GET",
+          "title": "Method",
+          "type": "string"
+        },
+        "submitText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submittext"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/FieldInfo"
+          },
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FormInfo",
+      "type": "object"
+    },
+    "HeadingInfo": {
+      "properties": {
+        "level": {
+          "title": "Level",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "text"
+      ],
+      "title": "HeadingInfo",
+      "type": "object"
+    },
+    "LinkInfo": {
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "href": {
+          "title": "Href",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "href"
+      ],
+      "title": "LinkInfo",
+      "type": "object"
+    },
+    "LlmUsage": {
+      "properties": {
+        "calls": {
+          "default": 0,
+          "title": "Calls",
+          "type": "integer"
+        },
+        "cacheHits": {
+          "default": 0,
+          "title": "Cachehits",
+          "type": "integer"
+        },
+        "inputTokens": {
+          "default": 0,
+          "title": "Inputtokens",
+          "type": "integer"
+        },
+        "outputTokens": {
+          "default": 0,
+          "title": "Outputtokens",
+          "type": "integer"
+        },
+        "costUsd": {
+          "default": 0.0,
+          "title": "Costusd",
+          "type": "number"
+        }
+      },
+      "title": "LlmUsage",
+      "type": "object"
+    },
+    "LoginInfo": {
+      "properties": {
+        "attempted": {
+          "default": false,
+          "title": "Attempted",
+          "type": "boolean"
+        },
+        "success": {
+          "default": false,
+          "title": "Success",
+          "type": "boolean"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "title": "LoginInfo",
+      "type": "object"
+    },
+    "Metrics": {
+      "properties": {
+        "runId": {
+          "title": "Runid",
+          "type": "string"
+        },
+        "wallClockSeconds": {
+          "title": "Wallclockseconds",
+          "type": "number"
+        },
+        "stageSeconds": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Stageseconds",
+          "type": "object"
+        },
+        "tests": {
+          "$ref": "#/$defs/MetricsTests"
+        },
+        "bugs": {
+          "$ref": "#/$defs/MetricsBugs"
+        },
+        "coverage": {
+          "$ref": "#/$defs/MetricsCoverage"
+        },
+        "llm": {
+          "$ref": "#/$defs/LlmUsage"
+        },
+        "parallel": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ParallelTiming"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "safety": {
+          "$ref": "#/$defs/MetricsSafety"
+        }
+      },
+      "required": [
+        "runId",
+        "wallClockSeconds"
+      ],
+      "title": "Metrics",
+      "type": "object"
+    },
+    "MetricsBugs": {
+      "properties": {
+        "candidates": {
+          "default": 0,
+          "title": "Candidates",
+          "type": "integer"
+        },
+        "confirmed": {
+          "default": 0,
+          "title": "Confirmed",
+          "type": "integer"
+        },
+        "flaky": {
+          "default": 0,
+          "title": "Flaky",
+          "type": "integer"
+        },
+        "notReproduced": {
+          "default": 0,
+          "title": "Notreproduced",
+          "type": "integer"
+        }
+      },
+      "title": "MetricsBugs",
+      "type": "object"
+    },
+    "MetricsCoverage": {
+      "properties": {
+        "pagesInMap": {
+          "default": 0,
+          "title": "Pagesinmap",
+          "type": "integer"
+        },
+        "pagesExercised": {
+          "default": 0,
+          "title": "Pagesexercised",
+          "type": "integer"
+        },
+        "formsInMap": {
+          "default": 0,
+          "title": "Formsinmap",
+          "type": "integer"
+        },
+        "formsExercised": {
+          "default": 0,
+          "title": "Formsexercised",
+          "type": "integer"
+        },
+        "specItems": {
+          "default": 0,
+          "title": "Specitems",
+          "type": "integer"
+        },
+        "specItemsCovered": {
+          "default": 0,
+          "title": "Specitemscovered",
+          "type": "integer"
+        }
+      },
+      "title": "MetricsCoverage",
+      "type": "object"
+    },
+    "MetricsSafety": {
+      "properties": {
+        "blockedRequests": {
+          "default": 0,
+          "title": "Blockedrequests",
+          "type": "integer"
+        }
+      },
+      "title": "MetricsSafety",
+      "type": "object"
+    },
+    "MetricsTests": {
+      "properties": {
+        "planned": {
+          "default": 0,
+          "title": "Planned",
+          "type": "integer"
+        },
+        "approved": {
+          "default": 0,
+          "title": "Approved",
+          "type": "integer"
+        },
+        "passed": {
+          "default": 0,
+          "title": "Passed",
+          "type": "integer"
+        },
+        "failed": {
+          "default": 0,
+          "title": "Failed",
+          "type": "integer"
+        },
+        "errored": {
+          "default": 0,
+          "title": "Errored",
+          "type": "integer"
+        }
+      },
+      "title": "MetricsTests",
+      "type": "object"
+    },
+    "PageInfo": {
+      "properties": {
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "integer"
+        },
+        "requiresAuth": {
+          "default": false,
+          "title": "Requiresauth",
+          "type": "boolean"
+        },
+        "headings": {
+          "items": {
+            "$ref": "#/$defs/HeadingInfo"
+          },
+          "title": "Headings",
+          "type": "array"
+        },
+        "links": {
+          "items": {
+            "$ref": "#/$defs/LinkInfo"
+          },
+          "title": "Links",
+          "type": "array"
+        },
+        "buttons": {
+          "items": {
+            "$ref": "#/$defs/ButtonInfo"
+          },
+          "title": "Buttons",
+          "type": "array"
+        },
+        "forms": {
+          "items": {
+            "$ref": "#/$defs/FormInfo"
+          },
+          "title": "Forms",
+          "type": "array"
+        },
+        "consoleErrors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Consoleerrors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "url",
+        "path",
+        "title",
+        "status"
+      ],
+      "title": "PageInfo",
+      "type": "object"
+    },
+    "ParallelTiming": {
+      "properties": {
+        "workers1Seconds": {
+          "title": "Workers1Seconds",
+          "type": "number"
+        },
+        "workers4Seconds": {
+          "title": "Workers4Seconds",
+          "type": "number"
+        },
+        "speedup": {
+          "title": "Speedup",
+          "type": "number"
+        }
+      },
+      "required": [
+        "workers1Seconds",
+        "workers4Seconds",
+        "speedup"
+      ],
+      "title": "ParallelTiming",
+      "type": "object"
+    },
+    "Progress": {
+      "properties": {
+        "step": {
+          "title": "Step",
+          "type": "string"
+        },
+        "done": {
+          "title": "Done",
+          "type": "integer"
+        },
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "step",
+        "done",
+        "total"
+      ],
+      "title": "Progress",
+      "type": "object"
+    },
+    "Results": {
+      "properties": {
+        "runId": {
+          "title": "Runid",
+          "type": "string"
+        },
+        "startedAt": {
+          "title": "Startedat",
+          "type": "string"
+        },
+        "durationSeconds": {
+          "title": "Durationseconds",
+          "type": "number"
+        },
+        "workers": {
+          "title": "Workers",
+          "type": "integer"
+        },
+        "tests": {
+          "items": {
+            "$ref": "#/$defs/TestResult"
+          },
+          "title": "Tests",
+          "type": "array"
+        },
+        "summary": {
+          "$ref": "#/$defs/ResultsSummary"
+        }
+      },
+      "required": [
+        "runId",
+        "startedAt",
+        "durationSeconds",
+        "workers"
+      ],
+      "title": "Results",
+      "type": "object"
+    },
+    "ResultsSummary": {
+      "properties": {
+        "total": {
+          "default": 0,
+          "title": "Total",
+          "type": "integer"
+        },
+        "passed": {
+          "default": 0,
+          "title": "Passed",
+          "type": "integer"
+        },
+        "assertionFailures": {
+          "default": 0,
+          "title": "Assertionfailures",
+          "type": "integer"
+        },
+        "testErrors": {
+          "default": 0,
+          "title": "Testerrors",
+          "type": "integer"
+        }
+      },
+      "title": "ResultsSummary",
+      "type": "object"
+    },
+    "ReviewDecision": {
+      "properties": {
+        "testId": {
+          "title": "Testid",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "approve",
+            "reject"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "testId",
+        "decision",
+        "reason"
+      ],
+      "title": "ReviewDecision",
+      "type": "object"
+    },
+    "ReviewLog": {
+      "properties": {
+        "runId": {
+          "title": "Runid",
+          "type": "string"
+        },
+        "reviewedAt": {
+          "title": "Reviewedat",
+          "type": "string"
+        },
+        "decisions": {
+          "items": {
+            "$ref": "#/$defs/ReviewDecision"
+          },
+          "title": "Decisions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "runId",
+        "reviewedAt"
+      ],
+      "title": "ReviewLog",
+      "type": "object"
+    },
+    "Run": {
+      "properties": {
+        "runId": {
+          "title": "Runid",
+          "type": "string"
+        },
+        "createdAt": {
+          "title": "Createdat",
+          "type": "string"
+        },
+        "updatedAt": {
+          "title": "Updatedat",
+          "type": "string"
+        },
+        "stage": {
+          "default": "created",
+          "enum": [
+            "created",
+            "exploring",
+            "planning",
+            "awaiting_review",
+            "scripting",
+            "running",
+            "verifying",
+            "reporting",
+            "done",
+            "failed"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "mode": {
+          "default": "manual",
+          "enum": [
+            "manual",
+            "autonomous"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "targetUrl": {
+          "title": "Targeturl",
+          "type": "string"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "progress": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Progress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "stageTimes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/StageTime"
+          },
+          "title": "Stagetimes",
+          "type": "object"
+        },
+        "golden": {
+          "default": false,
+          "title": "Golden",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "runId",
+        "createdAt",
+        "updatedAt",
+        "targetUrl"
+      ],
+      "title": "Run",
+      "type": "object"
+    },
+    "RunInput": {
+      "properties": {
+        "runId": {
+          "title": "Runid",
+          "type": "string"
+        },
+        "createdAt": {
+          "title": "Createdat",
+          "type": "string"
+        },
+        "targetUrl": {
+          "title": "Targeturl",
+          "type": "string"
+        },
+        "prompt": {
+          "default": "",
+          "title": "Prompt",
+          "type": "string"
+        },
+        "specRaw": {
+          "title": "Specraw",
+          "type": "string"
+        },
+        "spec": {
+          "items": {
+            "$ref": "#/$defs/SpecItem"
+          },
+          "title": "Spec",
+          "type": "array"
+        },
+        "username": {
+          "default": "",
+          "title": "Username",
+          "type": "string"
+        },
+        "mode": {
+          "default": "manual",
+          "enum": [
+            "manual",
+            "autonomous"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "budgets": {
+          "$ref": "#/$defs/Budgets"
+        }
+      },
+      "required": [
+        "runId",
+        "createdAt",
+        "targetUrl",
+        "specRaw"
+      ],
+      "title": "RunInput",
+      "type": "object"
+    },
+    "SpecItem": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "title": "SpecItem",
+      "type": "object"
+    },
+    "StageTime": {
+      "properties": {
+        "startedAt": {
+          "title": "Startedat",
+          "type": "string"
+        },
+        "endedAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endedat"
+        }
+      },
+      "required": [
+        "startedAt"
+      ],
+      "title": "StageTime",
+      "type": "object"
+    },
+    "Step": {
+      "properties": {
+        "n": {
+          "title": "N",
+          "type": "integer"
+        },
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "expected": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected"
+        }
+      },
+      "required": [
+        "n",
+        "action"
+      ],
+      "title": "Step",
+      "type": "object"
+    },
+    "TestCase": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "specRef": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Specref",
+          "type": "array"
+        },
+        "priority": {
+          "default": "medium",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/Step"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "status": {
+          "default": "proposed",
+          "enum": [
+            "proposed",
+            "approved",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "origin": {
+          "default": "planner",
+          "enum": [
+            "planner",
+            "human",
+            "fallback"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "script": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Script"
+        },
+        "scriptStatus": {
+          "default": "pending",
+          "enum": [
+            "pending",
+            "ok",
+            "error"
+          ],
+          "title": "Scriptstatus",
+          "type": "string"
+        },
+        "scriptError": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scripterror"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description"
+      ],
+      "title": "TestCase",
+      "type": "object"
+    },
+    "TestResult": {
+      "properties": {
+        "testId": {
+          "title": "Testid",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "planned",
+            "exploratory"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "passed",
+            "assertion_failure",
+            "test_error"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "durationMs": {
+          "title": "Durationms",
+          "type": "integer"
+        },
+        "errorMessage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Errormessage"
+        },
+        "evidenceDir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidencedir"
+        }
+      },
+      "required": [
+        "testId",
+        "title",
+        "file",
+        "source",
+        "outcome",
+        "durationMs"
+      ],
+      "title": "TestResult",
+      "type": "object"
+    },
+    "Verification": {
+      "properties": {
+        "bugId": {
+          "title": "Bugid",
+          "type": "string"
+        },
+        "verifiedAt": {
+          "title": "Verifiedat",
+          "type": "string"
+        },
+        "attempts": {
+          "items": {
+            "$ref": "#/$defs/VerificationAttempt"
+          },
+          "title": "Attempts",
+          "type": "array"
+        },
+        "reproduced": {
+          "title": "Reproduced",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "flaky",
+            "not_reproduced"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bugId",
+        "verifiedAt",
+        "reproduced",
+        "status"
+      ],
+      "title": "Verification",
+      "type": "object"
+    },
+    "VerificationAttempt": {
+      "properties": {
+        "attempt": {
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "reproduced": {
+          "title": "Reproduced",
+          "type": "boolean"
+        },
+        "outcome": {
+          "enum": [
+            "passed",
+            "assertion_failure",
+            "test_error"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "errorMessage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Errormessage"
+        },
+        "durationMs": {
+          "title": "Durationms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "attempt",
+        "reproduced",
+        "outcome",
+        "durationMs"
+      ],
+      "title": "VerificationAttempt",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "run": {
+      "$ref": "#/$defs/Run"
+    },
+    "input": {
+      "$ref": "#/$defs/RunInput"
+    },
+    "appMap": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AppMap"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "catalog": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Catalog"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "reviewLog": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReviewLog"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "results": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Results"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "bugs": {
+      "items": {
+        "$ref": "#/$defs/Bug"
+      },
+      "title": "Bugs",
+      "type": "array"
+    },
+    "verifications": {
+      "items": {
+        "$ref": "#/$defs/Verification"
+      },
+      "title": "Verifications",
+      "type": "array"
+    },
+    "metrics": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Metrics"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "hasReport": {
+      "default": false,
+      "title": "Hasreport",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "run",
+    "input"
+  ],
+  "title": "RunView",
+  "type": "object"
+}

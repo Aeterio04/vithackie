@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "pages": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Pages",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "description"
+  ],
+  "title": "Feature",
+  "type": "object"
+}

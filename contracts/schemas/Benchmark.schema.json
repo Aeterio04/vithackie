@@ -1,0 +1,77 @@
+{
+  "$defs": {
+    "BenchmarkMatch": {
+      "properties": {
+        "bugId": {
+          "title": "Bugid",
+          "type": "string"
+        },
+        "groundTruthId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Groundtruthid"
+        }
+      },
+      "required": [
+        "bugId"
+      ],
+      "title": "BenchmarkMatch",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "runId": {
+      "title": "Runid",
+      "type": "string"
+    },
+    "groundTruthTotal": {
+      "title": "Groundtruthtotal",
+      "type": "integer"
+    },
+    "matches": {
+      "items": {
+        "$ref": "#/$defs/BenchmarkMatch"
+      },
+      "title": "Matches",
+      "type": "array"
+    },
+    "truePositives": {
+      "title": "Truepositives",
+      "type": "integer"
+    },
+    "falsePositives": {
+      "title": "Falsepositives",
+      "type": "integer"
+    },
+    "recall": {
+      "title": "Recall",
+      "type": "number"
+    },
+    "precision": {
+      "title": "Precision",
+      "type": "number"
+    },
+    "replayRate": {
+      "title": "Replayrate",
+      "type": "number"
+    }
+  },
+  "required": [
+    "runId",
+    "groundTruthTotal",
+    "truePositives",
+    "falsePositives",
+    "recall",
+    "precision",
+    "replayRate"
+  ],
+  "title": "Benchmark",
+  "type": "object"
+}

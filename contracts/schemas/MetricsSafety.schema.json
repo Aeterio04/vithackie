@@ -1,0 +1,11 @@
+{
+  "properties": {
+    "blockedRequests": {
+      "default": 0,
+      "title": "Blockedrequests",
+      "type": "integer"
+    }
+  },
+  "title": "MetricsSafety",
+  "type": "object"
+}

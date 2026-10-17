@@ -1,0 +1,29 @@
+{
+  "bugId": "B01",
+  "verifiedAt": "2026-10-18T02:05:30Z",
+  "attempts": [
+    {
+      "attempt": 1,
+      "reproduced": true,
+      "outcome": "assertion_failure",
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"",
+      "durationMs": 920
+    },
+    {
+      "attempt": 2,
+      "reproduced": true,
+      "outcome": "assertion_failure",
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"",
+      "durationMs": 920
+    },
+    {
+      "attempt": 3,
+      "reproduced": true,
+      "outcome": "assertion_failure",
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"",
+      "durationMs": 920
+    }
+  ],
+  "reproduced": 3,
+  "status": "confirmed"
+}

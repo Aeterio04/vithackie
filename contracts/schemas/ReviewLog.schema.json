@@ -1,0 +1,54 @@
+{
+  "$defs": {
+    "ReviewDecision": {
+      "properties": {
+        "testId": {
+          "title": "Testid",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "approve",
+            "reject"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "testId",
+        "decision",
+        "reason"
+      ],
+      "title": "ReviewDecision",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "runId": {
+      "title": "Runid",
+      "type": "string"
+    },
+    "reviewedAt": {
+      "title": "Reviewedat",
+      "type": "string"
+    },
+    "decisions": {
+      "items": {
+        "$ref": "#/$defs/ReviewDecision"
+      },
+      "title": "Decisions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "runId",
+    "reviewedAt"
+  ],
+  "title": "ReviewLog",
+  "type": "object"
+}

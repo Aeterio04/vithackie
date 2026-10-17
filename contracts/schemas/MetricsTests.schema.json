@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "planned": {
+      "default": 0,
+      "title": "Planned",
+      "type": "integer"
+    },
+    "approved": {
+      "default": 0,
+      "title": "Approved",
+      "type": "integer"
+    },
+    "passed": {
+      "default": 0,
+      "title": "Passed",
+      "type": "integer"
+    },
+    "failed": {
+      "default": 0,
+      "title": "Failed",
+      "type": "integer"
+    },
+    "errored": {
+      "default": 0,
+      "title": "Errored",
+      "type": "integer"
+    }
+  },
+  "title": "MetricsTests",
+  "type": "object"
+}

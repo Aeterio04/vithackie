@@ -1,0 +1,243 @@
+{
+  "baseUrl": "http://localhost:4000",
+  "generatedAt": "2026-10-18T02:01:30Z",
+  "login": {
+    "attempted": true,
+    "success": true,
+    "url": "http://localhost:4000/login",
+    "note": "Authenticated as qa.tester@example.com"
+  },
+  "pages": [
+    {
+      "url": "http://localhost:4000/login",
+      "path": "/login",
+      "title": "Log in - TaskBoard",
+      "status": 200,
+      "requiresAuth": false,
+      "headings": [
+        {
+          "level": 1,
+          "text": "Log in"
+        }
+      ],
+      "links": [
+        {
+          "text": "Sign up",
+          "href": "/signup"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Log in"
+        }
+      ],
+      "forms": [
+        {
+          "id": "/login#form0",
+          "action": "/login",
+          "method": "POST",
+          "submitText": "Log in",
+          "fields": [
+            {
+              "role": "textbox",
+              "label": "Email",
+              "type": "email",
+              "name": "email",
+              "required": true
+            },
+            {
+              "role": "textbox",
+              "label": "Password",
+              "type": "password",
+              "name": "password",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "consoleErrors": []
+    },
+    {
+      "url": "http://localhost:4000/signup",
+      "path": "/signup",
+      "title": "Sign up - TaskBoard",
+      "status": 200,
+      "requiresAuth": false,
+      "headings": [
+        {
+          "level": 1,
+          "text": "Create Account"
+        }
+      ],
+      "links": [
+        {
+          "text": "Log in",
+          "href": "/login"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Sign up"
+        }
+      ],
+      "forms": [
+        {
+          "id": "/signup#form0",
+          "action": "/signup",
+          "method": "POST",
+          "submitText": "Sign up",
+          "fields": [
+            {
+              "role": "textbox",
+              "label": "Email",
+              "type": "email",
+              "name": "email",
+              "required": true
+            },
+            {
+              "role": "textbox",
+              "label": "Password",
+              "type": "password",
+              "name": "password",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "consoleErrors": []
+    },
+    {
+      "url": "http://localhost:4000/dashboard",
+      "path": "/dashboard",
+      "title": "Dashboard - TaskBoard",
+      "status": 200,
+      "requiresAuth": true,
+      "headings": [
+        {
+          "level": 1,
+          "text": "Dashboard"
+        },
+        {
+          "level": 2,
+          "text": "Your Tasks"
+        }
+      ],
+      "links": [
+        {
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "text": "Log out",
+          "href": "/logout"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Add item"
+        },
+        {
+          "text": "Delete"
+        }
+      ],
+      "forms": [
+        {
+          "id": "/dashboard#form0",
+          "action": "/dashboard/items",
+          "method": "POST",
+          "submitText": "Add item",
+          "fields": [
+            {
+              "role": "textbox",
+              "label": "Item title",
+              "type": "text",
+              "name": "title",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "consoleErrors": []
+    },
+    {
+      "url": "http://localhost:4000/settings",
+      "path": "/settings",
+      "title": "Settings - TaskBoard",
+      "status": 200,
+      "requiresAuth": true,
+      "headings": [
+        {
+          "level": 1,
+          "text": "Account Settings"
+        }
+      ],
+      "links": [
+        {
+          "text": "Dashboard",
+          "href": "/dashboard"
+        },
+        {
+          "text": "Log out",
+          "href": "/logout"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Save settings"
+        }
+      ],
+      "forms": [
+        {
+          "id": "/settings#form0",
+          "action": "/settings",
+          "method": "POST",
+          "submitText": "Save settings",
+          "fields": [
+            {
+              "role": "textbox",
+              "label": "Display name",
+              "type": "text",
+              "name": "displayName",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "consoleErrors": [
+        "TypeError: Cannot read properties of undefined (reading 'theme')"
+      ]
+    }
+  ],
+  "summary": "TaskBoard is a streamlined task management application with user registration, authentication, dashboard task CRUD, and profile customization.",
+  "features": [
+    {
+      "name": "Authentication",
+      "description": "User registration and session management",
+      "pages": [
+        "/login",
+        "/signup",
+        "/logout"
+      ]
+    },
+    {
+      "name": "Task Management",
+      "description": "Adding, viewing and deleting tasks",
+      "pages": [
+        "/dashboard"
+      ]
+    },
+    {
+      "name": "User Settings",
+      "description": "Updating display name and preferences",
+      "pages": [
+        "/settings"
+      ]
+    }
+  ],
+  "stats": {
+    "pagesVisited": 4,
+    "durationSeconds": 12.4,
+    "budgetHit": null
+  },
+  "error": null
+}

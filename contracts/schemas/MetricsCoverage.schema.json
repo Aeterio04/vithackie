@@ -1,0 +1,36 @@
+{
+  "properties": {
+    "pagesInMap": {
+      "default": 0,
+      "title": "Pagesinmap",
+      "type": "integer"
+    },
+    "pagesExercised": {
+      "default": 0,
+      "title": "Pagesexercised",
+      "type": "integer"
+    },
+    "formsInMap": {
+      "default": 0,
+      "title": "Formsinmap",
+      "type": "integer"
+    },
+    "formsExercised": {
+      "default": 0,
+      "title": "Formsexercised",
+      "type": "integer"
+    },
+    "specItems": {
+      "default": 0,
+      "title": "Specitems",
+      "type": "integer"
+    },
+    "specItemsCovered": {
+      "default": 0,
+      "title": "Specitemscovered",
+      "type": "integer"
+    }
+  },
+  "title": "MetricsCoverage",
+  "type": "object"
+}

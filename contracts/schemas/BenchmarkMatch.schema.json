@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "bugId": {
+      "title": "Bugid",
+      "type": "string"
+    },
+    "groundTruthId": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Groundtruthid"
+    }
+  },
+  "required": [
+    "bugId"
+  ],
+  "title": "BenchmarkMatch",
+  "type": "object"
+}

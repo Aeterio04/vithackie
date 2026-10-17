@@ -1,0 +1,194 @@
+{
+  "$defs": {
+    "ButtonInfo": {
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "ButtonInfo",
+      "type": "object"
+    },
+    "FieldInfo": {
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "role",
+        "label",
+        "type",
+        "name"
+      ],
+      "title": "FieldInfo",
+      "type": "object"
+    },
+    "FormInfo": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "action": {
+          "default": "",
+          "title": "Action",
+          "type": "string"
+        },
+        "method": {
+          "default": "GET",
+          "title": "Method",
+          "type": "string"
+        },
+        "submitText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submittext"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/FieldInfo"
+          },
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FormInfo",
+      "type": "object"
+    },
+    "HeadingInfo": {
+      "properties": {
+        "level": {
+          "title": "Level",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "text"
+      ],
+      "title": "HeadingInfo",
+      "type": "object"
+    },
+    "LinkInfo": {
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "href": {
+          "title": "Href",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "href"
+      ],
+      "title": "LinkInfo",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "url": {
+      "title": "Url",
+      "type": "string"
+    },
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "integer"
+    },
+    "requiresAuth": {
+      "default": false,
+      "title": "Requiresauth",
+      "type": "boolean"
+    },
+    "headings": {
+      "items": {
+        "$ref": "#/$defs/HeadingInfo"
+      },
+      "title": "Headings",
+      "type": "array"
+    },
+    "links": {
+      "items": {
+        "$ref": "#/$defs/LinkInfo"
+      },
+      "title": "Links",
+      "type": "array"
+    },
+    "buttons": {
+      "items": {
+        "$ref": "#/$defs/ButtonInfo"
+      },
+      "title": "Buttons",
+      "type": "array"
+    },
+    "forms": {
+      "items": {
+        "$ref": "#/$defs/FormInfo"
+      },
+      "title": "Forms",
+      "type": "array"
+    },
+    "consoleErrors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Consoleerrors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "url",
+    "path",
+    "title",
+    "status"
+  ],
+  "title": "PageInfo",
+  "type": "object"
+}

@@ -1,0 +1,240 @@
+{
+  "$defs": {
+    "Bug": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "testId": {
+          "title": "Testid",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "planned",
+            "exploratory"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "grep": {
+          "title": "Grep",
+          "type": "string"
+        },
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "validation",
+            "auth",
+            "data",
+            "navigation",
+            "console",
+            "network",
+            "ui",
+            "other"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "specRef": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Specref",
+          "type": "array"
+        },
+        "steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "expected": {
+          "title": "Expected",
+          "type": "string"
+        },
+        "actual": {
+          "title": "Actual",
+          "type": "string"
+        },
+        "errorMessage": {
+          "title": "Errormessage",
+          "type": "string"
+        },
+        "signature": {
+          "title": "Signature",
+          "type": "string"
+        },
+        "duplicates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Duplicates",
+          "type": "array"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "status": {
+          "enum": [
+            "candidate",
+            "confirmed",
+            "flaky",
+            "not_reproduced"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "replay": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BugReplay"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "testId",
+        "source",
+        "title",
+        "grep",
+        "file",
+        "category",
+        "severity",
+        "expected",
+        "actual",
+        "errorMessage",
+        "signature",
+        "status"
+      ],
+      "title": "Bug",
+      "type": "object"
+    },
+    "BugReplay": {
+      "properties": {
+        "reproduced": {
+          "title": "Reproduced",
+          "type": "integer"
+        },
+        "attempts": {
+          "title": "Attempts",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "reproduced",
+        "attempts"
+      ],
+      "title": "BugReplay",
+      "type": "object"
+    },
+    "Evidence": {
+      "properties": {
+        "screenshot": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Screenshot"
+        },
+        "video": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Video"
+        },
+        "trace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace"
+        },
+        "console": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Console"
+        },
+        "network": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Network"
+        }
+      },
+      "title": "Evidence",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "runId": {
+      "title": "Runid",
+      "type": "string"
+    },
+    "bugs": {
+      "items": {
+        "$ref": "#/$defs/Bug"
+      },
+      "title": "Bugs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "runId"
+  ],
+  "title": "BugsFile",
+  "type": "object"
+}

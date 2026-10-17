@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "total": {
+      "default": 0,
+      "title": "Total",
+      "type": "integer"
+    },
+    "passed": {
+      "default": 0,
+      "title": "Passed",
+      "type": "integer"
+    },
+    "assertionFailures": {
+      "default": 0,
+      "title": "Assertionfailures",
+      "type": "integer"
+    },
+    "testErrors": {
+      "default": 0,
+      "title": "Testerrors",
+      "type": "integer"
+    }
+  },
+  "title": "ResultsSummary",
+  "type": "object"
+}

@@ -1,0 +1,45 @@
+{
+  "properties": {
+    "attempt": {
+      "title": "Attempt",
+      "type": "integer"
+    },
+    "reproduced": {
+      "title": "Reproduced",
+      "type": "boolean"
+    },
+    "outcome": {
+      "enum": [
+        "passed",
+        "assertion_failure",
+        "test_error"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "errorMessage": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Errormessage"
+    },
+    "durationMs": {
+      "title": "Durationms",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "attempt",
+    "reproduced",
+    "outcome",
+    "durationMs"
+  ],
+  "title": "VerificationAttempt",
+  "type": "object"
+}

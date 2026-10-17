@@ -1,0 +1,27 @@
+{
+  "properties": {
+    "testId": {
+      "title": "Testid",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "approve",
+        "reject"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "testId",
+    "decision",
+    "reason"
+  ],
+  "title": "ReviewDecision",
+  "type": "object"
+}

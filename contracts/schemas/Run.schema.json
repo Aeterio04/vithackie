@@ -1,0 +1,139 @@
+{
+  "$defs": {
+    "Progress": {
+      "properties": {
+        "step": {
+          "title": "Step",
+          "type": "string"
+        },
+        "done": {
+          "title": "Done",
+          "type": "integer"
+        },
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "step",
+        "done",
+        "total"
+      ],
+      "title": "Progress",
+      "type": "object"
+    },
+    "StageTime": {
+      "properties": {
+        "startedAt": {
+          "title": "Startedat",
+          "type": "string"
+        },
+        "endedAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endedat"
+        }
+      },
+      "required": [
+        "startedAt"
+      ],
+      "title": "StageTime",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "runId": {
+      "title": "Runid",
+      "type": "string"
+    },
+    "createdAt": {
+      "title": "Createdat",
+      "type": "string"
+    },
+    "updatedAt": {
+      "title": "Updatedat",
+      "type": "string"
+    },
+    "stage": {
+      "default": "created",
+      "enum": [
+        "created",
+        "exploring",
+        "planning",
+        "awaiting_review",
+        "scripting",
+        "running",
+        "verifying",
+        "reporting",
+        "done",
+        "failed"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "mode": {
+      "default": "manual",
+      "enum": [
+        "manual",
+        "autonomous"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "targetUrl": {
+      "title": "Targeturl",
+      "type": "string"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    },
+    "progress": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Progress"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "stageTimes": {
+      "additionalProperties": {
+        "$ref": "#/$defs/StageTime"
+      },
+      "title": "Stagetimes",
+      "type": "object"
+    },
+    "golden": {
+      "default": false,
+      "title": "Golden",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "runId",
+    "createdAt",
+    "updatedAt",
+    "targetUrl"
+  ],
+  "title": "Run",
+  "type": "object"
+}

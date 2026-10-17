@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "tests": {
+      "default": 0,
+      "title": "Tests",
+      "type": "integer"
+    },
+    "bugs": {
+      "default": 0,
+      "title": "Bugs",
+      "type": "integer"
+    },
+    "confirmed": {
+      "default": 0,
+      "title": "Confirmed",
+      "type": "integer"
+    },
+    "flaky": {
+      "default": 0,
+      "title": "Flaky",
+      "type": "integer"
+    }
+  },
+  "title": "RunListItemCounts",
+  "type": "object"
+}

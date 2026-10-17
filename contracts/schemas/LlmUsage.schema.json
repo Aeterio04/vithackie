@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "calls": {
+      "default": 0,
+      "title": "Calls",
+      "type": "integer"
+    },
+    "cacheHits": {
+      "default": 0,
+      "title": "Cachehits",
+      "type": "integer"
+    },
+    "inputTokens": {
+      "default": 0,
+      "title": "Inputtokens",
+      "type": "integer"
+    },
+    "outputTokens": {
+      "default": 0,
+      "title": "Outputtokens",
+      "type": "integer"
+    },
+    "costUsd": {
+      "default": 0.0,
+      "title": "Costusd",
+      "type": "number"
+    }
+  },
+  "title": "LlmUsage",
+  "type": "object"
+}

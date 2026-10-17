@@ -1,0 +1,56 @@
+{
+  "run": {
+    "runId": "20261018-013000-dead",
+    "createdAt": "2026-10-18T01:30:00Z",
+    "updatedAt": "2026-10-18T01:30:45Z",
+    "stage": "failed",
+    "mode": "manual",
+    "targetUrl": "http://localhost:4000",
+    "error": "Target app unreachable at http://localhost:4000 (connection refused after 30s timeout)",
+    "progress": null,
+    "stageTimes": {
+      "created": {
+        "startedAt": "2026-10-18T01:30:00Z",
+        "endedAt": "2026-10-18T01:30:05Z"
+      },
+      "exploring": {
+        "startedAt": "2026-10-18T01:30:05Z",
+        "endedAt": "2026-10-18T01:30:45Z"
+      },
+      "failed": {
+        "startedAt": "2026-10-18T01:30:45Z",
+        "endedAt": "2026-10-18T01:30:45Z"
+      }
+    },
+    "golden": false
+  },
+  "input": {
+    "runId": "20261018-013000-dead",
+    "createdAt": "2026-10-18T01:30:00Z",
+    "targetUrl": "http://localhost:4000",
+    "prompt": "Test run",
+    "specRaw": "S1: Basic sign in",
+    "spec": [
+      {
+        "id": "S1",
+        "text": "Basic sign in"
+      }
+    ],
+    "username": "user@example.com",
+    "mode": "manual",
+    "budgets": {
+      "maxPages": 10,
+      "exploreSeconds": 90,
+      "maxTests": 12,
+      "testTimeoutMs": 30000
+    }
+  },
+  "appMap": null,
+  "catalog": null,
+  "reviewLog": null,
+  "results": null,
+  "bugs": [],
+  "verifications": [],
+  "metrics": null,
+  "hasReport": false
+}

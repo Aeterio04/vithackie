@@ -1,0 +1,49 @@
+{
+  "runId": "20261018-020000-a1b2",
+  "wallClockSeconds": 84.2,
+  "stageSeconds": {
+    "exploring": 14.5,
+    "planning": 10.2,
+    "awaiting_review": 5.0,
+    "scripting": 22.1,
+    "running": 18.5,
+    "verifying": 11.4,
+    "reporting": 2.5
+  },
+  "tests": {
+    "planned": 11,
+    "approved": 11,
+    "passed": 3,
+    "failed": 9,
+    "errored": 1
+  },
+  "bugs": {
+    "candidates": 10,
+    "confirmed": 8,
+    "flaky": 1,
+    "notReproduced": 1
+  },
+  "coverage": {
+    "pagesInMap": 4,
+    "pagesExercised": 4,
+    "formsInMap": 4,
+    "formsExercised": 4,
+    "specItems": 11,
+    "specItemsCovered": 11
+  },
+  "llm": {
+    "calls": 14,
+    "cacheHits": 6,
+    "inputTokens": 24500,
+    "outputTokens": 4800,
+    "costUsd": 0.14
+  },
+  "parallel": {
+    "workers1Seconds": 45.2,
+    "workers4Seconds": 18.5,
+    "speedup": 2.44
+  },
+  "safety": {
+    "blockedRequests": 0
+  }
+}

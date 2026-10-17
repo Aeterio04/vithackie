@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "candidates": {
+      "default": 0,
+      "title": "Candidates",
+      "type": "integer"
+    },
+    "confirmed": {
+      "default": 0,
+      "title": "Confirmed",
+      "type": "integer"
+    },
+    "flaky": {
+      "default": 0,
+      "title": "Flaky",
+      "type": "integer"
+    },
+    "notReproduced": {
+      "default": 0,
+      "title": "Notreproduced",
+      "type": "integer"
+    }
+  },
+  "title": "MetricsBugs",
+  "type": "object"
+}

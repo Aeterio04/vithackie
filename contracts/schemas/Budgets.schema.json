@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "maxPages": {
+      "default": 10,
+      "title": "Maxpages",
+      "type": "integer"
+    },
+    "exploreSeconds": {
+      "default": 90,
+      "title": "Exploreseconds",
+      "type": "integer"
+    },
+    "maxTests": {
+      "default": 12,
+      "title": "Maxtests",
+      "type": "integer"
+    },
+    "testTimeoutMs": {
+      "default": 30000,
+      "title": "Testtimeoutms",
+      "type": "integer"
+    }
+  },
+  "title": "Budgets",
+  "type": "object"
+}

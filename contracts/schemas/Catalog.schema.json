@@ -1,0 +1,158 @@
+{
+  "$defs": {
+    "Step": {
+      "properties": {
+        "n": {
+          "title": "N",
+          "type": "integer"
+        },
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "expected": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected"
+        }
+      },
+      "required": [
+        "n",
+        "action"
+      ],
+      "title": "Step",
+      "type": "object"
+    },
+    "TestCase": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "specRef": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Specref",
+          "type": "array"
+        },
+        "priority": {
+          "default": "medium",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/Step"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "status": {
+          "default": "proposed",
+          "enum": [
+            "proposed",
+            "approved",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "origin": {
+          "default": "planner",
+          "enum": [
+            "planner",
+            "human",
+            "fallback"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "script": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Script"
+        },
+        "scriptStatus": {
+          "default": "pending",
+          "enum": [
+            "pending",
+            "ok",
+            "error"
+          ],
+          "title": "Scriptstatus",
+          "type": "string"
+        },
+        "scriptError": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scripterror"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description"
+      ],
+      "title": "TestCase",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "runId": {
+      "title": "Runid",
+      "type": "string"
+    },
+    "generatedAt": {
+      "title": "Generatedat",
+      "type": "string"
+    },
+    "tests": {
+      "items": {
+        "$ref": "#/$defs/TestCase"
+      },
+      "title": "Tests",
+      "type": "array"
+    }
+  },
+  "required": [
+    "runId",
+    "generatedAt"
+  ],
+  "title": "Catalog",
+  "type": "object"
+}

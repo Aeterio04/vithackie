@@ -1,0 +1,33 @@
+{
+  "properties": {
+    "ts": {
+      "title": "Ts",
+      "type": "string"
+    },
+    "testId": {
+      "title": "Testid",
+      "type": "string"
+    },
+    "url": {
+      "title": "Url",
+      "type": "string"
+    },
+    "method": {
+      "title": "Method",
+      "type": "string"
+    },
+    "resourceType": {
+      "title": "Resourcetype",
+      "type": "string"
+    }
+  },
+  "required": [
+    "ts",
+    "testId",
+    "url",
+    "method",
+    "resourceType"
+  ],
+  "title": "BlockedRequest",
+  "type": "object"
+}
