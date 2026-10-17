@@ -1,0 +1,13 @@
+{
+  "title": "Signup accepts an invalid email address",
+  "category": "validation",
+  "severity": "medium",
+  "steps": [
+    "Navigate to the signup page at /signup",
+    "Enter 'not-an-email' in the Email field",
+    "Enter a valid 8+ character password in the Password field",
+    "Click the 'Sign up' submit button"
+  ],
+  "expected": "Form is rejected and displays alert message 'Enter a valid email address'",
+  "actual": "Form was submitted successfully without validation and redirected to dashboard"
+}
