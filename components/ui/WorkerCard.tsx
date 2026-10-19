@@ -64,7 +64,11 @@ export function WorkerCard({ worker, className }: WorkerCardProps) {
           {worker.latest_screenshot_url ? (
             /* Plain <img> as specified in requirements (not next/image) */
             <img
-              src={worker.latest_screenshot_url}
+              src={
+                worker.screenshot_updated_at
+                  ? `${worker.latest_screenshot_url}?t=${encodeURIComponent(worker.screenshot_updated_at)}`
+                  : worker.latest_screenshot_url
+              }
               alt={`Worker ${worker.id} screenshot`}
               className="w-full h-full object-cover"
               loading="lazy"

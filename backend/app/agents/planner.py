@@ -99,13 +99,20 @@ def plan_catalog(run_id: str) -> Catalog:
         max_tests=max_tests,
     )
 
+    try:
+        from app.frontend_adapter import log_pipeline
+    except Exception:
+        def log_pipeline(*args, **kwargs): pass
+
+    log_pipeline(run_id, f"Planner Agent: Synthesizing test catalog from app map and requirements...", source="planner")
+
     llm = get_llm()
     resp = llm.complete_json(
         system="You are a senior QA engineer designing test catalogs.",
         prompt=prompt_text,
         schema_name="planner_catalog",
         run_id=run_id,
-        max_tokens=6000,
+        max_tokens=1400,
     )
 
     raw_tests = resp.get("tests", []) if isinstance(resp, dict) else (resp if isinstance(resp, list) else [])
@@ -178,7 +185,7 @@ def plan_catalog(run_id: str) -> Catalog:
                 prompt=retry_prompt,
                 schema_name="planner_catalog",
                 run_id=run_id,
-                max_tokens=6000,
+                max_tokens=1400,
             )
             retry_tests = (
                 retry_resp.get("tests", [])
@@ -335,7 +342,7 @@ def plan_single_test(run_id: str, user_prompt: str) -> TestCase:
         prompt=prompt_text,
         schema_name="planner_single",
         run_id=run_id,
-        max_tokens=2000,
+        max_tokens=800,
     )
 
     test_data = resp.get("test", resp) if isinstance(resp, dict) else {}

@@ -406,6 +406,22 @@ async function main() {
       queue.push(baseNorm.url);
     }
 
+    // Also enqueue all links discovered on already scraped pages (e.g. /signup from /login)
+    for (const p of result.pages) {
+      for (const link of p.links) {
+        if (isDestructive(link.text) || isDestructive(link.href)) continue;
+        const linkNorm = normalizeUrl(link.href, baseOrigin);
+        if (
+          linkNorm &&
+          !visitedPaths.has(linkNorm.path) &&
+          !linkNorm.path.startsWith('/__') &&
+          !queue.includes(linkNorm.url)
+        ) {
+          queue.push(linkNorm.url);
+        }
+      }
+    }
+
     while (queue.length > 0) {
       const elapsedSeconds = (Date.now() - startTime) / 1000;
       if (result.pages.length >= maxPages) {

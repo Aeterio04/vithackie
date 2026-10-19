@@ -479,6 +479,32 @@ export default function ResultsRunPage() {
                   </ol>
                 </div>
               )}
+
+            {/* Screenshot Evidence Artifact */}
+            {previewBug.evidence?.screenshots &&
+              previewBug.evidence.screenshots.length > 0 && (
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-xs font-semibold text-[#141413] block">
+                    Evidence Screenshot Artifact
+                  </span>
+                  <a
+                    href={previewBug.evidence.screenshots[0]}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group relative block w-full aspect-video rounded-xl overflow-hidden border border-[#E3DACC] bg-[#1E1E1C] shadow-2xs hover:border-[#D97757] transition-all"
+                  >
+                    <img
+                      src={previewBug.evidence.screenshots[0]}
+                      alt="Bug evidence screenshot"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs gap-1.5 font-medium">
+                      <span>Click to open full artifact</span>
+                    </div>
+                  </a>
+                </div>
+              )}
           </div>
         )}
       </Drawer>

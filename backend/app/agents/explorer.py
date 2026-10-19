@@ -54,6 +54,13 @@ def run_explorer(run_id: str) -> AppMap:
         # On Windows, npx is a cmd script
         cmd = ["cmd", "/c", "npx", "tsx", "explore.ts"]
 
+    try:
+        from app.frontend_adapter import log_pipeline
+    except Exception:
+        def log_pipeline(*args, **kwargs): pass
+
+    log_pipeline(run_id, f"Exploratory Worker: Launching Chromium crawler against {base_url} (budget: {max_pages} pages, {explore_seconds}s)...", source="explorer")
+
     stderr_chunks: List[str] = []
     try:
         proc = subprocess.Popen(
@@ -89,6 +96,11 @@ def run_explorer(run_id: str) -> AppMap:
                         step=f"Crawling {page_path}",
                         done=done_n,
                         total=total_n,
+                    )
+                    log_pipeline(
+                        run_id,
+                        f"Exploratory Worker: Scraped page {page_path} ({done_n}/{total_n})",
+                        source="explorer",
                     )
 
                 if time.time() - start_wait > timeout_seconds:

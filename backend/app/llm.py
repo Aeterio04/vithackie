@@ -20,6 +20,8 @@ from app.storage import run_dir
 
 _usage_lock = threading.RLock()
 _singleton_lock = threading.Lock()
+_groq_pace_lock = threading.Lock()
+_groq_last_call_time = 0.0
 _llm_instance: Optional["LLM"] = None
 
 
@@ -136,7 +138,29 @@ class LLM:
                 )
                 f.flush()
                 os.fsync(f.fileno())
-            os.replace(temp_file, cache_file)
+            
+            replaced = False
+            for attempt in range(8):
+                try:
+                    os.replace(temp_file, cache_file)
+                    replaced = True
+                    break
+                except (PermissionError, OSError):
+                    time.sleep(0.03 * (attempt + 1))
+            if not replaced:
+                try:
+                    with open(cache_file, "w", encoding="utf-8") as f:
+                        json.dump(
+                            {
+                                "text": text,
+                                "inputTokens": input_tokens,
+                                "outputTokens": output_tokens,
+                            },
+                            f,
+                            ensure_ascii=False,
+                        )
+                except Exception:
+                    pass
         except Exception:
             if temp_file.exists():
                 try:
@@ -191,8 +215,25 @@ class LLM:
             with open(temp_file, "w", encoding="utf-8") as f:
                 json.dump(cur_usage, f, indent=2)
                 f.flush()
-                os.fsync(f.fileno())
-            os.replace(temp_file, usage_file)
+            replaced = False
+            for attempt in range(8):
+                try:
+                    os.replace(temp_file, usage_file)
+                    replaced = True
+                    break
+                except (PermissionError, OSError):
+                    time.sleep(0.03 * (attempt + 1))
+            if not replaced:
+                try:
+                    with open(usage_file, "w", encoding="utf-8") as f:
+                        json.dump(cur_usage, f, indent=2)
+                except Exception:
+                    pass
+                try:
+                    if temp_file.exists():
+                        temp_file.unlink()
+                except Exception:
+                    pass
 
     # --- Low-level provider invocation ---
 
@@ -208,16 +249,25 @@ class LLM:
         provider = self._provider
         model = settings.LLM_MODEL
 
-        # Retry logic: up to 3 attempts with 1s, 3s, 8s backoff
-        backoffs = [1, 3, 8]
+        # Extended retry logic: up to 5 attempts for rate limits, 3 for general errors
+        max_attempts = 5
         last_err: Optional[Exception] = None
 
-        for attempt in range(len(backoffs) + 1):
+        for attempt in range(max_attempts):
             try:
                 if provider == "groq":
+                    # Proactive rate-budgeting / pacing for Groq free-tier
+                    global _groq_last_call_time
+                    with _groq_pace_lock:
+                        now = time.time()
+                        elapsed_since_last = now - _groq_last_call_time
+                        if elapsed_since_last < 1.8:
+                            time.sleep(1.8 - elapsed_since_last)
+                        _groq_last_call_time = time.time()
+
                     client = self._get_groq_client()
                     kwargs = {
-                        "model": model or "llama-3.3-70b-versatile",
+                        "model": model or "qwen/qwen3.8-27b",
                         "messages": [
                             {"role": "system", "content": system},
                             {"role": "user", "content": prompt},
@@ -281,24 +331,66 @@ class LLM:
                 raise
             except Exception as e:
                 err_msg = str(e).lower()
-                # Fast fail without retrying for authentication, unauthorized, or bad request errors
+                # Fast fail without retrying for authentication or fatal client errors
                 if (
                     "authentication" in err_msg
                     or "invalid api key" in err_msg
                     or "unauthorized" in err_msg
                     or "401" in err_msg
-                    or "bad request" in err_msg
-                    or "400" in err_msg
+                    or ("400" in err_msg and "bad request" in err_msg)
                 ):
                     raise LLMError(f"Missing or invalid API key or bad request for provider {provider}: {e}")
 
                 last_err = e
+                is_rate_limit = (
+                    "429" in err_msg
+                    or "rate limit" in err_msg
+                    or "tpm" in err_msg
+                    or "tokens per minute" in err_msg
+                    or "too many requests" in err_msg
+                )
+
+                if is_rate_limit and attempt < max_attempts - 1:
+                    wait_seconds = 12.0
+                    m = re.search(r"try again in ([\d\.]+)s", str(e), re.IGNORECASE)
+                    if m:
+                        try:
+                            wait_seconds = float(m.group(1)) + 1.5
+                        except ValueError:
+                            pass
+                    elif hasattr(e, "response") and e.response and "retry-after" in getattr(e.response, "headers", {}):
+                        try:
+                            wait_seconds = float(e.response.headers.get("retry-after", 12)) + 1.0
+                        except ValueError:
+                            pass
+                    else:
+                        wait_seconds = [6.0, 12.0, 20.0, 30.0, 45.0][min(attempt, 4)]
+
+                    # If error was specifically an OTPM limit rejection (e.g. Limit 1000, Requested 1200)
+                    m_limit = re.search(r"limit\s+(\d+),\s*requested\s+(\d+)", str(e), re.IGNORECASE)
+                    if m_limit:
+                        try:
+                            allowed_lim = int(m_limit.group(1))
+                            max_tokens = max(150, allowed_lim - 50)
+                            wait_seconds = max(2.0, min(wait_seconds, 6.0))
+                        except Exception:
+                            pass
+
+                    import logging
+                    logging.getLogger("llm").warning(
+                        f"[Groq Rate Limit] 429 hit (clamped max_tokens={max_tokens}). Waiting {wait_seconds:.1f}s before retry (attempt {attempt + 1}/{max_attempts})..."
+                    )
+                    time.sleep(wait_seconds)
+                    continue
+
+                # Standard backoff for non-rate-limit errors (only 3 attempts)
+                backoffs = [1, 3, 8]
                 if attempt < len(backoffs):
                     time.sleep(backoffs[attempt])
                 else:
                     break
 
-        raise LLMError(f"Provider {provider} failed after 3 retries: {last_err}")
+        raise LLMError(f"Provider {provider} failed after {max_attempts} retries: {last_err}")
 
     # --- Public completion methods ---
 

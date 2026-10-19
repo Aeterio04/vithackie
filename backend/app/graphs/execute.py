@@ -42,7 +42,16 @@ def _safe_wrapper(node_name: str, fn):
     return wrapper
 
 
+def _log(run_id: str, message: str, level: str = "info"):
+    try:
+        from app.frontend_adapter import log_pipeline
+        log_pipeline(run_id, message, level=level, source="pipeline")
+    except Exception:
+        pass
+
+
 def node_write_scripts(run_id: str) -> None:
+    _log(run_id, "Pipeline: Beginning script synthesis phase for approved test catalog...")
     if settings.STUB_MODE:
         stubs.stub_write_scripts(run_id)
     else:
@@ -52,16 +61,18 @@ def node_write_scripts(run_id: str) -> None:
 
 def node_run_tests(run_id: str) -> None:
     storage.set_stage(run_id, "running", step="Executing Playwright test suite")
+    _log(run_id, "Pipeline: Executing test suite in Playwright Chromium sandboxes...")
     if settings.STUB_MODE:
         stubs.stub_run_tests(run_id)
     else:
         from app import runner_client
-        runner_client.run_tests(run_id, workers=4)
+        runner_client.run_tests(run_id, workers=2)
         runner_client.triage(run_id)
 
 
 def node_report_bugs(run_id: str) -> None:
     storage.set_stage(run_id, "verifying", step="Writing bug reports")
+    _log(run_id, "Pipeline: Writing defect reports from assertion failures...")
     if settings.STUB_MODE:
         stubs.stub_report_bugs(run_id)
     else:
@@ -73,6 +84,7 @@ def node_report_bugs(run_id: str) -> None:
 
 def node_verify(run_id: str) -> None:
     storage.set_stage(run_id, "verifying", step="Replaying bugs")
+    _log(run_id, "Pipeline: Starting deterministic 3x defect verification replays...")
     if settings.STUB_MODE:
         stubs.stub_verify(run_id)
     else:
@@ -82,6 +94,7 @@ def node_verify(run_id: str) -> None:
 
 def node_build_report(run_id: str) -> None:
     storage.set_stage(run_id, "reporting", step="Compiling final report and metrics")
+    _log(run_id, "Pipeline: Compiling final test coverage metrics and QA executive report...")
     if settings.STUB_MODE:
         stubs.stub_build_report(run_id)
     else:
@@ -90,6 +103,7 @@ def node_build_report(run_id: str) -> None:
         report.build_report(run_id)
 
     storage.set_stage(run_id, "done", step="Run completed successfully")
+    _log(run_id, "Pipeline: QA execution workflow finished successfully.")
 
 
 def should_continue(state: ExecuteState) -> str:

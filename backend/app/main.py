@@ -84,6 +84,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount Frontend Adapter Router for /api/v1/* routes
+from app.frontend_adapter import router as frontend_router
+app.include_router(frontend_router)
+
+# Alias for Next.js SSE stream route (/api/runs/:runId/stream)
+@app.get("/api/runs/{run_id}/stream")
+async def stream_run_proxy(run_id: str):
+    from app.frontend_adapter import stream_run_sse
+    return await stream_run_sse(run_id)
+
 
 # Request logging middleware (never logs request bodies to protect credentials)
 @app.middleware("http")
@@ -351,13 +361,11 @@ def _start_execute_background(run_id: str) -> None:
 
 
 @app.get("/health")
-@app.get("/api/v1/health")
 def health() -> dict:
     return {"ok": True}
 
 
 @app.get("/config")
-@app.get("/api/v1/config/defaults")
 def get_config() -> dict:
     allowed = getattr(settings, "allowed_hosts", getattr(settings, "ALLOWED_HOSTS", ["localhost", "127.0.0.1"]))
     return {
@@ -374,13 +382,11 @@ def get_config() -> dict:
 
 
 @app.get("/runs")
-@app.get("/api/v1/runs")
 def list_runs() -> List[RunListItem]:
     return storage.list_runs()
 
 
 @app.post("/runs", status_code=status.HTTP_201_CREATED)
-@app.post("/api/v1/runs/start", status_code=status.HTTP_201_CREATED)
 def start_run(payload: CreateRunRequest) -> dict:
     errors: List[dict] = []
 
@@ -476,7 +482,6 @@ def start_run(payload: CreateRunRequest) -> dict:
 
 
 @app.get("/runs/{run_id}")
-@app.get("/api/v1/runs/{run_id}")
 def get_run(run_id: str) -> RunView:
     run = storage.load_model(run_id, "run.json", Run)
     if not run:
@@ -533,7 +538,6 @@ def get_run(run_id: str) -> RunView:
 
 
 @app.put("/runs/{run_id}/catalog")
-@app.put("/api/v1/runs/{run_id}/catalog")
 def update_catalog(run_id: str, payload: UpdateCatalogRequest) -> Catalog:
     run = storage.load_model(run_id, "run.json", Run)
     if not run:
@@ -565,7 +569,6 @@ def update_catalog(run_id: str, payload: UpdateCatalogRequest) -> Catalog:
 
 
 @app.post("/runs/{run_id}/tests")
-@app.post("/api/v1/runs/{run_id}/tests")
 def add_test(run_id: str, payload: AddTestRequest) -> TestCase:
     run = storage.load_model(run_id, "run.json", Run)
     if not run:
@@ -609,7 +612,6 @@ def add_test(run_id: str, payload: AddTestRequest) -> TestCase:
 
 
 @app.post("/runs/{run_id}/execute", status_code=status.HTTP_202_ACCEPTED)
-@app.post("/api/v1/runs/{run_id}/catalog/approve-and-execute", status_code=status.HTTP_202_ACCEPTED)
 def execute_run(run_id: str) -> dict:
     run = storage.load_model(run_id, "run.json", Run)
     if not run:
@@ -642,7 +644,6 @@ def execute_run(run_id: str) -> dict:
 
 
 @app.get("/runs/{run_id}/report", response_class=PlainTextResponse)
-@app.get("/api/v1/runs/{run_id}/report", response_class=PlainTextResponse)
 def get_report(run_id: str) -> str:
     report_file = storage.run_dir(run_id) / "report.md"
     if not report_file.exists():
@@ -651,7 +652,6 @@ def get_report(run_id: str) -> str:
 
 
 @app.get("/runs/{run_id}/files/{path:path}")
-@app.get("/api/v1/runs/{run_id}/files/{path:path}")
 def get_run_file(run_id: str, path: str):
     rdir = storage.run_dir(run_id).resolve()
     target_file = (rdir / path).resolve()
@@ -683,7 +683,6 @@ def get_run_file(run_id: str, path: str):
 
 
 @app.get("/runs/{run_id}/export")
-@app.get("/api/v1/runs/{run_id}/export")
 def export_passing_tests(run_id: str):
     run = storage.load_model(run_id, "run.json", Run)
     results = storage.load_model(run_id, "results.json", Results)
@@ -788,7 +787,6 @@ export default defineConfig({{
 
 
 @app.get("/runs/{run_id}/stream")
-@app.get("/api/v1/runs/{run_id}/stream")
 async def stream_run_progress(run_id: str):
     """Server-Sent Events endpoint streaming stage changes and execution progress."""
     run = storage.load_model(run_id, "run.json", Run)
@@ -826,20 +824,4 @@ async def stream_run_progress(run_id: str):
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
-# Helper routes for frontend forms
-@app.post("/api/v1/targets/check")
-def check_target(payload: dict = Body(...)) -> dict:
-    url = payload.get("url", "")
-    parsed = urllib.parse.urlparse(url)
-    host = parsed.hostname or ""
-    allowlisted = host in settings.ALLOWED_HOSTS
-    return {"allowlisted": allowlisted, "host": host}
 
-
-@app.post("/api/v1/specs/upload")
-def upload_spec(payload: dict = Body(...)) -> dict:
-    spec_text = payload.get("specText", "")
-    items, errors = parse_spec_text(spec_text)
-    if errors:
-        return JSONResponse(status_code=422, content={"errors": errors})
-    return {"spec": [item.model_dump() for item in items]}

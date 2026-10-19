@@ -34,7 +34,7 @@ export default defineConfig({
     navigationTimeout: 15000,
     trace: 'retain-on-failure',
     video: 'retain-on-failure',
-    screenshot: 'only-on-failure',
+    screenshot: 'on',
     ignoreHTTPSErrors: false,
   },
   projects: [

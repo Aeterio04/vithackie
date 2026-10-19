@@ -430,37 +430,63 @@ export default function ReportDetailPage() {
               {confirmedBugs.map((b) => (
                 <div
                   key={b.id}
-                  className="p-3 rounded-xl border border-[#D2E3D3] bg-[#EBF2EB]/30 flex items-center justify-between gap-3"
+                  className="p-3.5 rounded-xl border border-[#D2E3D3] bg-[#EBF2EB]/30 flex flex-col gap-3"
                 >
-                  <div className="space-y-0.5 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Chip variant={b.severity} size="xs">
-                        {b.severity}
-                      </Chip>
-                      <h5 className="font-semibold text-xs text-[#141413] truncate">
-                        {b.title}
-                      </h5>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="space-y-0.5 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Chip variant={b.severity} size="xs">
+                          {b.severity}
+                        </Chip>
+                        <h5 className="font-semibold text-xs text-[#141413] truncate">
+                          {b.title}
+                        </h5>
+                      </div>
+                      <p className="text-xs text-[#6B6A64] line-clamp-1">
+                        {b.actual}
+                      </p>
                     </div>
-                    <p className="text-xs text-[#6B6A64] line-clamp-1">
-                      {b.actual}
-                    </p>
+
+                    <div className="flex items-center gap-3 shrink-0">
+                      <ReplayPips
+                        replays={b.replays}
+                        status={b.status}
+                        bug={b}
+                        size="sm"
+                      />
+                      <Link
+                        href={`/results/${runId}/bugs/${b.id}`}
+                        className="text-xs text-[#D97757] hover:underline font-medium inline-flex items-center gap-1"
+                      >
+                        <span>Evidence Details</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </Link>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    <ReplayPips
-                      replays={b.replays}
-                      status={b.status}
-                      bug={b}
-                      size="sm"
-                    />
-                    <Link
-                      href={`/results/${runId}/bugs/${b.id}`}
-                      className="text-xs text-[#D97757] hover:underline font-medium inline-flex items-center gap-1"
-                    >
-                      <span>Evidence</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </Link>
-                  </div>
+                  {b.evidence?.screenshots && b.evidence.screenshots.length > 0 && (
+                    <div className="pt-2.5 border-t border-[#D2E3D3]/50 flex items-center gap-3">
+                      <span className="text-[11px] font-semibold text-[#47704A] shrink-0">
+                        Evidence Screenshot:
+                      </span>
+                      <a
+                        href={b.evidence.screenshots[0]}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group relative block h-20 w-36 rounded-lg overflow-hidden border border-[#D2E3D3] bg-[#1E1E1C] shadow-2xs hover:border-[#D97757] transition-all"
+                      >
+                        <img
+                          src={b.evidence.screenshots[0]}
+                          alt={`${b.title} screenshot evidence`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] gap-1 font-medium">
+                          <span>View Artifact</span>
+                        </div>
+                      </a>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -490,37 +516,63 @@ export default function ReportDetailPage() {
               {flakyBugs.map((b) => (
                 <div
                   key={b.id}
-                  className="p-3 rounded-xl border border-[#F4E2BD] bg-[#FBF4E6]/30 flex items-center justify-between gap-3"
+                  className="p-3.5 rounded-xl border border-[#F4E2BD] bg-[#FBF4E6]/30 flex flex-col gap-3"
                 >
-                  <div className="space-y-0.5 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Chip variant={b.severity} size="xs">
-                        {b.severity}
-                      </Chip>
-                      <h5 className="font-semibold text-xs text-[#141413] truncate">
-                        {b.title}
-                      </h5>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="space-y-0.5 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Chip variant={b.severity} size="xs">
+                          {b.severity}
+                        </Chip>
+                        <h5 className="font-semibold text-xs text-[#141413] truncate">
+                          {b.title}
+                        </h5>
+                      </div>
+                      <p className="text-xs text-[#6B6A64] line-clamp-1">
+                        {b.actual}
+                      </p>
                     </div>
-                    <p className="text-xs text-[#6B6A64] line-clamp-1">
-                      {b.actual}
-                    </p>
+
+                    <div className="flex items-center gap-3 shrink-0">
+                      <ReplayPips
+                        replays={b.replays}
+                        status={b.status}
+                        bug={b}
+                        size="sm"
+                      />
+                      <Link
+                        href={`/results/${runId}/bugs/${b.id}`}
+                        className="text-xs text-[#D97757] hover:underline font-medium inline-flex items-center gap-1"
+                      >
+                        <span>Evidence Details</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </Link>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    <ReplayPips
-                      replays={b.replays}
-                      status={b.status}
-                      bug={b}
-                      size="sm"
-                    />
-                    <Link
-                      href={`/results/${runId}/bugs/${b.id}`}
-                      className="text-xs text-[#D97757] hover:underline font-medium inline-flex items-center gap-1"
-                    >
-                      <span>Evidence</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </Link>
-                  </div>
+                  {b.evidence?.screenshots && b.evidence.screenshots.length > 0 && (
+                    <div className="pt-2.5 border-t border-[#F4E2BD]/50 flex items-center gap-3">
+                      <span className="text-[11px] font-semibold text-[#A67319] shrink-0">
+                        Evidence Screenshot:
+                      </span>
+                      <a
+                        href={b.evidence.screenshots[0]}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group relative block h-20 w-36 rounded-lg overflow-hidden border border-[#F4E2BD] bg-[#1E1E1C] shadow-2xs hover:border-[#D97757] transition-all"
+                      >
+                        <img
+                          src={b.evidence.screenshots[0]}
+                          alt={`${b.title} screenshot evidence`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] gap-1 font-medium">
+                          <span>View Artifact</span>
+                        </div>
+                      </a>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

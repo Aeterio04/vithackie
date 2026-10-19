@@ -158,9 +158,78 @@ export const test = base.extend<{ evidence: void }>({
       context.pages().forEach(setupPageListeners);
       context.on('page', setupPageListeners);
 
+      const liveDir = process.env.LIVE_DIR;
+      const workerId = `w${((testInfo.workerIndex ?? 0) % 2) + 1}`;
+      if (liveDir && testId) {
+        try {
+          if (!fs.existsSync(liveDir)) {
+            fs.mkdirSync(liveDir, { recursive: true });
+          }
+          const startFile = path.join(liveDir, `${testId}.json`);
+          fs.writeFileSync(
+            startFile,
+            JSON.stringify(
+              {
+                id: testId,
+                title: testInfo.title,
+                status: 'running',
+                worker_id: workerId,
+                started_at: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+            'utf-8'
+          );
+        } catch {
+          // Ignore live status write error
+        }
+      }
+
       try {
         await use();
       } finally {
+        if (liveDir && testId) {
+          try {
+            if (!fs.existsSync(liveDir)) {
+              fs.mkdirSync(liveDir, { recursive: true });
+            }
+            // Capture screenshot for worker preview
+            const screenshotPath = path.join(liveDir, `${testId}.png`);
+            await page.screenshot({ path: screenshotPath, timeout: 3000 }).catch(() => {});
+
+            // Update latest screenshot for this worker
+            const workerImgPath = path.join(liveDir, `${workerId}.png`);
+            try {
+              if (fs.existsSync(screenshotPath)) {
+                fs.copyFileSync(screenshotPath, workerImgPath);
+              }
+            } catch {}
+
+            const statusFile = path.join(liveDir, `${testId}.json`);
+            const finalStatus = testInfo.status === 'passed' ? 'passed' : 'failed';
+            fs.writeFileSync(
+              statusFile,
+              JSON.stringify(
+                {
+                  id: testId,
+                  title: testInfo.title,
+                  status: finalStatus,
+                  duration_ms: testInfo.duration,
+                  worker_id: workerId,
+                  error_message: testInfo.error?.message ? String(testInfo.error.message).slice(0, 500) : null,
+                  finished_at: new Date().toISOString(),
+                },
+                null,
+                2
+              ),
+              'utf-8'
+            );
+          } catch {
+            // Ignore live status update error
+          }
+        }
+
         // Teardown: attach console.json and network.json to every test
         await testInfo.attach('console.json', {
           body: Buffer.from(JSON.stringify(consoleErrors, null, 2), 'utf-8'),

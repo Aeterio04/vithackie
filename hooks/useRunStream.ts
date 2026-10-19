@@ -37,6 +37,32 @@ export function useRunStream(runId: string | null | undefined, isFinished = fals
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Initial load of pipeline logs from backend (works even if run has completed/failed)
+  useEffect(() => {
+    if (!runId) return;
+    let cancelled = false;
+
+    fetch(`/api/v1/runs/${runId}/logs`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load logs");
+        return res.json();
+      })
+      .then((data: StreamLogEntry[]) => {
+        if (!cancelled && Array.isArray(data) && data.length > 0) {
+          setLogs((prev) => {
+            const seen = new Set(data.map((l) => `${l.timestamp}-${l.message}`));
+            const extra = prev.filter((l) => !seen.has(`${l.timestamp}-${l.message}`));
+            return [...data, ...extra].slice(-500);
+          });
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [runId]);
+
   // Helper to handle received SSE events and update React Query cache directly
   const handleSSEMessage = useCallback(
     (rawEventData: string, eventId?: string) => {
@@ -72,6 +98,7 @@ export function useRunStream(runId: string | null | undefined, isFinished = fals
               progress: event.progress,
             };
           });
+          queryClient.invalidateQueries({ queryKey: ["runs", runId] });
           break;
         }
 

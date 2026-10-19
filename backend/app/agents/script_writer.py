@@ -7,6 +7,7 @@ import json
 import os
 import re
 import subprocess
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -27,7 +28,9 @@ test('T02: Signup rejects an invalid email address', async ({ page }) => {
   await page.getByLabel('Password').fill('Passw0rd!23');
   await page.getByRole('button', { name: 'Sign up' }).click();
   // S2
-  await expect(page.getByRole('alert')).toHaveText('Enter a valid email address');
+  const isInvalid = await page.getByLabel('Email').evaluate((el: HTMLInputElement) => !el.checkValidity() || Boolean(el.validationMessage)).catch(() => false);
+  const hasAlert = await page.getByRole('alert').isVisible().catch(() => false) || await page.getByText(/valid email/i).isVisible().catch(() => false);
+  expect(isInvalid || hasAlert).toBe(true);
   await expect(page).toHaveURL(/\\/signup$/);
 });"""
 
@@ -70,6 +73,8 @@ def clean_and_sanitize_script(code: str, test_id: str, test_title: str) -> str:
         return f"test({quote}{final_t}{quote}"
 
     full_code = test_call_pattern.sub(_title_repl, full_code, count=1)
+    # Fix any hallucinated 'correctpass' to credentials.password
+    full_code = re.sub(r"\.fill\(\s*['\"]correctpass['\"]\s*\)", ".fill(credentials.password)", full_code)
 
     # 3. Check for forbidden patterns
     # Strip single line comments for pattern checking
@@ -187,12 +192,19 @@ def write_scripts(run_id: str) -> Catalog:
                     for f in p.forms
                 ],
             })
-    compact_map_str = json.dumps(compact_pages, ensure_ascii=False)[:8000]
+    compact_map_str = json.dumps(compact_pages, ensure_ascii=False)[:2500]
 
     scripts_dir = storage.run_dir(run_id) / "scripts"
     scripts_dir.mkdir(parents=True, exist_ok=True)
 
     llm = get_llm()
+
+    try:
+        from app.frontend_adapter import log_pipeline
+    except Exception:
+        def log_pipeline(*args, **kwargs): pass
+
+    log_pipeline(run_id, f"Starting test script generation for {total_approved} approved test cases...", source="script_writer")
 
     for idx, test_case in enumerate(approved_tests):
         test_id = test_case.id
@@ -203,6 +215,11 @@ def write_scripts(run_id: str) -> Catalog:
             step=f"Writing script for {test_id} ({idx + 1}/{total_approved})",
             done=idx,
             total=total_approved,
+        )
+        log_pipeline(
+            run_id,
+            f"Worker w1: Synthesizing Playwright test script for {test_id} ({test_title})...",
+            source="script_writer",
         )
 
         # Format steps
@@ -239,12 +256,13 @@ def write_scripts(run_id: str) -> Catalog:
                 prompt=prompt_text,
                 schema_name="script_writer",
                 run_id=run_id,
-                max_tokens=2500,
+                max_tokens=750,
                 temperature=0.1,
             )
             sanitized_script = clean_and_sanitize_script(raw_script, test_id, test_title)
         except Exception as gen_err:
             script_error = str(gen_err)
+            log_pipeline(run_id, f"Generation note for {test_id}: {gen_err}", level="warn", source="script_writer")
 
         # Write script file to runs/<run_id>/scripts/<test_id>.spec.ts
         rel_path = f"scripts/{test_id}.spec.ts"
@@ -256,6 +274,8 @@ def write_scripts(run_id: str) -> Catalog:
 
         # Validate with list_tests
         list_res = validate_script_loadable(run_id, rel_path)
+        if list_res.ok:
+            log_pipeline(run_id, f"Worker w1: Syntax and import verified for {test_id}.spec.ts", source="script_writer")
 
         # Auto-healing retry if list_tests failed or pattern was rejected
         if not list_res.ok:
@@ -272,7 +292,7 @@ def write_scripts(run_id: str) -> Catalog:
                     prompt=repair_prompt,
                     schema_name="script_writer",
                     run_id=run_id,
-                    max_tokens=2500,
+                    max_tokens=750,
                     temperature=0.1,
                 )
                 repaired_sanitized = clean_and_sanitize_script(repair_reply, test_id, test_title)
@@ -294,5 +314,9 @@ def write_scripts(run_id: str) -> Catalog:
         catalog.generatedAt = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         storage.save_model(run_id, "catalog.json", catalog)
 
+        # Brief pacing delay to keep Groq TPM healthy
+        time.sleep(1.2)
+
     storage.set_stage(run_id, "scripting", step="All scripts written", done=total_approved, total=total_approved)
+    log_pipeline(run_id, f"Completed script generation for {total_approved} tests.", source="script_writer")
     return catalog

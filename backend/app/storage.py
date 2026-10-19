@@ -4,6 +4,7 @@ import json
 import os
 import secrets
 import threading
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Type, TypeVar
@@ -48,25 +49,59 @@ def read_json(run_id: str, rel: str) -> Optional[Any]:
     file_path = run_dir(run_id) / rel
     if not file_path.exists():
         return None
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return None
+    for attempt in range(5):
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (PermissionError, OSError):
+            time.sleep(0.02 * (attempt + 1))
+        except Exception:
+            return None
+    return None
 
 
 def write_json(run_id: str, rel: str, data: Any) -> None:
-    """Atomically write JSON data to rel inside run_id directory using a temp file."""
+    """Atomically write JSON data to rel inside run_id directory with Windows retry/fallback."""
     target_path = run_dir(run_id) / rel
     target_path.parent.mkdir(parents=True, exist_ok=True)
     temp_path = target_path.with_suffix(target_path.suffix + f".tmp.{secrets.token_hex(4)}")
 
-    with open(temp_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-        f.flush()
-        os.fsync(f.fileno())
+    try:
+        with open(temp_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+            f.flush()
+            os.fsync(f.fileno())
+    except Exception:
+        # Direct fallback write
+        try:
+            with open(target_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        except Exception:
+            pass
+        return
 
-    os.replace(temp_path, target_path)
+    # Windows file replacement retry loop to protect against reader contention and indexing
+    replaced = False
+    for attempt in range(10):
+        try:
+            os.replace(temp_path, target_path)
+            replaced = True
+            break
+        except (PermissionError, OSError):
+            time.sleep(0.04 * (attempt + 1))
+
+    if not replaced:
+        # Fallback to direct overwrite if Windows exclusively locked atomic replace
+        try:
+            with open(target_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        except Exception:
+            pass
+        try:
+            if temp_path.exists():
+                temp_path.unlink()
+        except Exception:
+            pass
 
 
 def load_model(run_id: str, rel: str, model_cls: Type[T]) -> Optional[T]:

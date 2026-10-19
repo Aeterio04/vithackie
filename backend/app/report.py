@@ -337,6 +337,10 @@ def build_report(run_id: str) -> str:
             if evidence_links:
                 lines.append(f"- **Evidence:** {' | '.join(evidence_links)}")
 
+            # Display screenshot artifact directly in markdown report
+            if ev and ev.screenshot and (run_folder / ev.screenshot).exists():
+                lines.append(f"\n![{b.id} Evidence Screenshot]({ev.screenshot})\n")
+
             if b.duplicates:
                 lines.append(f"- **Also seen in:** {', '.join(b.duplicates)}")
             if b.source == "exploratory":
@@ -388,6 +392,10 @@ def build_report(run_id: str) -> str:
 
             if evidence_links:
                 lines.append(f"- **Evidence:** {' | '.join(evidence_links)}")
+
+            # Display screenshot artifact directly in markdown report
+            if ev and ev.screenshot and (run_folder / ev.screenshot).exists():
+                lines.append(f"\n![{b.id} Evidence Screenshot]({ev.screenshot})\n")
             if b.duplicates:
                 lines.append(f"- **Also seen in:** {', '.join(b.duplicates)}")
             lines.append("")

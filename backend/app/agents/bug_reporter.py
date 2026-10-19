@@ -121,7 +121,7 @@ def write_bug_reports(run_id: str) -> List[Bug]:
                 prompt=prompt_text,
                 schema_name="bug_report",
                 run_id=run_id,
-                max_tokens=1200,
+                max_tokens=650,
             )
 
             if isinstance(resp, dict):

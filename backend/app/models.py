@@ -18,6 +18,7 @@ Stage = Literal[
     "reporting",
     "done",
     "failed",
+    "cancelled",
 ]
 
 Mode = Literal["manual", "autonomous"]
@@ -200,10 +201,10 @@ class TestCase(BaseModel):
     title: str
     description: str
     specRef: List[str] = Field(default_factory=list)
-    priority: Literal["high", "medium", "low"] = "medium"
+    priority: Literal["critical", "high", "medium", "low"] = "medium"
     steps: List[Step] = Field(default_factory=list)
-    status: Literal["proposed", "approved", "rejected"] = "proposed"
-    origin: Literal["planner", "human", "fallback"] = "planner"
+    status: Literal["proposed", "approved", "rejected", "edited", "pending"] = "proposed"
+    origin: Literal["planner", "human", "fallback", "llm", "heuristic"] = "planner"
     script: Optional[str] = None
     scriptStatus: Literal["pending", "ok", "error"] = "pending"
     scriptError: Optional[str] = None
@@ -219,7 +220,7 @@ class Catalog(BaseModel):
 class ReviewDecision(BaseModel):
     model_config = ConfigDict(extra="ignore")
     testId: str
-    decision: Literal["approve", "reject"]
+    decision: Literal["approve", "approved", "reject", "rejected"]
     reason: str
 
 

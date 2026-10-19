@@ -21,8 +21,9 @@ class Settings:
         self.runs_dir: Path = (REPO_ROOT / runs_name).resolve()
         self.runs_dir.mkdir(parents=True, exist_ok=True)
 
-        self.LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "anthropic")
-        self.LLM_MODEL: str = os.getenv("LLM_MODEL", "claude-sonnet-5-5")
+        self.LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "groq")
+        self.LLM_MODEL: str = os.getenv("LLM_MODEL", "qwen/qwen3.8-27b")
+        self.GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
         self.ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
         self.OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
 

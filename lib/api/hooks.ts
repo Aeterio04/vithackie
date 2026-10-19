@@ -213,7 +213,19 @@ export function useRun(runId: string | null | undefined) {
         schema: RunSchema,
       }),
     enabled: Boolean(runId),
-    staleTime: 5000,
+    staleTime: 1000,
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      if (
+        status === "completed" ||
+        status === "failed" ||
+        status === "cancelled" ||
+        status === "budget_exhausted"
+      ) {
+        return false;
+      }
+      return 2000;
+    },
   });
 }
 
@@ -447,12 +459,7 @@ export function useExecution(runId: string | null | undefined) {
         schema: ExecutionStateSchema,
       }),
     enabled: Boolean(runId),
-    refetchInterval: (query) => {
-      // Poll execution only if run is not finished or stream falls back
-      const data = query.state.data;
-      if (!data) return 4000;
-      return 3000;
-    },
+    refetchInterval: 2000,
   });
 }
 
@@ -464,6 +471,7 @@ export function useTests(runId: string | null | undefined) {
         schema: z.array(ExecutionTestSchema),
       }),
     enabled: Boolean(runId),
+    refetchInterval: 2000,
   });
 }
 

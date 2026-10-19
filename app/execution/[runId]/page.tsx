@@ -239,7 +239,7 @@ export default function ExecutionRunPage() {
           <div className="bg-white border border-[#E3DACC] rounded-[16px] p-4 shadow-xs">
             <BudgetMeter
               label="Run Minutes"
-              current={run.budget_usage?.elapsed_minutes ?? 0}
+              current={execution?.budget_usage?.elapsed_minutes ?? run.budget_usage?.elapsed_minutes ?? 0}
               max={run.budgets.max_run_minutes}
               unit="m"
             />
@@ -248,7 +248,7 @@ export default function ExecutionRunPage() {
           <div className="bg-white border border-[#E3DACC] rounded-[16px] p-4 shadow-xs">
             <BudgetMeter
               label="Pages Crawled"
-              current={run.budget_usage?.pages_crawled ?? 0}
+              current={execution?.budget_usage?.pages_crawled ?? run.budget_usage?.pages_crawled ?? 0}
               max={run.budgets.max_pages}
             />
           </div>
@@ -256,7 +256,7 @@ export default function ExecutionRunPage() {
           <div className="bg-white border border-[#E3DACC] rounded-[16px] p-4 shadow-xs">
             <BudgetMeter
               label="Steps Executed"
-              current={run.budget_usage?.steps_executed ?? 0}
+              current={execution?.budget_usage?.steps_executed ?? run.budget_usage?.steps_executed ?? 0}
               max={run.budgets.max_steps_per_test * 10}
             />
           </div>
@@ -264,7 +264,7 @@ export default function ExecutionRunPage() {
           <div className="bg-white border border-[#E3DACC] rounded-[16px] p-4 shadow-xs">
             <BudgetMeter
               label="Parallel Workers"
-              current={run.budget_usage?.active_workers ?? workers.length}
+              current={execution?.budget_usage?.active_workers ?? run.budget_usage?.active_workers ?? workers.length}
               max={run.budgets.parallel_workers}
             />
           </div>

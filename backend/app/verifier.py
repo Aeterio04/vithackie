@@ -55,6 +55,11 @@ def verify_bug(run_id: str, bug_id: str) -> Verification:
         spec_dir = str(bug_file_path.parent)
         extra_env = None
 
+    try:
+        from app.frontend_adapter import log_pipeline
+    except Exception:
+        def log_pipeline(*args, **kwargs): pass
+
     attempts: List[VerificationAttempt] = []
 
     for attempt_num in range(1, 4):
@@ -65,6 +70,11 @@ def verify_bug(run_id: str, bug_id: str) -> Verification:
                 done=attempt_num - 1,
                 total=3,
             ),
+        )
+        log_pipeline(
+            run_id,
+            f"Deterministic Verifier: Replaying suspected defect {target_bug.id} ({target_bug.title}) - Trial {attempt_num}/3...",
+            source="verifier",
         )
 
         out_name = f"verify/{target_bug.id}/{attempt_num}"

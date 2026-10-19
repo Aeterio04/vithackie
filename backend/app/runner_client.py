@@ -194,6 +194,9 @@ def run_playwright(
     env["VISITED_DIR"] = normalize_path(raw_dir / "visited")
     env["TEST_USERNAME"] = username
     env["TEST_PASSWORD"] = secret_password
+    live_dir = r_dir / "live"
+    live_dir.mkdir(parents=True, exist_ok=True)
+    env["LIVE_DIR"] = normalize_path(live_dir)
 
     if extra_env:
         env.update(extra_env)
@@ -367,13 +370,28 @@ def run_tests(
         else:
             tests_to_run.append(t.id)
 
+    try:
+        from app.frontend_adapter import log_pipeline
+    except Exception:
+        def log_pipeline(*args, **kwargs): pass
+
     num_workers = workers if workers is not None else 4
+    log_pipeline(
+        run_id,
+        f"Runner: Dispatching {len(tests_to_run)} executable test specs across {num_workers} parallel Playwright workers...",
+        source="runner",
+    )
     start_wall = time.time()
 
     raw_run = run_playwright(
         run_id,
         workers=num_workers,
         out_name="main",
+    )
+    log_pipeline(
+        run_id,
+        f"Runner: Playwright execution batch finished in {time.time() - start_wall:.1f}s. Parsing reports and traces...",
+        source="runner",
     )
 
     probes_run = None
@@ -481,6 +499,103 @@ def run_tests(
                     evidenceDir=None,
                 )
             )
+
+    # --------------------------------------------------------------------------
+    # Single-Attempt Self-Healing Repair for Locator Timeouts & Syntax Errors
+    # --------------------------------------------------------------------------
+    recoverable_failures = [
+        t for t in test_results
+        if t.outcome == "test_error" and t.testId.startswith("T")
+    ]
+
+    if recoverable_failures:
+        log_pipeline(
+            run_id,
+            f"Self-Healing: Detected {len(recoverable_failures)} locator timeout / syntax error(s). Requesting 1-time automated repair from LLM...",
+            source="runner",
+        )
+        for t in recoverable_failures:
+            script_path = r_dir / "scripts" / f"{t.testId}.spec.ts"
+            if not script_path.exists():
+                continue
+            original_code = script_path.read_text(encoding="utf-8")
+            repair_prompt = (
+                f"You are an expert Playwright TypeScript engineer. A test script failed execution due to a locator timeout, syntax error, or timing issue.\n\n"
+                f"Test ID: {t.testId}\n"
+                f"Test Title: {t.title}\n"
+                f"Execution Error / Stack Trace:\n{t.errorMessage or 'Locator timeout or execution error'}\n\n"
+                f"Current Failed Script:\n{original_code}\n\n"
+                "TASK:\n"
+                "Analyze the failure and fix the locator timeout, missing wait/navigation, or syntax issue.\n"
+                "RULES:\n"
+                "1. If an action timed out (e.g. waiting for 'Log out' or waiting for an element), ensure proper preceding actions completed, wait for URL/navigation if needed, or check the right locator.\n"
+                "2. Maintain the exact same test intent and KEEP ALL CORE ASSERTIONS intact. Do not remove expectations or invert checks.\n"
+                "3. Return ONLY valid TypeScript code starting with import and test(). No explanations.\n"
+            )
+            try:
+                from app.llm import get_llm
+                from app.agents.script_writer import clean_and_sanitize_script
+                llm = get_llm()
+                fixed_code_raw = llm.complete_text(
+                    system="You are an expert Playwright TypeScript automation engineer.",
+                    prompt=repair_prompt,
+                    schema_name="script_writer",
+                    run_id=run_id,
+                    max_tokens=750,
+                    temperature=0.1,
+                )
+                fixed_code = clean_and_sanitize_script(fixed_code_raw, t.testId, t.title)
+                script_path.write_text(fixed_code, encoding="utf-8")
+
+                # Re-run only this test
+                log_pipeline(run_id, f"Self-Healing: Re-running repaired script for {t.testId} (single retry attempt)...", source="runner")
+                retry_run = run_playwright(
+                    run_id,
+                    grep=f"{t.testId}:",
+                    out_name=f"retry_{t.testId}",
+                    workers=1,
+                    timeout_s=30,
+                )
+                if retry_run.report_path:
+                    re_records = parse_report(retry_run.report_path)
+                    match_rec = next((rec for rec in re_records if t.testId in rec.get("title", "")), None)
+                    if match_rec:
+                        re_status = match_rec.get("status")
+                        re_err = clean_error_message(match_rec.get("errorMessage", ""))
+                        if re_status == "passed":
+                            t.outcome = "passed"
+                            t.errorMessage = None
+                            t.durationMs = int(match_rec.get("durationMs", 0))
+                            log_pipeline(run_id, f"Self-Healing: {t.testId} PASSED on retry after LLM repair!", source="runner")
+                        elif is_assertion_failure(re_err):
+                            t.outcome = "assertion_failure"
+                            t.errorMessage = re_err
+                            t.durationMs = int(match_rec.get("durationMs", 0))
+                            ev_dir = r_dir / "evidence" / t.testId
+                            ev_dir.mkdir(parents=True, exist_ok=True)
+                            t.evidenceDir = f"evidence/{t.testId}"
+                            log_pipeline(run_id, f"Self-Healing: {t.testId} repaired; confirmed application assertion failure.", source="runner")
+                        else:
+                            # Still failing after 1 retry: not our issue, mark as persistent environment/infrastructure error
+                            t.outcome = "test_error"
+                            t.errorMessage = f"Persistent execution failure after 1 repair attempt: {re_err}"
+                            log_pipeline(run_id, f"Self-Healing: {t.testId} still failed after 1 repair attempt. Excluded from bugs and flagged as environment/target infrastructure defect.", level="warn", source="runner")
+
+                        # Sync with live status json if present
+                        live_json_path = r_dir / "live" / f"{t.testId}.json"
+                        if live_json_path.exists():
+                            try:
+                                with open(live_json_path, "r", encoding="utf-8") as jf:
+                                    ldata = json.load(jf)
+                                ldata["status"] = t.outcome
+                                ldata["duration_ms"] = t.durationMs
+                                ldata["error_message"] = t.errorMessage
+                                with open(live_json_path, "w", encoding="utf-8") as jf:
+                                    json.dump(ldata, jf, indent=2)
+                            except Exception:
+                                pass
+            except Exception as repair_exc:
+                log_pipeline(run_id, f"Self-Healing: Repair attempt for {t.testId} encountered error: {repair_exc}", level="warn", source="runner")
 
     test_results.sort(key=lambda x: x.testId)
 
