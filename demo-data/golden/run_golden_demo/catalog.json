@@ -1,0 +1,372 @@
+{
+  "runId": "20261018-020000-a1b2",
+  "generatedAt": "2026-10-18T02:03:00Z",
+  "tests": [
+    {
+      "id": "T01",
+      "title": "T01: Signing up with valid credentials lands on dashboard",
+      "description": "Verify valid account creation flow",
+      "specRef": [
+        "S1"
+      ],
+      "priority": "high",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Navigate to /signup",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Fill Email with unique('user')@example.com",
+          "expected": null
+        },
+        {
+          "n": 3,
+          "action": "Fill Password with 'Passw0rd!123'",
+          "expected": null
+        },
+        {
+          "n": 4,
+          "action": "Click 'Sign up' button",
+          "expected": "User lands on /dashboard"
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T01.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T02",
+      "title": "T02: Signing up with invalid email is rejected",
+      "description": "Verify rejection of malformed email address",
+      "specRef": [
+        "S2"
+      ],
+      "priority": "medium",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Navigate to /signup",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Fill Email with 'not-an-email'",
+          "expected": null
+        },
+        {
+          "n": 3,
+          "action": "Fill Password with 'ValidPass123'",
+          "expected": null
+        },
+        {
+          "n": 4,
+          "action": "Click 'Sign up' button",
+          "expected": "Shows message \"Enter a valid email address\""
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T02.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T03",
+      "title": "T03: Signing up with short password is rejected",
+      "description": "Verify password length validation (< 8 characters)",
+      "specRef": [
+        "S3"
+      ],
+      "priority": "medium",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Navigate to /signup",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Fill Email with unique('user')@example.com",
+          "expected": null
+        },
+        {
+          "n": 3,
+          "action": "Fill Password with '1234567'",
+          "expected": null
+        },
+        {
+          "n": 4,
+          "action": "Click 'Sign up' button",
+          "expected": "Shows message \"Password must be at least 8 characters\""
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T03.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T04",
+      "title": "T04: Logging in with valid credentials lands on dashboard",
+      "description": "Verify happy path login",
+      "specRef": [
+        "S4"
+      ],
+      "priority": "high",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Navigate to /login",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Fill Email with 'qa.tester@example.com'",
+          "expected": null
+        },
+        {
+          "n": 3,
+          "action": "Fill Password with 'Passw0rd!23'",
+          "expected": null
+        },
+        {
+          "n": 4,
+          "action": "Click 'Log in' button",
+          "expected": "User lands on /dashboard"
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T04.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T05",
+      "title": "T05: Logging in with wrong password shows error",
+      "description": "Verify rejection of incorrect password",
+      "specRef": [
+        "S5"
+      ],
+      "priority": "high",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Navigate to /login",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Fill Email with 'qa.tester@example.com'",
+          "expected": null
+        },
+        {
+          "n": 3,
+          "action": "Fill Password with 'WrongPassword!'",
+          "expected": null
+        },
+        {
+          "n": 4,
+          "action": "Click 'Log in' button",
+          "expected": "Shows message \"Invalid email or password\" and remains on /login"
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T05.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T06",
+      "title": "T06: Logging in email is case-insensitive",
+      "description": "Verify uppercase email login",
+      "specRef": [
+        "S6"
+      ],
+      "priority": "high",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Navigate to /login",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Fill Email with 'QA.Tester@Example.com'",
+          "expected": null
+        },
+        {
+          "n": 3,
+          "action": "Fill Password with 'Passw0rd!23'",
+          "expected": null
+        },
+        {
+          "n": 4,
+          "action": "Click 'Log in' button",
+          "expected": "User lands on /dashboard"
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T06.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T07",
+      "title": "T07: Adding item with non-empty title shows in list",
+      "description": "Verify task addition",
+      "specRef": [
+        "S7"
+      ],
+      "priority": "high",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Log in as qa.tester@example.com and open /dashboard",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Fill Item title with unique('Task')",
+          "expected": null
+        },
+        {
+          "n": 3,
+          "action": "Click 'Add item' button",
+          "expected": "Item appears in task list"
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T07.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T08",
+      "title": "T08: Adding item with empty title is rejected",
+      "description": "Verify title required validation",
+      "specRef": [
+        "S8"
+      ],
+      "priority": "medium",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Log in as qa.tester@example.com and open /dashboard",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Clear Item title",
+          "expected": null
+        },
+        {
+          "n": 3,
+          "action": "Click 'Add item' button",
+          "expected": "Shows message \"Title is required\" and no item is added"
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T08.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T09",
+      "title": "T09: Deleting an item removes only that item",
+      "description": "Verify item deletion target",
+      "specRef": [
+        "S9"
+      ],
+      "priority": "high",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Log in and ensure two distinct items exist on /dashboard",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Click 'Delete' on the second item",
+          "expected": "Only the second item is removed; first remains"
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T09.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T10",
+      "title": "T10: Saving display name shows success and page has no errors",
+      "description": "Verify settings save and console health",
+      "specRef": [
+        "S10"
+      ],
+      "priority": "medium",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Log in and navigate to /settings",
+          "expected": "Page loads without console errors"
+        },
+        {
+          "n": 2,
+          "action": "Fill Display name with 'Quality Tester'",
+          "expected": null
+        },
+        {
+          "n": 3,
+          "action": "Click 'Save settings'",
+          "expected": "Shows status \"Settings saved\""
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T10.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    },
+    {
+      "id": "T11",
+      "title": "T11: Logging out returns to login and Back does not show dashboard",
+      "description": "Verify logout and cache invalidation",
+      "specRef": [
+        "S11"
+      ],
+      "priority": "high",
+      "steps": [
+        {
+          "n": 1,
+          "action": "Log in and navigate to /dashboard",
+          "expected": null
+        },
+        {
+          "n": 2,
+          "action": "Click 'Log out'",
+          "expected": "Navigates to /login"
+        },
+        {
+          "n": 3,
+          "action": "Click browser Back button",
+          "expected": "Dashboard is not displayed; redirected to /login"
+        }
+      ],
+      "status": "approved",
+      "origin": "planner",
+      "script": "scripts/T11.spec.ts",
+      "scriptStatus": "ok",
+      "scriptError": null
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "runId": "20261018-020000-a1b2",
+  "reviewedAt": "2026-10-18T02:02:45Z",
+  "decisions": [
+    {
+      "testId": "T01",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S1"
+    },
+    {
+      "testId": "T02",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S2"
+    },
+    {
+      "testId": "T03",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S3"
+    },
+    {
+      "testId": "T04",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S4"
+    },
+    {
+      "testId": "T05",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S5"
+    },
+    {
+      "testId": "T06",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S6"
+    },
+    {
+      "testId": "T07",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S7"
+    },
+    {
+      "testId": "T08",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S8"
+    },
+    {
+      "testId": "T09",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S9"
+    },
+    {
+      "testId": "T10",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S10"
+    },
+    {
+      "testId": "T11",
+      "decision": "approve",
+      "reason": "Valid test verifying spec requirement S11"
+    }
+  ]
+}

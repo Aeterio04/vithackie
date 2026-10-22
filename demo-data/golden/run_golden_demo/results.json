@@ -1,0 +1,144 @@
+{
+  "runId": "20261018-020000-a1b2",
+  "startedAt": "2026-10-18T02:04:00Z",
+  "durationSeconds": 18.5,
+  "workers": 4,
+  "tests": [
+    {
+      "testId": "T01",
+      "title": "T01: Signing up with valid credentials lands on dashboard",
+      "file": "scripts/T01.spec.ts",
+      "source": "planned",
+      "outcome": "passed",
+      "durationMs": 1200,
+      "errorMessage": null,
+      "evidenceDir": null
+    },
+    {
+      "testId": "T02",
+      "title": "T02: Signing up with invalid email is rejected",
+      "file": "scripts/T02.spec.ts",
+      "source": "planned",
+      "outcome": "assertion_failure",
+      "durationMs": 950,
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Enter a valid email address\"\nReceived: \"Welcome to dashboard\"",
+      "evidenceDir": "evidence/T02"
+    },
+    {
+      "testId": "T03",
+      "title": "T03: Signing up with short password is rejected",
+      "file": "scripts/T03.spec.ts",
+      "source": "planned",
+      "outcome": "assertion_failure",
+      "durationMs": 850,
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Password must be at least 8 characters\"\nReceived: \"Welcome to dashboard\"",
+      "evidenceDir": null
+    },
+    {
+      "testId": "T04",
+      "title": "T04: Logging in with valid credentials lands on dashboard",
+      "file": "scripts/T04.spec.ts",
+      "source": "planned",
+      "outcome": "passed",
+      "durationMs": 1100,
+      "errorMessage": null,
+      "evidenceDir": null
+    },
+    {
+      "testId": "T05",
+      "title": "T05: Logging in with wrong password shows error",
+      "file": "scripts/T05.spec.ts",
+      "source": "planned",
+      "outcome": "assertion_failure",
+      "durationMs": 900,
+      "errorMessage": "expect(received).toBeVisible()\nExpected: visible alert\nReceived: not visible",
+      "evidenceDir": null
+    },
+    {
+      "testId": "T06",
+      "title": "T06: Logging in email is case-insensitive",
+      "file": "scripts/T06.spec.ts",
+      "source": "planned",
+      "outcome": "assertion_failure",
+      "durationMs": 920,
+      "errorMessage": "expect(received).toHaveURL(expected)\nExpected: /dashboard\nReceived: /login?error=invalid_user",
+      "evidenceDir": null
+    },
+    {
+      "testId": "T07",
+      "title": "T07: Adding item with non-empty title shows in list",
+      "file": "scripts/T07.spec.ts",
+      "source": "planned",
+      "outcome": "passed",
+      "durationMs": 1400,
+      "errorMessage": null,
+      "evidenceDir": null
+    },
+    {
+      "testId": "T08",
+      "title": "T08: Adding item with empty title is rejected",
+      "file": "scripts/T08.spec.ts",
+      "source": "planned",
+      "outcome": "assertion_failure",
+      "durationMs": 880,
+      "errorMessage": "expect(received).toHaveText(expected)\nExpected: \"Title is required\"\nReceived: item created successfully",
+      "evidenceDir": null
+    },
+    {
+      "testId": "T09",
+      "title": "T09: Deleting an item removes only that item",
+      "file": "scripts/T09.spec.ts",
+      "source": "planned",
+      "outcome": "assertion_failure",
+      "durationMs": 1300,
+      "errorMessage": "expect(items.first()).toHaveText(expected)\nExpected: \"Task Alpha\"\nReceived: \"Task Beta\"",
+      "evidenceDir": null
+    },
+    {
+      "testId": "T10",
+      "title": "T10: Saving display name shows success and page has no errors",
+      "file": "scripts/T10.spec.ts",
+      "source": "planned",
+      "outcome": "assertion_failure",
+      "durationMs": 1050,
+      "errorMessage": "expect(consoleErrors).toHaveLength(0)\nExpected: 0 errors\nReceived: 1 error (TypeError)",
+      "evidenceDir": null
+    },
+    {
+      "testId": "T11",
+      "title": "T11: Logging out returns to login and Back does not show dashboard",
+      "file": "scripts/T11.spec.ts",
+      "source": "planned",
+      "outcome": "assertion_failure",
+      "durationMs": 1600,
+      "errorMessage": "expect(received).toHaveURL(expected)\nExpected: /login\nReceived: /dashboard (cached page)",
+      "evidenceDir": null
+    },
+    {
+      "testId": "T12",
+      "title": "T12: External navigation test",
+      "file": "scripts/T12.spec.ts",
+      "source": "planned",
+      "outcome": "test_error",
+      "durationMs": 5200,
+      "errorMessage": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9999",
+      "evidenceDir": null
+    },
+    {
+      "testId": "X02",
+      "title": "X02: Exploratory SQL injection probe on search input",
+      "file": "scripts/probes/X02.spec.ts",
+      "source": "exploratory",
+      "outcome": "assertion_failure",
+      "durationMs": 780,
+      "errorMessage": "expect(response.status()).not.toBe(500)\nExpected: not 500\nReceived: 500 Internal Server Error",
+      "evidenceDir": null
+    }
+  ],
+  "summary": {
+    "total": 13,
+    "passed": 3,
+    "assertionFailures": 9,
+    "testErrors": 1
+  }
+}

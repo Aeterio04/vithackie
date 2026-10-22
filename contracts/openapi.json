@@ -1,0 +1,3666 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Autonomous AI QA Engineer API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Login",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Auth Me",
+        "operationId": "auth_me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Health",
+        "operationId": "get_health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/config/defaults": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Config Defaults",
+        "operationId": "get_config_defaults_api_v1_config_defaults_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stats": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Stats",
+        "operationId": "get_stats_api_v1_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/targets/check": {
+      "post": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Check Target",
+        "operationId": "check_target_api_v1_targets_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TargetCheckPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/specs/upload": {
+      "post": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Upload Spec",
+        "operationId": "upload_spec_api_v1_specs_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_spec_api_v1_specs_upload_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "List Runs",
+        "operationId": "list_runs_api_v1_runs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Create Run",
+        "operationId": "create_run_api_v1_runs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRunPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/start": {
+      "post": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Start Run Pipeline",
+        "operationId": "start_run_pipeline_api_v1_runs__run_id__start_post",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Single Run",
+        "operationId": "get_single_run_api_v1_runs__run_id__get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/cancel": {
+      "post": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Cancel Run",
+        "operationId": "cancel_run_api_v1_runs__run_id__cancel_post",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/retry": {
+      "post": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Retry Run",
+        "operationId": "retry_run_api_v1_runs__run_id__retry_post",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/app-map": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get App Map",
+        "operationId": "get_app_map_api_v1_runs__run_id__app_map_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/catalog": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Catalog",
+        "operationId": "get_catalog_api_v1_runs__run_id__catalog_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/catalog/{test_id}": {
+      "patch": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Update Catalog Test",
+        "operationId": "update_catalog_test_api_v1_runs__run_id__catalog__test_id__patch",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "test_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Test Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchTestPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/review": {
+      "post": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Submit Review",
+        "operationId": "submit_review_api_v1_runs__run_id__review_post",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewSubmission"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/review-log": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Review Log",
+        "operationId": "get_review_log_api_v1_runs__run_id__review_log_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/execution": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Execution State",
+        "operationId": "get_execution_state_api_v1_runs__run_id__execution_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/tests": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Tests",
+        "operationId": "get_tests_api_v1_runs__run_id__tests_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/bugs": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Bugs",
+        "operationId": "get_bugs_api_v1_runs__run_id__bugs_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bugs/{bug_id}": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Single Bug",
+        "operationId": "get_single_bug_api_v1_bugs__bug_id__get",
+        "parameters": [
+          {
+            "name": "bug_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Bug Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/report": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Json Report",
+        "operationId": "get_json_report_api_v1_runs__run_id__report_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/files/{path}": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Serve Run File",
+        "operationId": "serve_run_file_api_v1_runs__run_id__files__path__get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Path"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/report/export": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Export Tests",
+        "operationId": "export_tests_api_v1_runs__run_id__report_export_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "json",
+              "title": "Format"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/tests/export": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Export Tests",
+        "operationId": "export_tests_api_v1_runs__run_id__tests_export_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "json",
+              "title": "Format"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/export": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Export Tests",
+        "operationId": "export_tests_api_v1_runs__run_id__export_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "json",
+              "title": "Format"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/logs": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Get Run Logs",
+        "description": "Retrieve full chronological pipeline logs for the run.",
+        "operationId": "get_run_logs_api_v1_runs__run_id__logs_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/events": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Poll Run Events",
+        "description": "Fallback endpoint for polling events when SSE is not supported.",
+        "operationId": "poll_run_events_api_v1_runs__run_id__events_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/stream": {
+      "get": {
+        "tags": [
+          "frontend-adapter"
+        ],
+        "summary": "Stream Run Sse",
+        "description": "Server-Sent Events endpoint streaming typed events for useRunStream.ts.",
+        "operationId": "stream_run_sse_api_v1_runs__run_id__stream_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/stream": {
+      "get": {
+        "summary": "Stream Run Proxy",
+        "operationId": "stream_run_proxy_api_runs__run_id__stream_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config": {
+      "get": {
+        "summary": "Get Config",
+        "operationId": "get_config_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Config Config Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs": {
+      "get": {
+        "summary": "List Runs",
+        "operationId": "list_runs_runs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RunListItem"
+                  },
+                  "type": "array",
+                  "title": "Response List Runs Runs Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Start Run",
+        "operationId": "start_run_runs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Start Run Runs Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{run_id}": {
+      "get": {
+        "summary": "Get Run",
+        "operationId": "get_run_runs__run_id__get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{run_id}/catalog": {
+      "put": {
+        "summary": "Update Catalog",
+        "operationId": "update_catalog_runs__run_id__catalog_put",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCatalogRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Catalog"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{run_id}/tests": {
+      "post": {
+        "summary": "Add Test",
+        "operationId": "add_test_runs__run_id__tests_post",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTestRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestCase"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{run_id}/execute": {
+      "post": {
+        "summary": "Execute Run",
+        "operationId": "execute_run_runs__run_id__execute_post",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Execute Run Runs  Run Id  Execute Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{run_id}/report": {
+      "get": {
+        "summary": "Get Report",
+        "operationId": "get_report_runs__run_id__report_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{run_id}/files/{path}": {
+      "get": {
+        "summary": "Get Run File",
+        "operationId": "get_run_file_runs__run_id__files__path__get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Path"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{run_id}/export": {
+      "get": {
+        "summary": "Export Passing Tests",
+        "operationId": "export_passing_tests_runs__run_id__export_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{run_id}/stream": {
+      "get": {
+        "summary": "Stream Run Progress",
+        "description": "Server-Sent Events endpoint streaming stage changes and execution progress.",
+        "operationId": "stream_run_progress_runs__run_id__stream_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddTestRequest": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "title": "AddTestRequest"
+      },
+      "AppMap": {
+        "properties": {
+          "baseUrl": {
+            "type": "string",
+            "title": "Baseurl"
+          },
+          "generatedAt": {
+            "type": "string",
+            "title": "Generatedat"
+          },
+          "login": {
+            "$ref": "#/components/schemas/LoginInfo"
+          },
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/PageInfo"
+            },
+            "type": "array",
+            "title": "Pages"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary",
+            "default": ""
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            },
+            "type": "array",
+            "title": "Features"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/AppMapStats"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "baseUrl",
+          "generatedAt"
+        ],
+        "title": "AppMap"
+      },
+      "AppMapStats": {
+        "properties": {
+          "pagesVisited": {
+            "type": "integer",
+            "title": "Pagesvisited",
+            "default": 0
+          },
+          "durationSeconds": {
+            "type": "number",
+            "title": "Durationseconds",
+            "default": 0.0
+          },
+          "budgetHit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pages",
+                  "time"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budgethit"
+          }
+        },
+        "type": "object",
+        "title": "AppMapStats"
+      },
+      "Body_upload_spec_api_v1_specs_upload_post": {
+        "properties": {
+          "file": {
+            "anyOf": [
+              {
+                "type": "string",
+                "contentMediaType": "application/octet-stream"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File"
+          },
+          "spec_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Text"
+          }
+        },
+        "type": "object",
+        "title": "Body_upload_spec_api_v1_specs_upload_post"
+      },
+      "Budgets": {
+        "properties": {
+          "maxPages": {
+            "type": "integer",
+            "title": "Maxpages",
+            "default": 10
+          },
+          "exploreSeconds": {
+            "type": "integer",
+            "title": "Exploreseconds",
+            "default": 90
+          },
+          "maxTests": {
+            "type": "integer",
+            "title": "Maxtests",
+            "default": 12
+          },
+          "testTimeoutMs": {
+            "type": "integer",
+            "title": "Testtimeoutms",
+            "default": 30000
+          }
+        },
+        "type": "object",
+        "title": "Budgets"
+      },
+      "Bug": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "testId": {
+            "type": "string",
+            "title": "Testid"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "planned",
+              "exploratory"
+            ],
+            "title": "Source"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "grep": {
+            "type": "string",
+            "title": "Grep"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "validation",
+              "auth",
+              "data",
+              "navigation",
+              "console",
+              "network",
+              "ui",
+              "other"
+            ],
+            "title": "Category"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ],
+            "title": "Severity"
+          },
+          "specRef": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Specref"
+          },
+          "steps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "expected": {
+            "type": "string",
+            "title": "Expected"
+          },
+          "actual": {
+            "type": "string",
+            "title": "Actual"
+          },
+          "errorMessage": {
+            "type": "string",
+            "title": "Errormessage"
+          },
+          "signature": {
+            "type": "string",
+            "title": "Signature"
+          },
+          "duplicates": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Duplicates"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Evidence"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "candidate",
+              "confirmed",
+              "flaky",
+              "not_reproduced"
+            ],
+            "title": "Status"
+          },
+          "replay": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BugReplay"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "testId",
+          "source",
+          "title",
+          "grep",
+          "file",
+          "category",
+          "severity",
+          "expected",
+          "actual",
+          "errorMessage",
+          "signature",
+          "status"
+        ],
+        "title": "Bug"
+      },
+      "BugReplay": {
+        "properties": {
+          "reproduced": {
+            "type": "integer",
+            "title": "Reproduced"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reproduced",
+          "attempts"
+        ],
+        "title": "BugReplay"
+      },
+      "ButtonInfo": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "ButtonInfo"
+      },
+      "Catalog": {
+        "properties": {
+          "runId": {
+            "type": "string",
+            "title": "Runid"
+          },
+          "generatedAt": {
+            "type": "string",
+            "title": "Generatedat"
+          },
+          "tests": {
+            "items": {
+              "$ref": "#/components/schemas/TestCase"
+            },
+            "type": "array",
+            "title": "Tests"
+          }
+        },
+        "type": "object",
+        "required": [
+          "runId",
+          "generatedAt"
+        ],
+        "title": "Catalog"
+      },
+      "CreateRunPayload": {
+        "properties": {
+          "target_url": {
+            "type": "string",
+            "title": "Target Url"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "default": ""
+          },
+          "spec_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Id"
+          },
+          "spec_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Text"
+          },
+          "review_mode": {
+            "type": "string",
+            "title": "Review Mode",
+            "default": "manual"
+          },
+          "budgets": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budgets"
+          },
+          "credentials": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credentials"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_url"
+        ],
+        "title": "CreateRunPayload"
+      },
+      "CreateRunRequest": {
+        "properties": {
+          "targetUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Targeturl"
+          },
+          "target_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Url"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "default": ""
+          },
+          "spec": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec"
+          },
+          "specRaw": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specraw"
+          },
+          "spec_raw": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Raw"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "default": ""
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "default": ""
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "default": "manual"
+          }
+        },
+        "type": "object",
+        "title": "CreateRunRequest"
+      },
+      "Evidence": {
+        "properties": {
+          "screenshot": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Screenshot"
+          },
+          "video": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video"
+          },
+          "trace": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trace"
+          },
+          "console": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Console"
+          },
+          "network": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Network"
+          }
+        },
+        "type": "object",
+        "title": "Evidence"
+      },
+      "Feature": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "pages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "description"
+        ],
+        "title": "Feature"
+      },
+      "FieldInfo": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "label",
+          "type",
+          "name"
+        ],
+        "title": "FieldInfo"
+      },
+      "FormInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "default": ""
+          },
+          "method": {
+            "type": "string",
+            "title": "Method",
+            "default": "GET"
+          },
+          "submitText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submittext"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/FieldInfo"
+            },
+            "type": "array",
+            "title": "Fields"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "FormInfo"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HeadingInfo": {
+        "properties": {
+          "level": {
+            "type": "integer",
+            "title": "Level"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "level",
+          "text"
+        ],
+        "title": "HeadingInfo"
+      },
+      "LinkInfo": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "href": {
+            "type": "string",
+            "title": "Href"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text",
+          "href"
+        ],
+        "title": "LinkInfo"
+      },
+      "LlmUsage": {
+        "properties": {
+          "calls": {
+            "type": "integer",
+            "title": "Calls",
+            "default": 0
+          },
+          "cacheHits": {
+            "type": "integer",
+            "title": "Cachehits",
+            "default": 0
+          },
+          "inputTokens": {
+            "type": "integer",
+            "title": "Inputtokens",
+            "default": 0
+          },
+          "outputTokens": {
+            "type": "integer",
+            "title": "Outputtokens",
+            "default": 0
+          },
+          "costUsd": {
+            "type": "number",
+            "title": "Costusd",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "title": "LlmUsage"
+      },
+      "LoginInfo": {
+        "properties": {
+          "attempted": {
+            "type": "boolean",
+            "title": "Attempted",
+            "default": false
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": false
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "title": "LoginInfo"
+      },
+      "LoginRequest": {
+        "properties": {
+          "username_or_email": {
+            "type": "string",
+            "title": "Username Or Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username_or_email",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "Metrics": {
+        "properties": {
+          "runId": {
+            "type": "string",
+            "title": "Runid"
+          },
+          "wallClockSeconds": {
+            "type": "number",
+            "title": "Wallclockseconds"
+          },
+          "stageSeconds": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Stageseconds"
+          },
+          "tests": {
+            "$ref": "#/components/schemas/MetricsTests"
+          },
+          "bugs": {
+            "$ref": "#/components/schemas/MetricsBugs"
+          },
+          "coverage": {
+            "$ref": "#/components/schemas/MetricsCoverage"
+          },
+          "llm": {
+            "$ref": "#/components/schemas/LlmUsage"
+          },
+          "parallel": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ParallelTiming"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "safety": {
+            "$ref": "#/components/schemas/MetricsSafety"
+          }
+        },
+        "type": "object",
+        "required": [
+          "runId",
+          "wallClockSeconds"
+        ],
+        "title": "Metrics"
+      },
+      "MetricsBugs": {
+        "properties": {
+          "candidates": {
+            "type": "integer",
+            "title": "Candidates",
+            "default": 0
+          },
+          "confirmed": {
+            "type": "integer",
+            "title": "Confirmed",
+            "default": 0
+          },
+          "flaky": {
+            "type": "integer",
+            "title": "Flaky",
+            "default": 0
+          },
+          "notReproduced": {
+            "type": "integer",
+            "title": "Notreproduced",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "MetricsBugs"
+      },
+      "MetricsCoverage": {
+        "properties": {
+          "pagesInMap": {
+            "type": "integer",
+            "title": "Pagesinmap",
+            "default": 0
+          },
+          "pagesExercised": {
+            "type": "integer",
+            "title": "Pagesexercised",
+            "default": 0
+          },
+          "formsInMap": {
+            "type": "integer",
+            "title": "Formsinmap",
+            "default": 0
+          },
+          "formsExercised": {
+            "type": "integer",
+            "title": "Formsexercised",
+            "default": 0
+          },
+          "specItems": {
+            "type": "integer",
+            "title": "Specitems",
+            "default": 0
+          },
+          "specItemsCovered": {
+            "type": "integer",
+            "title": "Specitemscovered",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "MetricsCoverage"
+      },
+      "MetricsSafety": {
+        "properties": {
+          "blockedRequests": {
+            "type": "integer",
+            "title": "Blockedrequests",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "MetricsSafety"
+      },
+      "MetricsTests": {
+        "properties": {
+          "planned": {
+            "type": "integer",
+            "title": "Planned",
+            "default": 0
+          },
+          "approved": {
+            "type": "integer",
+            "title": "Approved",
+            "default": 0
+          },
+          "passed": {
+            "type": "integer",
+            "title": "Passed",
+            "default": 0
+          },
+          "failed": {
+            "type": "integer",
+            "title": "Failed",
+            "default": 0
+          },
+          "errored": {
+            "type": "integer",
+            "title": "Errored",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "MetricsTests"
+      },
+      "PageInfo": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "type": "integer",
+            "title": "Status"
+          },
+          "requiresAuth": {
+            "type": "boolean",
+            "title": "Requiresauth",
+            "default": false
+          },
+          "headings": {
+            "items": {
+              "$ref": "#/components/schemas/HeadingInfo"
+            },
+            "type": "array",
+            "title": "Headings"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/LinkInfo"
+            },
+            "type": "array",
+            "title": "Links"
+          },
+          "buttons": {
+            "items": {
+              "$ref": "#/components/schemas/ButtonInfo"
+            },
+            "type": "array",
+            "title": "Buttons"
+          },
+          "forms": {
+            "items": {
+              "$ref": "#/components/schemas/FormInfo"
+            },
+            "type": "array",
+            "title": "Forms"
+          },
+          "consoleErrors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Consoleerrors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url",
+          "path",
+          "title",
+          "status"
+        ],
+        "title": "PageInfo"
+      },
+      "ParallelTiming": {
+        "properties": {
+          "workers1Seconds": {
+            "type": "number",
+            "title": "Workers1Seconds"
+          },
+          "workers4Seconds": {
+            "type": "number",
+            "title": "Workers4Seconds"
+          },
+          "speedup": {
+            "type": "number",
+            "title": "Speedup"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workers1Seconds",
+          "workers4Seconds",
+          "speedup"
+        ],
+        "title": "ParallelTiming"
+      },
+      "PatchTestPayload": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "expected_result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Result"
+          },
+          "steps": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Steps"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          }
+        },
+        "type": "object",
+        "title": "PatchTestPayload"
+      },
+      "Progress": {
+        "properties": {
+          "step": {
+            "type": "string",
+            "title": "Step"
+          },
+          "done": {
+            "type": "integer",
+            "title": "Done"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "step",
+          "done",
+          "total"
+        ],
+        "title": "Progress"
+      },
+      "Results": {
+        "properties": {
+          "runId": {
+            "type": "string",
+            "title": "Runid"
+          },
+          "startedAt": {
+            "type": "string",
+            "title": "Startedat"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "title": "Durationseconds"
+          },
+          "workers": {
+            "type": "integer",
+            "title": "Workers"
+          },
+          "tests": {
+            "items": {
+              "$ref": "#/components/schemas/TestResult"
+            },
+            "type": "array",
+            "title": "Tests"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ResultsSummary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "runId",
+          "startedAt",
+          "durationSeconds",
+          "workers"
+        ],
+        "title": "Results"
+      },
+      "ResultsSummary": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "default": 0
+          },
+          "passed": {
+            "type": "integer",
+            "title": "Passed",
+            "default": 0
+          },
+          "assertionFailures": {
+            "type": "integer",
+            "title": "Assertionfailures",
+            "default": 0
+          },
+          "testErrors": {
+            "type": "integer",
+            "title": "Testerrors",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "ResultsSummary"
+      },
+      "ReviewDecision": {
+        "properties": {
+          "testId": {
+            "type": "string",
+            "title": "Testid"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "approved",
+              "reject",
+              "rejected"
+            ],
+            "title": "Decision"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "testId",
+          "decision",
+          "reason"
+        ],
+        "title": "ReviewDecision"
+      },
+      "ReviewLog": {
+        "properties": {
+          "runId": {
+            "type": "string",
+            "title": "Runid"
+          },
+          "reviewedAt": {
+            "type": "string",
+            "title": "Reviewedat"
+          },
+          "decisions": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewDecision"
+            },
+            "type": "array",
+            "title": "Decisions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "runId",
+          "reviewedAt"
+        ],
+        "title": "ReviewLog"
+      },
+      "ReviewSubmission": {
+        "properties": {
+          "test_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Test Ids"
+          },
+          "decision": {
+            "type": "string",
+            "title": "Decision"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "test_ids",
+          "decision"
+        ],
+        "title": "ReviewSubmission"
+      },
+      "Run": {
+        "properties": {
+          "runId": {
+            "type": "string",
+            "title": "Runid"
+          },
+          "createdAt": {
+            "type": "string",
+            "title": "Createdat"
+          },
+          "updatedAt": {
+            "type": "string",
+            "title": "Updatedat"
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "created",
+              "exploring",
+              "planning",
+              "awaiting_review",
+              "scripting",
+              "running",
+              "verifying",
+              "reporting",
+              "done",
+              "failed",
+              "cancelled"
+            ],
+            "title": "Stage",
+            "default": "created"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "autonomous"
+            ],
+            "title": "Mode",
+            "default": "manual"
+          },
+          "targetUrl": {
+            "type": "string",
+            "title": "Targeturl"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "progress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Progress"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stageTimes": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/StageTime"
+            },
+            "type": "object",
+            "title": "Stagetimes"
+          },
+          "golden": {
+            "type": "boolean",
+            "title": "Golden",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "runId",
+          "createdAt",
+          "updatedAt",
+          "targetUrl"
+        ],
+        "title": "Run"
+      },
+      "RunInput": {
+        "properties": {
+          "runId": {
+            "type": "string",
+            "title": "Runid"
+          },
+          "createdAt": {
+            "type": "string",
+            "title": "Createdat"
+          },
+          "targetUrl": {
+            "type": "string",
+            "title": "Targeturl"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "default": ""
+          },
+          "specRaw": {
+            "type": "string",
+            "title": "Specraw"
+          },
+          "spec": {
+            "items": {
+              "$ref": "#/components/schemas/SpecItem"
+            },
+            "type": "array",
+            "title": "Spec"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "default": ""
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "autonomous"
+            ],
+            "title": "Mode",
+            "default": "manual"
+          },
+          "budgets": {
+            "$ref": "#/components/schemas/Budgets"
+          }
+        },
+        "type": "object",
+        "required": [
+          "runId",
+          "createdAt",
+          "targetUrl",
+          "specRaw"
+        ],
+        "title": "RunInput"
+      },
+      "RunListItem": {
+        "properties": {
+          "runId": {
+            "type": "string",
+            "title": "Runid"
+          },
+          "createdAt": {
+            "type": "string",
+            "title": "Createdat"
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "created",
+              "exploring",
+              "planning",
+              "awaiting_review",
+              "scripting",
+              "running",
+              "verifying",
+              "reporting",
+              "done",
+              "failed",
+              "cancelled"
+            ],
+            "title": "Stage"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "autonomous"
+            ],
+            "title": "Mode"
+          },
+          "targetUrl": {
+            "type": "string",
+            "title": "Targeturl"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/RunListItemCounts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "runId",
+          "createdAt",
+          "stage",
+          "mode",
+          "targetUrl"
+        ],
+        "title": "RunListItem"
+      },
+      "RunListItemCounts": {
+        "properties": {
+          "tests": {
+            "type": "integer",
+            "title": "Tests",
+            "default": 0
+          },
+          "bugs": {
+            "type": "integer",
+            "title": "Bugs",
+            "default": 0
+          },
+          "confirmed": {
+            "type": "integer",
+            "title": "Confirmed",
+            "default": 0
+          },
+          "flaky": {
+            "type": "integer",
+            "title": "Flaky",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "RunListItemCounts"
+      },
+      "RunView": {
+        "properties": {
+          "run": {
+            "$ref": "#/components/schemas/Run"
+          },
+          "input": {
+            "$ref": "#/components/schemas/RunInput"
+          },
+          "appMap": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AppMap"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "catalog": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Catalog"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reviewLog": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReviewLog"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "results": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Results"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bugs": {
+            "items": {
+              "$ref": "#/components/schemas/Bug"
+            },
+            "type": "array",
+            "title": "Bugs"
+          },
+          "verifications": {
+            "items": {
+              "$ref": "#/components/schemas/Verification"
+            },
+            "type": "array",
+            "title": "Verifications"
+          },
+          "metrics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Metrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hasReport": {
+            "type": "boolean",
+            "title": "Hasreport",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "run",
+          "input"
+        ],
+        "title": "RunView"
+      },
+      "SpecItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "text"
+        ],
+        "title": "SpecItem"
+      },
+      "StageTime": {
+        "properties": {
+          "startedAt": {
+            "type": "string",
+            "title": "Startedat"
+          },
+          "endedAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Endedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "startedAt"
+        ],
+        "title": "StageTime"
+      },
+      "Step": {
+        "properties": {
+          "n": {
+            "type": "integer",
+            "title": "N"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "expected": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected"
+          }
+        },
+        "type": "object",
+        "required": [
+          "n",
+          "action"
+        ],
+        "title": "Step"
+      },
+      "TargetCheckPayload": {
+        "properties": {
+          "target_url": {
+            "type": "string",
+            "title": "Target Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_url"
+        ],
+        "title": "TargetCheckPayload"
+      },
+      "TestCase": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "specRef": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Specref"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ],
+            "title": "Priority",
+            "default": "medium"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "approved",
+              "rejected",
+              "edited",
+              "pending"
+            ],
+            "title": "Status",
+            "default": "proposed"
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "planner",
+              "human",
+              "fallback",
+              "llm",
+              "heuristic"
+            ],
+            "title": "Origin",
+            "default": "planner"
+          },
+          "script": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Script"
+          },
+          "scriptStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "ok",
+              "error"
+            ],
+            "title": "Scriptstatus",
+            "default": "pending"
+          },
+          "scriptError": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scripterror"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description"
+        ],
+        "title": "TestCase"
+      },
+      "TestResult": {
+        "properties": {
+          "testId": {
+            "type": "string",
+            "title": "Testid"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "planned",
+              "exploratory"
+            ],
+            "title": "Source"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "passed",
+              "assertion_failure",
+              "test_error"
+            ],
+            "title": "Outcome"
+          },
+          "durationMs": {
+            "type": "integer",
+            "title": "Durationms"
+          },
+          "errorMessage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errormessage"
+          },
+          "evidenceDir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidencedir"
+          }
+        },
+        "type": "object",
+        "required": [
+          "testId",
+          "title",
+          "file",
+          "source",
+          "outcome",
+          "durationMs"
+        ],
+        "title": "TestResult"
+      },
+      "UpdateCatalogRequest": {
+        "properties": {
+          "tests": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/TestCase"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tests"
+          },
+          "items": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/TestCase"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "title": "UpdateCatalogRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "Verification": {
+        "properties": {
+          "bugId": {
+            "type": "string",
+            "title": "Bugid"
+          },
+          "verifiedAt": {
+            "type": "string",
+            "title": "Verifiedat"
+          },
+          "attempts": {
+            "items": {
+              "$ref": "#/components/schemas/VerificationAttempt"
+            },
+            "type": "array",
+            "title": "Attempts"
+          },
+          "reproduced": {
+            "type": "integer",
+            "title": "Reproduced"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "flaky",
+              "not_reproduced"
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "bugId",
+          "verifiedAt",
+          "reproduced",
+          "status"
+        ],
+        "title": "Verification"
+      },
+      "VerificationAttempt": {
+        "properties": {
+          "attempt": {
+            "type": "integer",
+            "title": "Attempt"
+          },
+          "reproduced": {
+            "type": "boolean",
+            "title": "Reproduced"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "passed",
+              "assertion_failure",
+              "test_error"
+            ],
+            "title": "Outcome"
+          },
+          "errorMessage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errormessage"
+          },
+          "durationMs": {
+            "type": "integer",
+            "title": "Durationms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt",
+          "reproduced",
+          "outcome",
+          "durationMs"
+        ],
+        "title": "VerificationAttempt"
+      }
+    }
+  }
+}
