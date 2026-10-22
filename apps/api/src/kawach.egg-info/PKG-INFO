@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: kawach
+Version: 0.1.0
+Summary: Autonomous AI QA Engineer API & Platform
+Requires-Python: >=3.11
+Requires-Dist: fastapi
+Requires-Dist: uvicorn[standard]
+Requires-Dist: pydantic>=2
+Requires-Dist: langgraph
+Requires-Dist: anthropic
+Requires-Dist: openai
+Requires-Dist: python-dotenv
+Requires-Dist: httpx
+Requires-Dist: python-multipart
+Requires-Dist: import-linter

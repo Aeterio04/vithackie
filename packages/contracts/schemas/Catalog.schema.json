@@ -54,6 +54,7 @@
         "priority": {
           "default": "medium",
           "enum": [
+            "critical",
             "high",
             "medium",
             "low"
@@ -73,7 +74,9 @@
           "enum": [
             "proposed",
             "approved",
-            "rejected"
+            "rejected",
+            "edited",
+            "pending"
           ],
           "title": "Status",
           "type": "string"
@@ -83,7 +86,9 @@
           "enum": [
             "planner",
             "human",
-            "fallback"
+            "fallback",
+            "llm",
+            "heuristic"
           ],
           "title": "Origin",
           "type": "string"

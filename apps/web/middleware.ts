@@ -6,10 +6,12 @@ export function middleware(request: NextRequest) {
   // Public paths that do not require auth check
   const isPublicPath =
     pathname.startsWith("/login") ||
+    pathname.startsWith("/register") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/_next") ||
     pathname.includes(".") || // static assets e.g. favicon.ico
     pathname === "/favicon.ico";
+
 
   if (isPublicPath) {
     return NextResponse.next();

@@ -5,12 +5,53 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register",
+        "description": "Register a new user account with email and password.",
+        "operationId": "register_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/login": {
       "post": {
         "tags": [
-          "frontend-adapter"
+          "auth"
         ],
         "summary": "Login",
+        "description": "Log in with email/password and obtain JWT session and refresh tokens.",
         "operationId": "login_api_v1_auth_login_post",
         "requestBody": {
           "content": {
@@ -44,19 +85,118 @@
         }
       }
     },
-    "/api/v1/auth/me": {
-      "get": {
+    "/api/v1/auth/refresh": {
+      "post": {
         "tags": [
-          "frontend-adapter"
+          "auth"
         ],
-        "summary": "Auth Me",
-        "operationId": "auth_me_api_v1_auth_me_get",
+        "summary": "Refresh Session",
+        "description": "Rotate active refresh token and issue a fresh access token.",
+        "operationId": "refresh_session_api_v1_auth_refresh_post",
+        "parameters": [
+          {
+            "name": "refresh_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Refresh Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RefreshRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Auth Me",
+        "description": "Retrieve current authenticated user profile.",
+        "operationId": "auth_me_api_v1_auth_me_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -66,16 +206,62 @@
     "/api/v1/auth/logout": {
       "post": {
         "tags": [
-          "frontend-adapter"
+          "auth"
         ],
         "summary": "Logout",
+        "description": "Log out current user, revoke active refresh token, and clear cookies.",
         "operationId": "logout_api_v1_auth_logout_post",
+        "parameters": [
+          {
+            "name": "refresh_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Refresh Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RefreshRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -85,29 +271,11 @@
     "/api/v1/health": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "health"
         ],
         "summary": "Get Health",
+        "description": "Health check endpoint indicating active QA engine status.",
         "operationId": "get_health_api_v1_health_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/config/defaults": {
-      "get": {
-        "tags": [
-          "frontend-adapter"
-        ],
-        "summary": "Get Config Defaults",
-        "operationId": "get_config_defaults_api_v1_config_defaults_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -123,10 +291,31 @@
     "/api/v1/stats": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "health"
         ],
         "summary": "Get Stats",
+        "description": "Aggregate statistics across all stored runs.",
         "operationId": "get_stats_api_v1_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/config/defaults": {
+      "get": {
+        "tags": [
+          "config"
+        ],
+        "summary": "Get Config Defaults",
+        "description": "Retrieve platform defaults and constraints.",
+        "operationId": "get_config_defaults_api_v1_config_defaults_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -142,9 +331,10 @@
     "/api/v1/targets/check": {
       "post": {
         "tags": [
-          "frontend-adapter"
+          "config"
         ],
         "summary": "Check Target",
+        "description": "Check target reachability and domain authorization against ALLOWED_HOSTS.",
         "operationId": "check_target_api_v1_targets_check_post",
         "requestBody": {
           "content": {
@@ -181,9 +371,10 @@
     "/api/v1/specs/upload": {
       "post": {
         "tags": [
-          "frontend-adapter"
+          "config"
         ],
         "summary": "Upload Spec",
+        "description": "Upload or paste a specification document.",
         "operationId": "upload_spec_api_v1_specs_upload_post",
         "requestBody": {
           "content": {
@@ -216,19 +407,60 @@
         }
       }
     },
-    "/api/v1/runs": {
+    "/api/v1/projects": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "projects"
         ],
-        "summary": "List Runs",
-        "operationId": "list_runs_api_v1_runs_get",
+        "summary": "List Projects",
+        "description": "List all projects owned by the authenticated user.",
+        "operationId": "list_projects_api_v1_projects_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response List Projects Api V1 Projects Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -236,19 +468,43 @@
       },
       "post": {
         "tags": [
-          "frontend-adapter"
+          "projects"
         ],
-        "summary": "Create Run",
-        "operationId": "create_run_api_v1_runs_post",
+        "summary": "Create Project",
+        "description": "Create a new project owned by current user.",
+        "operationId": "create_project_api_v1_projects_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateRunPayload"
+                "$ref": "#/components/schemas/CreateProjectRequest"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "201": {
@@ -272,12 +528,552 @@
         }
       }
     },
+    "/api/v1/projects/{project_id}": {
+      "get": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Get Project",
+        "description": "Get project details. Returns 404 if project is not owned by user.",
+        "operationId": "get_project_api_v1_projects__project_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Update Project",
+        "description": "Update owned project attributes.",
+        "operationId": "update_project_api_v1_projects__project_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProjectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Delete Project",
+        "description": "Soft-delete project.",
+        "operationId": "delete_project_api_v1_projects__project_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/credentials": {
+      "put": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Set Credentials",
+        "description": "Set encrypted target application credentials. Write-only: password is never returned.",
+        "operationId": "set_credentials_api_v1_projects__project_id__credentials_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetCredentialsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Get Credentials Info",
+        "description": "Check credentials presence without revealing secret.",
+        "operationId": "get_credentials_info_api_v1_projects__project_id__credentials_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "List Runs",
+        "description": "List test runs scoped to the authenticated user.",
+        "operationId": "list_runs_api_v1_runs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Create Run",
+        "description": "Create a new QA test run and begin exploration/planning.",
+        "operationId": "create_run_api_v1_runs_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRunPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Get Single Run",
+        "description": "Retrieve detailed state of a single run. Returns 404 for foreign runs.",
+        "operationId": "get_single_run_api_v1_runs__run_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Delete Run Endpoint",
+        "description": "Delete run artifacts and remove from memory.",
+        "operationId": "delete_run_endpoint_api_v1_runs__run_id__delete",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/runs/{run_id}/start": {
       "post": {
         "tags": [
-          "frontend-adapter"
+          "runs"
         ],
         "summary": "Start Run Pipeline",
+        "description": "Start or restart a run.",
         "operationId": "start_run_pipeline_api_v1_runs__run_id__start_post",
         "parameters": [
           {
@@ -312,13 +1108,14 @@
         }
       }
     },
-    "/api/v1/runs/{run_id}": {
-      "get": {
+    "/api/v1/runs/{run_id}/resume": {
+      "post": {
         "tags": [
-          "frontend-adapter"
+          "runs"
         ],
-        "summary": "Get Single Run",
-        "operationId": "get_single_run_api_v1_runs__run_id__get",
+        "summary": "Resume Run Endpoint",
+        "description": "Resume execution of an approved test catalog.",
+        "operationId": "resume_run_endpoint_api_v1_runs__run_id__resume_post",
         "parameters": [
           {
             "name": "run_id",
@@ -355,10 +1152,11 @@
     "/api/v1/runs/{run_id}/cancel": {
       "post": {
         "tags": [
-          "frontend-adapter"
+          "runs"
         ],
-        "summary": "Cancel Run",
-        "operationId": "cancel_run_api_v1_runs__run_id__cancel_post",
+        "summary": "Cancel Run Endpoint",
+        "description": "Cancel an active run.",
+        "operationId": "cancel_run_endpoint_api_v1_runs__run_id__cancel_post",
         "parameters": [
           {
             "name": "run_id",
@@ -395,50 +1193,11 @@
     "/api/v1/runs/{run_id}/retry": {
       "post": {
         "tags": [
-          "frontend-adapter"
+          "runs"
         ],
         "summary": "Retry Run",
+        "description": "Reset run state and retry execution.",
         "operationId": "retry_run_api_v1_runs__run_id__retry_post",
-        "parameters": [
-          {
-            "name": "run_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Run Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/runs/{run_id}/app-map": {
-      "get": {
-        "tags": [
-          "frontend-adapter"
-        ],
-        "summary": "Get App Map",
-        "operationId": "get_app_map_api_v1_runs__run_id__app_map_get",
         "parameters": [
           {
             "name": "run_id",
@@ -475,10 +1234,16 @@
     "/api/v1/runs/{run_id}/catalog": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "catalog"
         ],
         "summary": "Get Catalog",
+        "description": "Retrieve catalog test cases formatted for frontend.",
         "operationId": "get_catalog_api_v1_runs__run_id__catalog_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "run_id",
@@ -487,6 +1252,22 @@
             "schema": {
               "type": "string",
               "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
             }
           }
         ],
@@ -515,10 +1296,16 @@
     "/api/v1/runs/{run_id}/catalog/{test_id}": {
       "patch": {
         "tags": [
-          "frontend-adapter"
+          "catalog"
         ],
-        "summary": "Update Catalog Test",
-        "operationId": "update_catalog_test_api_v1_runs__run_id__catalog__test_id__patch",
+        "summary": "Patch Test",
+        "description": "Update title, priority, or steps of a catalog test.",
+        "operationId": "patch_test_api_v1_runs__run_id__catalog__test_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "run_id",
@@ -536,6 +1323,22 @@
             "schema": {
               "type": "string",
               "title": "Test Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
             }
           }
         ],
@@ -571,12 +1374,64 @@
         }
       }
     },
+    "/api/v1/runs/{run_id}/catalog/test": {
+      "post": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Add Custom Test",
+        "description": "Generate and append a new test case to catalog from prompt.",
+        "operationId": "add_custom_test_api_v1_runs__run_id__catalog_test_post",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTestPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/runs/{run_id}/review": {
       "post": {
         "tags": [
-          "frontend-adapter"
+          "catalog"
         ],
         "summary": "Submit Review",
+        "description": "Apply QA decisions to catalog tests and advance to script synthesis if all are reviewed.",
         "operationId": "submit_review_api_v1_runs__run_id__review_post",
         "parameters": [
           {
@@ -624,90 +1479,11 @@
     "/api/v1/runs/{run_id}/review-log": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "catalog"
         ],
         "summary": "Get Review Log",
+        "description": "Retrieve decision log for catalog reviews.",
         "operationId": "get_review_log_api_v1_runs__run_id__review_log_get",
-        "parameters": [
-          {
-            "name": "run_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Run Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/runs/{run_id}/execution": {
-      "get": {
-        "tags": [
-          "frontend-adapter"
-        ],
-        "summary": "Get Execution State",
-        "operationId": "get_execution_state_api_v1_runs__run_id__execution_get",
-        "parameters": [
-          {
-            "name": "run_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Run Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/runs/{run_id}/tests": {
-      "get": {
-        "tags": [
-          "frontend-adapter"
-        ],
-        "summary": "Get Tests",
-        "operationId": "get_tests_api_v1_runs__run_id__tests_get",
         "parameters": [
           {
             "name": "run_id",
@@ -744,10 +1520,16 @@
     "/api/v1/runs/{run_id}/bugs": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "bugs"
         ],
-        "summary": "Get Bugs",
-        "operationId": "get_bugs_api_v1_runs__run_id__bugs_get",
+        "summary": "Get Run Bugs",
+        "description": "Retrieve defect reports with reproduction outcomes and evidence links. Returns 404 if run not owned.",
+        "operationId": "get_run_bugs_api_v1_runs__run_id__bugs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "run_id",
@@ -756,6 +1538,22 @@
             "schema": {
               "type": "string",
               "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
             }
           }
         ],
@@ -784,10 +1582,16 @@
     "/api/v1/bugs/{bug_id}": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "bugs"
         ],
         "summary": "Get Single Bug",
+        "description": "Find a specific defect report across all runs, respecting tenant ownership.",
         "operationId": "get_single_bug_api_v1_bugs__bug_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "bug_id",
@@ -796,6 +1600,93 @@
             "schema": {
               "type": "string",
               "title": "Bug Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/bugs/{bug_id}/retest": {
+      "post": {
+        "tags": [
+          "bugs"
+        ],
+        "summary": "Retest Bug Endpoint",
+        "description": "Execute deterministic 3x replay for candidate bug.",
+        "operationId": "retest_bug_endpoint_api_v1_runs__run_id__bugs__bug_id__retest_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "bug_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Bug Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
             }
           }
         ],
@@ -824,10 +1715,16 @@
     "/api/v1/runs/{run_id}/report": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "reports"
         ],
-        "summary": "Get Json Report",
-        "operationId": "get_json_report_api_v1_runs__run_id__report_get",
+        "summary": "Get Report",
+        "description": "Retrieve complete QA report including verification funnel and coverage.",
+        "operationId": "get_report_api_v1_runs__run_id__report_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "run_id",
@@ -836,6 +1733,782 @@
             "schema": {
               "type": "string",
               "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/results": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Get Results",
+        "description": "Retrieve raw test results.",
+        "operationId": "get_results_api_v1_runs__run_id__results_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/metrics": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Get Metrics",
+        "description": "Retrieve calculated run metrics.",
+        "operationId": "get_metrics_api_v1_runs__run_id__metrics_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/report/export": {
+      "get": {
+        "tags": [
+          "exports"
+        ],
+        "summary": "Export Passing Tests",
+        "description": "Export passing tests as a standalone runnable Playwright project.",
+        "operationId": "export_passing_tests_api_v1_runs__run_id__report_export_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/tests/export": {
+      "get": {
+        "tags": [
+          "exports"
+        ],
+        "summary": "Export Passing Tests",
+        "description": "Export passing tests as a standalone runnable Playwright project.",
+        "operationId": "export_passing_tests_api_v1_runs__run_id__tests_export_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/export": {
+      "get": {
+        "tags": [
+          "exports"
+        ],
+        "summary": "Export Passing Tests",
+        "description": "Export passing tests as a standalone runnable Playwright project.",
+        "operationId": "export_passing_tests_api_v1_runs__run_id__export_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/export/scripts": {
+      "get": {
+        "tags": [
+          "exports"
+        ],
+        "summary": "Export Scripts Only",
+        "description": "Export passing test scripts as standalone Playwright project.",
+        "operationId": "export_scripts_only_api_v1_runs__run_id__export_scripts_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/execution": {
+      "get": {
+        "tags": [
+          "streams"
+        ],
+        "summary": "Get Execution State",
+        "description": "Retrieve live worker states and test execution progress.",
+        "operationId": "get_execution_state_api_v1_runs__run_id__execution_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/tests": {
+      "get": {
+        "tags": [
+          "streams"
+        ],
+        "summary": "Get Tests",
+        "description": "Retrieve list of executed tests with statuses.",
+        "operationId": "get_tests_api_v1_runs__run_id__tests_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/logs": {
+      "get": {
+        "tags": [
+          "streams"
+        ],
+        "summary": "Get Logs",
+        "description": "Retrieve full chronological pipeline logs for the run.",
+        "operationId": "get_logs_api_v1_runs__run_id__logs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/events": {
+      "get": {
+        "tags": [
+          "streams"
+        ],
+        "summary": "Poll Run Events",
+        "description": "Fallback endpoint for polling events when SSE is not supported.",
+        "operationId": "poll_run_events_api_v1_runs__run_id__events_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/stream": {
+      "get": {
+        "tags": [
+          "streams"
+        ],
+        "summary": "Stream Run Sse",
+        "description": "Server-Sent Events endpoint streaming typed events for useRunStream.ts.",
+        "operationId": "stream_run_sse_api_v1_runs__run_id__stream_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/artifacts/{artifact_id}": {
+      "get": {
+        "tags": [
+          "artifacts"
+        ],
+        "summary": "Get Artifact",
+        "description": "Serve physical artifact evidence with strict multi-tenant ownership check.\n\nReturns 404 if artifact does not exist or is owned by another user.",
+        "operationId": "get_artifact_api_v1_artifacts__artifact_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "artifact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Artifact Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
             }
           }
         ],
@@ -864,10 +2537,11 @@
     "/api/v1/runs/{run_id}/files/{path}": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "artifacts"
         ],
-        "summary": "Serve Run File",
-        "operationId": "serve_run_file_api_v1_runs__run_id__files__path__get",
+        "summary": "Get Run File",
+        "description": "Serve generated screenshots, videos, trace files, and scripts securely.",
+        "operationId": "get_run_file_api_v1_runs__run_id__files__path__get",
         "parameters": [
           {
             "name": "run_id",
@@ -910,164 +2584,14 @@
         }
       }
     },
-    "/api/v1/runs/{run_id}/report/export": {
+    "/api/v1/runs/{run_id}/app-map": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "artifacts"
         ],
-        "summary": "Export Tests",
-        "operationId": "export_tests_api_v1_runs__run_id__report_export_get",
-        "parameters": [
-          {
-            "name": "run_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Run Id"
-            }
-          },
-          {
-            "name": "format",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "json",
-              "title": "Format"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/runs/{run_id}/tests/export": {
-      "get": {
-        "tags": [
-          "frontend-adapter"
-        ],
-        "summary": "Export Tests",
-        "operationId": "export_tests_api_v1_runs__run_id__tests_export_get",
-        "parameters": [
-          {
-            "name": "run_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Run Id"
-            }
-          },
-          {
-            "name": "format",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "json",
-              "title": "Format"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/runs/{run_id}/export": {
-      "get": {
-        "tags": [
-          "frontend-adapter"
-        ],
-        "summary": "Export Tests",
-        "operationId": "export_tests_api_v1_runs__run_id__export_get",
-        "parameters": [
-          {
-            "name": "run_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Run Id"
-            }
-          },
-          {
-            "name": "format",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "json",
-              "title": "Format"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/runs/{run_id}/logs": {
-      "get": {
-        "tags": [
-          "frontend-adapter"
-        ],
-        "summary": "Get Run Logs",
-        "description": "Retrieve full chronological pipeline logs for the run.",
-        "operationId": "get_run_logs_api_v1_runs__run_id__logs_get",
+        "summary": "Get App Map",
+        "description": "Retrieve application map node graph and crawled pages.",
+        "operationId": "get_app_map_api_v1_runs__run_id__app_map_get",
         "parameters": [
           {
             "name": "run_id",
@@ -1084,7 +2608,11 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get App Map Api V1 Runs  Run Id  App Map Get"
+                }
               }
             }
           },
@@ -1101,26 +2629,31 @@
         }
       }
     },
-    "/api/v1/runs/{run_id}/events": {
+    "/api/v1/projects/{project_id}/saved-tests": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "saved-tests"
         ],
-        "summary": "Poll Run Events",
-        "description": "Fallback endpoint for polling events when SSE is not supported.",
-        "operationId": "poll_run_events_api_v1_runs__run_id__events_get",
+        "summary": "List Saved Tests",
+        "description": "List all saved tests in the project's regression library.",
+        "operationId": "list_saved_tests_api_v1_projects__project_id__saved_tests_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
-            "name": "run_id",
+            "name": "project_id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Run Id"
+              "title": "Project Id"
             }
           },
           {
-            "name": "since",
+            "name": "token",
             "in": "query",
             "required": false,
             "schema": {
@@ -1132,7 +2665,7 @@
                   "type": "null"
                 }
               ],
-              "title": "Since"
+              "title": "Token"
             }
           }
         ],
@@ -1141,7 +2674,85 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SavedTestRead"
+                  },
+                  "title": "Response List Saved Tests Api V1 Projects  Project Id  Saved Tests Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "saved-tests"
+        ],
+        "summary": "Save Test",
+        "description": "Save an executed test case to the project's regression library.",
+        "operationId": "save_test_api_v1_projects__project_id__saved_tests_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavedTestCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedTestRead"
+                }
               }
             }
           },
@@ -1158,22 +2769,109 @@
         }
       }
     },
-    "/api/v1/runs/{run_id}/stream": {
+    "/api/v1/projects/{project_id}/saved-tests/{test_id}": {
+      "delete": {
+        "tags": [
+          "saved-tests"
+        ],
+        "summary": "Delete Saved Test",
+        "description": "Remove a test from the project's regression suite.",
+        "operationId": "delete_saved_test_api_v1_projects__project_id__saved_tests__test_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "test_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Test Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/commits": {
       "get": {
         "tags": [
-          "frontend-adapter"
+          "commits"
         ],
-        "summary": "Stream Run Sse",
-        "description": "Server-Sent Events endpoint streaming typed events for useRunStream.ts.",
-        "operationId": "stream_run_sse_api_v1_runs__run_id__stream_get",
+        "summary": "List Commits",
+        "description": "List commit events recorded for this project.",
+        "operationId": "list_commits_api_v1_projects__project_id__commits_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
-            "name": "run_id",
+            "name": "project_id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Run Id"
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
             }
           }
         ],
@@ -1182,7 +2880,85 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommitEventRead"
+                  },
+                  "title": "Response List Commits Api V1 Projects  Project Id  Commits Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "commits"
+        ],
+        "summary": "Trigger Commit Regression",
+        "description": "Manually record a commit event and trigger regression testing.",
+        "operationId": "trigger_commit_regression_api_v1_projects__project_id__commits_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommitEventCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommitEventRead"
+                }
               }
             }
           },
@@ -1199,23 +2975,265 @@
         }
       }
     },
-    "/api/runs/{run_id}/stream": {
+    "/api/v1/projects/{project_id}/commits/{commit_id}/analysis": {
       "get": {
-        "summary": "Stream Run Proxy",
-        "operationId": "stream_run_proxy_api_runs__run_id__stream_get",
+        "tags": [
+          "commits"
+        ],
+        "summary": "Get Failure Analysis",
+        "description": "Fetch probabilistic root cause localization for failures caused by a commit.",
+        "operationId": "get_failure_analysis_api_v1_projects__project_id__commits__commit_id__analysis_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
-            "name": "run_id",
+            "name": "project_id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Run Id"
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "commit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Commit Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
             }
           }
         ],
         "responses": {
           "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureAnalysisRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/commits/{commit_id}/suggest-fix": {
+      "post": {
+        "tags": [
+          "commits"
+        ],
+        "summary": "Request Fix Suggestion",
+        "description": "Request synthesis of a unified diff fix for a regression failure.",
+        "operationId": "request_fix_suggestion_api_v1_projects__project_id__commits__commit_id__suggest_fix_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "commit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Commit Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FixSuggestionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/commits/{commit_id}/auto-fix": {
+      "post": {
+        "tags": [
+          "commits"
+        ],
+        "summary": "Trigger Auto Fix Pr",
+        "description": "Open a GitHub pull request with the validated fix.",
+        "operationId": "trigger_auto_fix_pr_api_v1_projects__project_id__commits__commit_id__auto_fix_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "commit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Commit Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FixSuggestionActionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FixSuggestionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/webhooks/github": {
+      "post": {
+        "tags": [
+          "webhooks"
+        ],
+        "summary": "Receive Github Webhook",
+        "description": "Receive and verify GitHub push / pull_request webhook events.\n\nVerifies HMAC-SHA256 signature using GITHUB_WEBHOOK_SECRET.\nRejects unauthorized requests with 401 Unauthorized.\nRejects duplicate delivery IDs with 409 Conflict.\nReturns 501 Not Implemented because the downstream execution loop is scaffolded.",
+        "operationId": "receive_github_webhook_api_v1_webhooks_github_post",
+        "parameters": [
+          {
+            "name": "X-Hub-Signature-256",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Hub-Signature-256"
+            }
+          },
+          {
+            "name": "X-GitHub-Delivery",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Github-Delivery"
+            }
+          }
+        ],
+        "responses": {
+          "501": {
             "description": "Successful Response",
             "content": {
               "application/json": {
@@ -1238,7 +3256,11 @@
     },
     "/health": {
       "get": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Health",
+        "description": "Service health probe.",
         "operationId": "health_health_get",
         "responses": {
           "200": {
@@ -1258,7 +3280,11 @@
     },
     "/config": {
       "get": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Get Config",
+        "description": "System limits, timeouts, and configured budgets.",
         "operationId": "get_config_config_get",
         "responses": {
           "200": {
@@ -1278,7 +3304,11 @@
     },
     "/runs": {
       "get": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "List Runs",
+        "description": "List summary records for all runs.",
         "operationId": "list_runs_runs_get",
         "responses": {
           "200": {
@@ -1298,7 +3328,11 @@
         }
       },
       "post": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Start Run",
+        "description": "Start a new QA test run conforming strictly to Section 8 contract.",
         "operationId": "start_run_runs_post",
         "requestBody": {
           "content": {
@@ -1315,11 +3349,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Start Run Runs Post"
-                }
+                "schema": {}
               }
             }
           },
@@ -1338,7 +3368,11 @@
     },
     "/runs/{run_id}": {
       "get": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Get Run",
+        "description": "Retrieve complete state of a run.",
         "operationId": "get_run_runs__run_id__get",
         "parameters": [
           {
@@ -1377,7 +3411,11 @@
     },
     "/runs/{run_id}/catalog": {
       "put": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Update Catalog",
+        "description": "Update test cases in catalog while awaiting review.",
         "operationId": "update_catalog_runs__run_id__catalog_put",
         "parameters": [
           {
@@ -1426,7 +3464,11 @@
     },
     "/runs/{run_id}/tests": {
       "post": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Add Test",
+        "description": "Generate and append a new test case to the catalog from prompt.",
         "operationId": "add_test_runs__run_id__tests_post",
         "parameters": [
           {
@@ -1475,7 +3517,11 @@
     },
     "/runs/{run_id}/execute": {
       "post": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Execute Run",
+        "description": "Approve non-rejected catalog tests and launch test execution.",
         "operationId": "execute_run_runs__run_id__execute_post",
         "parameters": [
           {
@@ -1516,7 +3562,11 @@
     },
     "/runs/{run_id}/report": {
       "get": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Get Report",
+        "description": "Retrieve markdown report file.",
         "operationId": "get_report_runs__run_id__report_get",
         "parameters": [
           {
@@ -1555,7 +3605,11 @@
     },
     "/runs/{run_id}/files/{path}": {
       "get": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Get Run File",
+        "description": "Retrieve an artifact file from the run directory.",
         "operationId": "get_run_file_runs__run_id__files__path__get",
         "parameters": [
           {
@@ -1601,8 +3655,53 @@
     },
     "/runs/{run_id}/export": {
       "get": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Export Passing Tests",
+        "description": "Export passing Playwright tests as a standalone ZIP package.",
         "operationId": "export_passing_tests_runs__run_id__export_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/runs/{run_id}/stream": {
+      "get": {
+        "tags": [
+          "legacy-contracts"
+        ],
+        "summary": "Stream Run Progress",
+        "description": "Server-Sent Events endpoint streaming stage changes.",
+        "operationId": "stream_run_progress_api_runs__run_id__stream_get",
         "parameters": [
           {
             "name": "run_id",
@@ -1638,8 +3737,11 @@
     },
     "/runs/{run_id}/stream": {
       "get": {
+        "tags": [
+          "legacy-contracts"
+        ],
         "summary": "Stream Run Progress",
-        "description": "Server-Sent Events endpoint streaming stage changes and execution progress.",
+        "description": "Server-Sent Events endpoint streaming stage changes.",
         "operationId": "stream_run_progress_runs__run_id__stream_get",
         "parameters": [
           {
@@ -1677,6 +3779,19 @@
   },
   "components": {
     "schemas": {
+      "AddTestPayload": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "title": "AddTestPayload"
+      },
       "AddTestRequest": {
         "properties": {
           "prompt": {
@@ -2019,6 +4134,239 @@
         ],
         "title": "Catalog"
       },
+      "CommitEventCreate": {
+        "properties": {
+          "sha": {
+            "type": "string",
+            "title": "Sha",
+            "description": "Git commit SHA-1 or SHA-256"
+          },
+          "branch": {
+            "type": "string",
+            "title": "Branch",
+            "description": "Target branch name"
+          },
+          "author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author",
+            "description": "Commit author name or handle"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message",
+            "description": "Commit commit message"
+          },
+          "pushed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Pushed At",
+            "description": "Timestamp of push"
+          },
+          "webhook_delivery_id": {
+            "type": "string",
+            "title": "Webhook Delivery Id",
+            "description": "Unique GitHub webhook delivery ID for idempotency"
+          },
+          "files_changed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Files Changed",
+            "description": "List of files touched by commit"
+          },
+          "diff_stats": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Diff Stats",
+            "description": "Additions, deletions, total lines"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sha",
+          "branch",
+          "pushed_at",
+          "webhook_delivery_id"
+        ],
+        "title": "CommitEventCreate",
+        "description": "Payload representing a push or PR commit event from GitHub."
+      },
+      "CommitEventRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "default": "github"
+          },
+          "sha": {
+            "type": "string",
+            "title": "Sha"
+          },
+          "branch": {
+            "type": "string",
+            "title": "Branch"
+          },
+          "author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "pushed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Pushed At"
+          },
+          "webhook_delivery_id": {
+            "type": "string",
+            "title": "Webhook Delivery Id"
+          },
+          "files_changed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Files Changed"
+          },
+          "diff_stats": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Diff Stats"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "project_id",
+          "sha",
+          "branch",
+          "pushed_at",
+          "webhook_delivery_id",
+          "status",
+          "created_at"
+        ],
+        "title": "CommitEventRead",
+        "description": "Commit event model returned to clients."
+      },
+      "CreateProjectRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "targetUrl": {
+            "type": "string",
+            "title": "Targeturl"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "defaultMode": {
+            "type": "string",
+            "title": "Defaultmode",
+            "default": "manual"
+          },
+          "budgets": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budgets"
+          },
+          "allowedHosts": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowedhosts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "targetUrl"
+        ],
+        "title": "CreateProjectRequest"
+      },
       "CreateRunPayload": {
         "properties": {
           "target_url": {
@@ -2230,6 +4578,128 @@
         "type": "object",
         "title": "Evidence"
       },
+      "FailureAnalysisRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "test_result_id": {
+            "type": "string",
+            "title": "Test Result Id"
+          },
+          "commit_event_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commit Event Id"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/FailureCandidateRead"
+            },
+            "type": "array",
+            "title": "Candidates"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "run_id",
+          "test_result_id",
+          "status",
+          "created_at"
+        ],
+        "title": "FailureAnalysisRead",
+        "description": "Failure localization report mapping regression failure back to code."
+      },
+      "FailureCandidateRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "rank": {
+            "type": "integer",
+            "title": "Rank",
+            "description": "Rank order (1 = most likely)"
+          },
+          "file_path": {
+            "type": "string",
+            "title": "File Path",
+            "description": "Target repository file path"
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Component",
+            "description": "Detected component name"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "description": "Probabilistic confidence score"
+          },
+          "rationale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rationale",
+            "description": "Analysis justification"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "rank",
+          "file_path",
+          "confidence"
+        ],
+        "title": "FailureCandidateRead",
+        "description": "Ranked probabilistic candidate source file responsible for a test failure."
+      },
       "Feature": {
         "properties": {
           "name": {
@@ -2287,6 +4757,116 @@
           "name"
         ],
         "title": "FieldInfo"
+      },
+      "FixSuggestionActionRequest": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "description": "accept | reject | create_pr"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "FixSuggestionActionRequest",
+        "description": "Action taken on a fix suggestion (accept, reject, auto-fix PR)."
+      },
+      "FixSuggestionRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "analysis_id": {
+            "type": "string",
+            "title": "Analysis Id"
+          },
+          "diff_artifact_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diff Artifact Id"
+          },
+          "risk_class": {
+            "type": "string",
+            "title": "Risk Class",
+            "default": "small"
+          },
+          "files_changed": {
+            "type": "integer",
+            "title": "Files Changed",
+            "default": 1
+          },
+          "lines_changed": {
+            "type": "integer",
+            "title": "Lines Changed",
+            "default": 0
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "proposed"
+          },
+          "validation_verification_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validation Verification Id"
+          },
+          "pr_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pr Url"
+          },
+          "pr_number": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pr Number"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "analysis_id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "FixSuggestionRead",
+        "description": "Proposed code patch or auto-fix suggestion."
       },
       "FormInfo": {
         "properties": {
@@ -2449,8 +5029,26 @@
       },
       "LoginRequest": {
         "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
           "username_or_email": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Username Or Email"
           },
           "password": {
@@ -2460,7 +5058,6 @@
         },
         "type": "object",
         "required": [
-          "username_or_email",
           "password"
         ],
         "title": "LoginRequest"
@@ -2785,6 +5382,52 @@
           "total"
         ],
         "title": "Progress"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refreshToken": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refreshtoken"
+          }
+        },
+        "type": "object",
+        "title": "RefreshRequest"
+      },
+      "RegisterRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          },
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "RegisterRequest"
       },
       "Results": {
         "properties": {
@@ -3246,6 +5889,151 @@
         ],
         "title": "RunView"
       },
+      "SavedTestCreate": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "title": "Run Id",
+            "description": "Run ID from which the test originated"
+          },
+          "test_id": {
+            "type": "string",
+            "title": "Test Id",
+            "description": "Test case ID (e.g. T01)"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Optional custom name for saved test"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags",
+            "description": "Categorization tags"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id",
+          "test_id"
+        ],
+        "title": "SavedTestCreate",
+        "description": "Payload to save an executed test case to a project's regression library."
+      },
+      "SavedTestRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id"
+          },
+          "origin_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin Run Id"
+          },
+          "origin_test_case_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin Test Case Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "script_path": {
+            "type": "string",
+            "title": "Script Path"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "project_id",
+          "name",
+          "script_path",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SavedTestRead",
+        "description": "Saved test model returned to clients."
+      },
+      "SetCredentialsRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "SetCredentialsRequest"
+      },
       "SpecItem": {
         "properties": {
           "id": {
@@ -3537,6 +6325,68 @@
         "type": "object",
         "title": "UpdateCatalogRequest"
       },
+      "UpdateProjectRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "targetUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Targeturl"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "defaultMode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Defaultmode"
+          },
+          "budgets": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budgets"
+          }
+        },
+        "type": "object",
+        "title": "UpdateProjectRequest"
+      },
       "ValidationError": {
         "properties": {
           "loc": {
@@ -3660,6 +6510,12 @@
           "durationMs"
         ],
         "title": "VerificationAttempt"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }

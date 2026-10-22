@@ -47,7 +47,7 @@ To automate the entire QA engineering lifecycle from specification analysis to v
 
 ```
 +----------------------------------------------------------------------------------------------------+
-|                                    NEXT.JS 16 FRONTEND (Turbopack)                                 |
+|                                    NEXT.JS 16 FRONTEND (apps/web/)                                 |
 |  - Start / Preflight Form (/start)            - Review Gate Table (/catalog/[runId])              |
 |  - Real-time Cockpit & Logs (/execution/[id]) - Bug Deep-Dive & Videos (/results/[id])             |
 |  - Executive KPI & Coverage Report (/reports/[id])                                                 |
@@ -55,10 +55,10 @@ To automate the entire QA engineering lifecycle from specification analysis to v
                                                   | REST API & SSE Event Stream (/api/v1/*, /runs/*)
                                                   v
 +----------------------------------------------------------------------------------------------------+
-|                                  FASTAPI APPLICATION (backend/app/main.py)                        |
-|  - Dual-mounted endpoints (root + /api/v1/*)    - Spec item parser (^S\d+:)                        |
-|  - Concurrency & stage guards (409)             - Frontend adapter layer (frontend_adapter.py)     |
-|  - In-memory export zip packager                - Thread-safe storage manager (storage.py)         |
+|                                  FASTAPI APPLICATION (apps/api/src/kawach/main.py)                |
+|  - App factory & lifespan (< 80 lines)          - Modular routers (kawach.api.v1, legacy)          |
+|  - Use-case services (kawach.services)          - Layered architecture with domain/schemas split   |
+|  - In-memory export zip packager                - Artifact storage manager (kawach.storage)        |
 +-------------------------------------------------+--------------------------------------------------+
                                                   |
                          +------------------------+------------------------+
@@ -178,6 +178,65 @@ Without a traditional SQL index, run listing is optimized for high speed:
   - Reverts in-memory users, sessions, and items back to clean initial seeds.
   - Resets the `saveCount` to `0`.
   - Executed before every 3x replay attempt in `verifier.py` to guarantee clean state.
+
+### 5.9. Relational Persistence Platform (PostgreSQL + SQLite + Alembic)
+Starting in Phase 3, KAWACH supports a full relational database layer alongside managed filesystem artifacts:
+- **Engine & Session Management (`kawach.db.session`):**
+  - Configured with SQLAlchemy 2.0 `create_engine` and `sessionmaker`.
+  - In development/testing: SQLite with foreign key enforcement (`PRAGMA foreign_keys=ON;`) and batch migration mode.
+  - In production: PostgreSQL with connection pooling.
+  - Generator `get_db()` provides transactional session dependency for FastAPI routes.
+- **Declarative Schema (30 Tables across 9 Modules):**
+  - `kawach.db.models.identity`: `User`, `RefreshToken`
+  - `kawach.db.models.project`: `Project`, `SpecItem`, `ProjectCredential`, `ProjectIntegration`
+  - `kawach.db.models.runs`: `Run`, `RunStageTime`, `AppMap`, `RunMetric`, `LlmUsage`
+  - `kawach.db.models.tests`: `TestCase`, `TestCaseSpecRef`, `TestScript`, `ReviewDecision`, `TestResult`
+  - `kawach.db.models.artifacts`: `Artifact` (metadata for physical storage)
+  - `kawach.db.models.bugs`: `Bug`, `BugEvidence`, `BugDuplicate`, `Verification`, `VerificationAttempt`
+  - `kawach.db.models.saved_tests`: `SavedTest`, `SavedTestCoverage`, `RunSelectedTest`
+  - `kawach.db.models.commit_loop`: `CommitEvent`, `FailureAnalysis`, `FailureCandidate`, `FixSuggestion`
+  - `kawach.db.models.audit`: `AuditLog`
+- **Scoped Multi-Tenant Repositories (`kawach.repositories`):**
+  - Every repository query accepts a `Scope(user_id, is_system)`.
+  - Non-system scopes strictly enforce user isolation on all project and run resources.
+  - Repositories: `UserRepository`, `ProjectRepository`, `RunRepository`, `TestCatalogRepository`, `BugRepository`, `ArtifactRepository`, `AuditRepository`.
+- **SecretStore Driver (`kawach.core.security`):**
+  - Fernet symmetric encryption at rest for passwords, API tokens, and webhook secrets.
+  - Constant-time comparison `constant_time_compare()` to prevent timing attacks.
+  - Token masking `mask_token()` for safe API display.
+- **ArtifactStore Driver (`kawach.storage.artifact_store`):**
+  - Physical file management under `ARTIFACTS_DIR` (defaults to `<repo_root>/data/artifacts`).
+  - Hierarchical directory partitioning: `projects/<project_id>/runs/<run_id>/<kind>/<uuid>_<filename>`.
+  - SHA256 integrity verification, safe path traversal checks, and MIME auto-detection.
+- **EventBus & JobRunner (`kawach.core.events`, `kawach.core.jobs`):**
+  - Synchronous and asynchronous pub/sub event bus for live stage progression and SSE streaming.
+  - Background job runner for executing async testing tasks.
+- **Legacy Migration Utility (`apps/api/scripts/import_legacy_runs.py`):**
+  - Reads flat-file runs from `runs/` or `demo-data/golden/`.
+  - Migrates input, run state, spec items, topology, catalog, test cases, results, review decisions, bugs, replay verifications, metrics, and evidence into the database and `ArtifactStore`.
+
+### 5.10. Multi-Tenancy, Authentication & Access Control (Phase 4)
+- **Equal-Privilege Multi-Tenancy:**
+  - Complete data isolation based on project ownership (`project.owner_id == current_user.id`).
+  - Users can only see, create, update, or execute runs, test catalogs, bugs, and artifacts within their own projects.
+- **Anti-Leakage 404 Protection:**
+  - Any request targeting a project, run, bug, or artifact owned by another user yields `404 Not Found` (never `403 Forbidden`). This conceals the existence of foreign resources and prevents enumeration attacks.
+- **Authentication Engine (`kawach.services.auth_service`, `kawach.core.security`):**
+  - User registration & login with email and password.
+  - Password hashing via PBKDF2 with SHA-256 and salt.
+  - Session authentication via signed JSON Web Tokens (JWT) using `HS256`.
+  - Tokens delivered via `httpOnly`, `SameSite=Lax` cookies (`auth_token`), and supported in `Authorization: Bearer <token>` headers.
+  - Real-time SSE streaming (`/api/v1/runs/{id}/stream`) supports both cookies and `?token=` query parameters for browser `EventSource` compatibility.
+  - Refresh token rotation persisted in `refresh_tokens` table with SHA-256 token hashing and revocation tracking.
+- **SecretStore Credential Encryption at Rest:**
+  - Credentials and tokens stored encrypted with Fernet symmetric cryptography (`SecretStore`).
+  - Write-only credentials API: `GET /projects/{id}/credentials` returns only `{hasSecret: bool, token: "...1234"}`, never cleartext passwords or keys.
+  - Cleartext secrets are scrubbed and prohibited from logging, export zips, and LLM prompts.
+- **Audit Logging System (`kawach.db.models.audit`, `kawach.repositories.audit_repo`):**
+  - Every sensitive operation (`user_register`, `login`, `project_create`, `project_update`, `credential_change`, `run_start`, `export`) is recorded in `audit_logs`.
+  - Stores timestamp, user ID, client IP, action, entity type, entity ID, and sanitized metadata.
+- **Scoped Binary Artifact Delivery:**
+  - Endpoint `GET /api/v1/artifacts/{id}` checks user ownership against `ArtifactStore` on physical disk and streams binary files with correct MIME headers.
 
 ---
 
@@ -497,9 +556,9 @@ Compact summary returned by `GET /runs` for the runs dashboard.
 
 ## 7. Subsystems & Included Capabilities
 
-### 7.1. Target Testbed Application (`target-app/`)
+### 7.1. Target Testbed Application (`examples/target-app/`)
 - Lightweight Express.js multi-page web application (`http://localhost:4000`) with authentication, dashboard items, settings, and full reset endpoint (`POST /__reset`).
-- Contains **9 intentionally planted ground truth bugs** (`GT01`–`GT09`):
+- Contains **9 intentionally planted ground truth bugs** (`GT01`–`GT09`), tracked in `benchmarks/planted-bugs/ground_truth.json` (and `examples/target-app/ground_truth.json`):
   - `GT01`: Client-side validation bypass on `/signup` (accepts invalid email).
   - `GT02`: Signup allows weak passwords (< 8 chars).
   - `GT03`: Login with invalid password fails silently without displaying an error alert.
@@ -509,41 +568,54 @@ Compact summary returned by `GET /runs` for the runs dashboard.
   - `GT07`: Missing `Cache-Control: no-store` header allows viewing cached dashboard after logout via Back button.
   - `GT08`: Settings page crashes with an unhandled `TypeError` in browser console.
   - `GT09`: Settings save throws HTTP 500 error on even save counts (flaky defect).
-- Includes self-test harness (`target-app/selftest.mjs`) and specification document (`target-app/spec.md`).
+- Includes self-test harness (`examples/target-app/selftest.mjs`) and specification document (`examples/target-app/spec.md`).
 
-### 7.2. Intelligence & Agentic Core (`backend/app/agents/`)
-- **Explorer (`explorer.py`):** Drives headless Chromium crawler (`runner/explore.ts`) using breadth-first search to map interactive elements, forms, inputs, buttons, and headings into `app_map.json`.
-- **Planner (`planner.py`):** Analyzes `app_map.json` and functional specs to synthesize an exhaustive test catalog (`catalog.json`) with full `S1..Sn` spec mapping, priority assignments, and step-by-step test plans. Also supports ad-hoc single test synthesis from user prompts.
-- **Reviewer (`reviewer.py`):** Evaluates test catalogs during autonomous runs, providing documented rationales for test approval or rejection in `review_log.json`.
-- **Script Writer (`script_writer.py`):** Generates clean, robust Playwright TypeScript test scripts utilizing custom fixtures (`runner/fixtures.ts`). Includes code sanitizers to strip markdown code blocks, enforce locator best practices, prevent hardcoded credentials, and ensure sandbox safety.
-- **Bug Reporter (`bug_reporter.py`):** Ingests test failures, execution traces, screenshots, and replay outcomes to synthesize developer-grade bug reports (`bugs.json`) with exact reproduction steps, expected vs. observed behavior, error stack traces, and evidence links.
+### 7.2. Intelligence & Agentic Core (`apps/api/src/kawach/agents/`)
+- **Explorer (`agents/explorer/`):** Drives headless Chromium crawler (`apps/runner/explore.ts`) using breadth-first search to map interactive elements, forms, inputs, buttons, and headings into `app_map.json`. Prompts co-located in `prompts/explore_summary.md`.
+- **Planner (`agents/planner/`):** Analyzes `app_map.json` and functional specs to synthesize an exhaustive test catalog (`catalog.json`) with full `S1..Sn` spec mapping, priority assignments, and step-by-step test plans. Prompts co-located in `prompts/planner.md` and `prompts/planner_single.md`.
+- **Reviewer (`agents/reviewer/`):** Evaluates test catalogs during autonomous runs, providing documented rationales for test approval or rejection in `review_log.json`.
+- **Script Writer (`agents/script_writer/`):** Generates clean, robust Playwright TypeScript test scripts utilizing custom fixtures (`apps/runner/fixtures.ts`). Prompts co-located in `prompts/script_writer.md` and `prompts/_guard.md`.
+- **Bug Reporter (`agents/bug_reporter/`):** Ingests test failures, execution traces, screenshots, and replay outcomes to synthesize developer-grade bug reports (`bugs.json`). Prompts co-located in `prompts/bug_reporter.md`.
 
-### 7.3. Workflows & Graphs (`backend/app/graphs/`)
+### 7.3. Workflows & Graphs (`apps/api/src/kawach/workflows/`)
 - **LangGraph Workflows:** Orchestrates stateful multi-agent execution with error containment (`safe_node` wrappers):
   - `explore_plan.py`: Graph 1 (exploration ➔ map synthesis ➔ planning ➔ review gate).
   - `execute.py`: Graph 2 (scripting ➔ parallel execution ➔ self-healing ➔ triage ➔ 3x verification ➔ bug reporting ➔ final report compilation).
   - `stubs.py`: Zero-LLM deterministic simulation engine using contract fixtures for testing and fallback.
 
-### 7.4. Runner & Execution Platform (`runner/`, `backend/app/runner_client.py`)
+### 7.4. Runner & Execution Platform (`apps/runner/`, `apps/api/src/kawach/execution/runner.py`)
 - **Playwright Test Runner:** Parallel test execution engine dividing tests across browser workers (`w1`, `w2`).
-- **Fixture System (`runner/fixtures.ts`):** Provides isolated page fixtures, automatic failure screenshots, video recordings, Playwright trace zips, console error interceptors, and network activity harvesters.
+- **Fixture System (`apps/runner/fixtures.ts`):** Provides isolated page fixtures, automatic failure screenshots, video recordings, Playwright trace zips, console error interceptors, and network activity harvesters.
 - **Self-Healing Loop:** Automatically catches locator errors or runtime exceptions, requests a repaired script from the script writer agent, and re-executes.
 
-### 7.5. Prover & Verifier (`backend/app/verifier.py`)
+### 7.5. Prover & Verifier (`apps/api/src/kawach/execution/verifier.py`)
 - **3x Clean Replay Engine:** Isolates suspected defects and executes 3 fresh replay trials against the target app, executing `POST /__reset` before each attempt to guarantee fresh state.
 - Accurately classifies outcomes into **Confirmed** (3/3), **Flaky** (1-2/3), or **Not Reproduced** (0/3).
 
-### 7.6. Report & Metrics Compiler (`backend/app/report.py`)
+### 7.6. Report & Metrics Compiler (`apps/api/src/kawach/execution/reporting.py`)
 - **Zero-LLM Deterministic Compiler:** Computes wall-clock execution time, stage seconds, test pass/fail rates, bug categories, map/form/spec coverage percentages, and LLM token usage.
 - Produces deterministic, Markdown-formatted `report.md` with table cell escaping, bug severity sorting, and embedded artifact links.
 
-### 7.7. FastAPI Backend & Adapter (`backend/app/main.py`, `backend/app/frontend_adapter.py`)
+### 7.7. FastAPI Backend & Application Factory (`apps/api/src/kawach/main.py`, `apps/api/src/kawach/api/`)
+- Lightweight app factory (`create_app()`, < 80 lines) with lifespan manager recovering stale active runs.
+- **Authentication & Security Engine (`apps/api/src/kawach/api/v1/auth.py`, `apps/api/src/kawach/api/deps.py`):**
+  - Session authentication via `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, `POST /api/v1/auth/refresh`, `GET /api/v1/auth/me`, `POST /api/v1/auth/logout`.
+  - Delivers `auth_token` and `refresh_token` in `httpOnly`, `SameSite=Lax` cookies; supports `Authorization: Bearer <token>` and `?token=` query param.
+  - Anti-leakage 404 security: access to unauthorized resources returns `404 Not Found` (never `403 Forbidden`).
+- **Project Management (`apps/api/src/kawach/api/v1/projects.py`):**
+  - Project CRUD (`/api/v1/projects`, `/api/v1/projects/{id}`), auto-slugification, and encrypted write-only credentials (`PUT /projects/{id}/credentials`).
+- **Scoped Artifact Serving (`apps/api/src/kawach/api/v1/artifacts.py`):**
+  - Binary file streaming (`GET /api/v1/artifacts/{id}`) verified against user project ownership and served from `ArtifactStore`.
+- **Scaffolded Product Flow Endpoints (HTTP 501 / Phase 5):**
+  - `apps/api/src/kawach/api/v1/saved_tests.py`: `/projects/{id}/saved-tests` (CRUD endpoints for regression suite).
+  - `apps/api/src/kawach/api/v1/commits.py`: `/projects/{id}/commits`, `/analysis`, `/suggest-fix`, `/auto-fix`.
+  - `apps/api/src/kawach/api/v1/webhooks.py`: Public `/webhooks/github` receiver with active HMAC-SHA256 signature verification and delivery ID idempotency checking.
 - Dual-mounted REST endpoints supporting both canonical routes (`/runs`, `/config`, `/health`) and Next.js proxy paths (`/api/v1/*`).
 - Real-time Server-Sent Events (SSE) stream (`/runs/{id}/stream` and `/api/v1/runs/{id}/logs`) streaming live execution logs and progress pings.
-- In-memory export packager streaming zip files containing passing tests with rewritten import paths (`../../../runner/fixtures` ➔ `./fixtures`).
+- In-memory export packager streaming zip files containing passing tests with rewritten import paths (`./fixtures`).
 - Security middleware blocking path traversal (`../`), symlink escapes, and direct access to `secrets.json` or `input.json`.
 
-### 7.8. Frontend Web Application (`app/`, `components/`, `hooks/`, `lib/`)
+### 7.8. Frontend Web Application (`apps/web/`)
 - **Next.js 16 (Turbopack) + Tailwind CSS + TanStack React Query**.
 - **Views Implemented:**
   - `/` & `/start`: Run configuration and spec upload.
@@ -559,196 +631,89 @@ Compact summary returned by `GET /runs` for the runs dashboard.
 
 ```text
 vithackie/
-+-- app/                                    # Next.js App Router (Pages, Layouts, Routing)
-|   +-- api/                                # Next.js Route Handlers / API proxies
-|   +-- catalog/
-|   |   +-- [runId]/
-|   |   |   +-- page.tsx                    # Review Gate Page (Approve/Reject/Edit Catalog)
-|   |   +-- page.tsx                        # Catalog route redirect / fallback
-|   +-- execution/
-|   |   +-- [runId]/
-|   |   |   +-- page.tsx                    # Live Execution Cockpit (Worker Cards, Live Logs)
-|   |   +-- page.tsx                        # Execution route fallback
-|   +-- login/
-|   |   +-- page.tsx                        # Auth / Login UI placeholder
-|   +-- reports/
-|   |   +-- [runId]/
-|   |   |   +-- page.tsx                    # Executive QA Report View (KPIs, Funnel, Markdown)
-|   |   +-- page.tsx                        # Reports list fallback
-|   +-- results/
-|   |   +-- [runId]/
-|   |   |   +-- bugs/
-|   |   |   |   +-- [bugId]/
-|   |   |   |   |   +-- page.tsx            # Bug Deep-Dive (Video Player, Traces, Replay Log)
-|   |   |   +-- page.tsx                    # Test Results & Verified Bugs Hub
-|   |   +-- page.tsx                        # Results route fallback
-|   +-- start/
-|   |   +-- page.tsx                        # Pre-flight Configuration & Run Start View
-|   +-- favicon.ico                         # Favicon
-|   +-- globals.css                         # Tailwind CSS base and theme definitions
-|   +-- layout.tsx                          # Root Application Shell layout
-|   +-- page.tsx                            # Root Landing Page (redirects to /start)
-+-- backend/                                # Python Agentic Backend Subsystem
-|   +-- .llm_cache/                         # Local disk cache for LLM requests (deterministic)
-|   +-- app/                                # FastAPI application and agent modules
-|   |   +-- agents/                         # Autonomous Agent implementations
-|   |   |   +-- __init__.py                 # Agents package export
-|   |   |   +-- bug_reporter.py             # Bug Reporter Agent (defect synthesis)
-|   |   |   +-- explorer.py                 # Explorer Agent (crawler + page summary)
-|   |   |   +-- planner.py                  # Test Planner Agent (catalog generation)
-|   |   |   +-- reviewer.py                 # Reviewer Agent (autonomous catalog approval)
-|   |   |   +-- script_writer.py            # Script Writer Agent (Playwright TS synthesis)
-|   |   +-- fake_llm/                       # Canned LLM responses for STUB_MODE / LLM_PROVIDER=fake
-|   |   |   +-- _example.json               # Schema example
-|   |   |   +-- bug_report.json             # Canned bug reports
-|   |   |   +-- explore_summary.json        # Canned page discovery summary
-|   |   |   +-- planner_catalog.json        # Canned 11-test catalog
-|   |   |   +-- planner_single.json         # Canned single ad-hoc test
-|   |   |   +-- script_writer.txt           # Canned Playwright test script
-|   |   +-- graphs/                         # LangGraph Orchestration Workflows
-|   |   |   +-- __init__.py                 # Graphs package entrypoint
-|   |   |   +-- execute.py                  # Graph 2: Scripting, Running, Proving, Reporting
-|   |   |   +-- explore_plan.py             # Graph 1: Pre-flight, Crawling, Planning, Review
-|   |   |   +-- stubs.py                    # Deterministic stub simulation engine
-|   |   +-- prompts/                        # System prompts for LLM agents
-|   |   |   +-- _guard.md                   # Anti-prompt-injection security guard template
-|   |   |   +-- bug_reporter.md             # Bug reporter instructions and schema
-|   |   |   +-- explore_summary.md          # Explorer page summarization prompt
-|   |   |   +-- planner.md                  # Test catalog planning prompt
-|   |   |   +-- planner_single.md           # Single test synthesis prompt
-|   |   |   +-- script_writer.md            # Playwright TS code generation prompt
-|   |   +-- __init__.py                     # App package initialization
-|   |   +-- config.py                       # App configuration, settings, and env vars
-|   |   +-- frontend_adapter.py             # DTO mapping and proxy adapter for frontend UI
-|   |   +-- llm.py                          # Multi-provider LLM client with rate limiting & caching
-|   |   +-- main.py                         # FastAPI server, REST endpoints, SSE stream, exports
-|   |   +-- models.py                       # Pydantic v2 domain schemas (Run, Catalog, Bug, etc.)
-|   |   +-- prompts.py                      # Prompt loader and untrusted data wrapping helpers
-|   |   +-- report.py                       # Zero-LLM metrics and Markdown report generator
-|   |   +-- runner_client.py                # Playwright execution driver & self-healing harness
-|   |   +-- storage.py                      # Thread-safe JSON file-based run storage manager
-|   |   +-- verifier.py                     # Deterministic 3x clean replay verifier engine
-|   +-- scripts/                            # Operational & verification scripts
-|   |   +-- dump_graphs.py                  # Generates Mermaid diagram files for graphs
-|   |   +-- export_schemas.py               # Exports Pydantic schemas to contracts/schemas/
-|   |   +-- generate_samples.py             # Generates sample JSON files from contracts
-|   |   +-- llm_smoke.py                    # Smoke test for live LLM providers
-|   |   +-- validate_samples.py             # Validates contract sample JSONs against models
-|   |   +-- verify_live.py                  # Live end-to-end verification script against target app
-|   +-- tests/                              # Pytest test suite (55 tests)
-|   |   +-- conftest.py                     # Pytest shared fixtures
-|   |   +-- test_api.py                     # API endpoints, security, validation, export tests
-|   |   +-- test_bug_reporter.py            # Bug reporter agent unit tests
-|   |   +-- test_explorer.py                # Explorer agent unit tests
-|   |   +-- test_graphs.py                  # LangGraph explore-plan & execute workflow tests
-|   |   +-- test_llm.py                     # LLM client, fake provider, cache, and token tests
-|   |   +-- test_planner.py                 # Planner agent unit tests
-|   |   +-- test_report.py                  # Metrics calculation and report generator tests
-|   |   +-- test_runner_client.py           # Playwright runner client & execution tests
-|   |   +-- test_script_writer.py           # Script writer agent & code sanitizer tests
-|   |   +-- test_verifier.py                # 3x replay harness and classification tests
-|   +-- requirements.txt                    # Python dependencies
-+-- components/                             # React UI Component Library
-|   +-- features/
-|   |   +-- StartTestForm.tsx               # URL, Spec, Mode, and Credentials submission form
-|   +-- layout/
-|   |   +-- AppShell.tsx                    # Main application wrapper with nav and footer
-|   |   +-- Sidebar.tsx                     # Side navigation bar
-|   |   +-- TopBar.tsx                      # Top status bar with active run switcher
-|   +-- providers/
-|   |   +-- QueryProvider.tsx               # TanStack React Query provider
-|   +-- ui/                                 # Reusable atomic UI components
-|       +-- BudgetMeter.tsx                 # Budget usage display meter
-|       +-- Button.tsx                      # Styled button with variants
-|       +-- Card.tsx                        # Glassmorphism container card
-|       +-- Checkbox.tsx                    # Accessible form checkbox
-|       +-- Chip.tsx                        # Status and severity badges
-|       +-- CodeBlock.tsx                   # Syntax-highlighted code container
-|       +-- ConnectionBadge.tsx             # Backend health & SSE connection indicator
-|       +-- DataTable.tsx                   # Sortable, filterable table
-|       +-- Dialog.tsx                      # Accessible modal dialog
-|       +-- Drawer.tsx                      # Slide-out preview drawer
-|       +-- DropdownMenu.tsx                # Action dropdown menu
-|       +-- EmptyState.tsx                  # Empty data placeholder
-|       +-- FileDropzone.tsx                # Drag-and-drop file upload for specs
-|       +-- LogViewer.tsx                   # Streaming real-time log terminal viewer
-|       +-- ReplayPips.tsx                  # 3x replay visualization dots (green/amber/red)
-|       +-- RunSwitcher.tsx                 # Active run selector dropdown
-|       +-- Skeleton.tsx                    # Loading skeleton placeholder
-|       +-- Stepper.tsx                     # Pipeline progress stage indicator
-|       +-- Switch.tsx                      # Toggle switch component
-|       +-- Tabs.tsx                        # Multi-panel tab switcher
-|       +-- Toast.tsx                       # Notification alerts
-|       +-- Tooltip.tsx                     # Interactive hover tooltips
-|       +-- WorkerCard.tsx                  # Sandbox worker card with live screenshots
-+-- contracts/                              # Architecture Contracts & Golden Samples
-|   +-- samples/                            # Golden contract sample files
-|   |   +-- files/                          # Sample execution evidence and scripts
-|   |   |   +-- evidence/                   # Screenshots, videos, network, and console logs
-|   |   |   +-- scripts/                    # Sample Playwright TS script
-|   |   |   +-- report.md                   # Sample final markdown report
-|   |   +-- app_map.sample.json             # Reference explored application map
-|   |   +-- bugs.sample.json                # Reference triaged and verified bug list
-|   |   +-- catalog.sample.json             # Reference 11-test catalog
-|   |   +-- metrics.sample.json             # Reference run metrics
-|   |   +-- results.sample.json             # Reference Playwright execution results
-|   |   +-- review_log.sample.json          # Reference autonomous reviewer decisions
-|   |   +-- run_view.*.sample.json          # Reference API run views across all stages
-|   |   +-- runs_list.sample.json           # Reference runs list
-|   |   +-- verification.B01.sample.json    # Reference 3x replay verification record
-|   +-- schemas/                            # 40+ exported JSON Schemas matching models
-|   +-- types.ts                            # Canonical TypeScript interfaces matching models.py
-+-- demo-data/                              # Golden run artifacts for demo presentations
-+-- docs/                                   # Project Documentation & Architecture RFCs
-|   +-- AGENT_RULES.md                      # Strict operational rules for AI agents
-|   +-- agentic_implementation.md           # Implementation log for LangGraph agents
-|   +-- API_CONTRACT.md                     # REST API specification for frontend
-|   +-- CHECKLIST.md                        # Master project development checklist
-|   +-- CONTRACTS.md                        # Core system schemas, files, and signatures
-|   +-- graph1.mmd                          # Mermaid diagram for Graph 1
-|   +-- graph2.mmd                          # Mermaid diagram for Graph 2
-|   +-- KAWACH_FRONTEND.md                  # Frontend requirements and design tokens
-|   +-- p01.md - p08.md                     # Development track prompts and specifications
-|   +-- report_example.md                   # Compiled sample QA report
-|   +-- work_distribution.md                # Multi-developer branch and track allocation
-+-- hooks/
-|   +-- useRunStream.ts                     # React hook for SSE live log streaming & polling
-+-- lib/
-|   +-- api/
-|   |   +-- client.ts                       # Typed HTTP API client using fetch
-|   |   +-- config.ts                       # API endpoints and base URL configuration
-|   |   +-- hooks.ts                        # React Query hooks for queries and mutations
-|   +-- mocks/
-|   |   +-- devMockService.ts               # Client-side dev mock responses
-|   +-- store/
-|   |   +-- uiStore.ts                      # Client-side UI state management
-|   +-- utils.ts                            # General utility functions
-+-- runner/                                 # Playwright Test Execution Environment
-|   +-- hand-written/                       # Reference hand-crafted Playwright scripts (T90..T93)
-|   +-- tests-smoke/                        # Smoke tests validating Playwright execution
-|   +-- explore.ts                          # Playwright BFS web crawler script
-|   +-- fixtures.ts                         # Custom Playwright test fixtures (video, trace, worker)
-|   +-- playwright.config.ts                # Playwright test runner configuration
-|   +-- tsconfig.json                       # TypeScript config for runner
-+-- target-app/                             # Vulnerable Express.js Demo Web App
-|   +-- ground_truth.json                   # Ground truth definitions for planted bugs (GT01..GT09)
-|   +-- selftest.mjs                        # Verification script verifying planted bugs
-|   +-- server.js                           # Express application server (Port 4000)
-|   +-- spec.md                             # Specification requirements (S1..S11)
-+-- types/
-|   +-- index.ts                            # Global frontend TypeScript types
++-- apps/
+|   +-- api/                                # FastAPI Backend & AI QA Engine
+|   |   +-- alembic/                        # Database migration environment & versions
+|   |   +-- alembic.ini                     # Alembic configuration
+|   |   +-- pyproject.toml                  # Python package & tool configuration
+|   |   +-- requirements.txt                # Backend dependencies (FastAPI, SQLAlchemy 2, Alembic, pyjwt, etc.)
+|   |   +-- src/
+|   |   |   +-- kawach/                     # Core KAWACH package
+|   |   |       +-- __init__.py
+|   |   |       +-- main.py                 # App factory & server entrypoint (< 80 lines)
+|   |   |       +-- core/                   # Config (BaseSettings), clock, logging, security (SecretStore), events, jobs
+|   |   |       +-- domain/                 # Pure domain entities, enums, policies (is_small_fix, is_fix_allowed)
+|   |   |       +-- schemas/                # Wire / API Pydantic DTOs (saved_tests, commit_loop, integrations)
+|   |   |       +-- storage/                # Artifact storage driver & manager
+|   |   |       +-- db/                     # Declarative Base, Session, and 30 ORM models
+|   |   |       |   +-- models/             # identity, project, runs, tests, artifacts, bugs, saved_tests, commit_loop, audit
+|   |   |       +-- repositories/           # Multi-tenant scoped repositories (Scope(user_id))
+|   |   |       +-- services/               # Use-case services (auth, project, regression, localization, fix)
+|   |   |       +-- agents/                 # AI agents with co-located prompts
+|   |   |       |   +-- bug_reporter/
+|   |   |       |   +-- explorer/
+|   |   |       |   +-- fix_suggest/        # [Scaffold] FixSuggesterAgent Protocol
+|   |   |       |   +-- localizer/          # [Scaffold] LocalizerAgent Protocol
+|   |   |       |   +-- planner/
+|   |   |       |   +-- reviewer/
+|   |   |       |   +-- script_writer/
+|   |   |       +-- workflows/              # LangGraph state machine orchestrators (explore_plan, execute, regression)
+|   |   |       +-- execution/              # Runner client, verifier, triage, reporting
+|   |   |       +-- integrations/           # External service integrations (GitHub HMAC signature & safety policies)
+|   |   |       |   +-- github/
+|   |   |       +-- llm/                    # Provider wrappers, tokens, cache, fake responses
+|   |   |       +-- api/                    # Routers (v1, legacy), middleware, dependencies (deps.py), mappers
+|   |   |           +-- v1/                 # auth, projects, runs, bugs, catalog, reports, exports, artifacts, streams, saved_tests, commits, webhooks
+|   |   +-- app/                            # Backward-compatible shims forwarding to kawach.*
+|   |   +-- tests/                          # Backend test suite (69 tests: 68 passed, 1 skipped)
+
+|   |   +-- scripts/                        # Utility & operational scripts (e.g. import_legacy_runs.py)
+|   +-- web/                                # Next.js 16 Web Dashboard (Turbopack, TypeScript)
+|   |   +-- src/
+|   |   |   +-- app/                            # Route hierarchy: (auth), (app)/projects, legacy shims
+|   |   |   +-- features/                       # Feature-sliced domain modules (auth, projects, runs, catalog, results, reports, library, commits)
+|   |   |   +-- shared/                         # Shared UI tokens, layout, providers, hooks, and HTTP client
+|   |   |   +-- generated/                      # OpenAPI TypeScript generated types (api-types.ts)
+|   |   +-- public/                             # Static assets & icons
+|   |   +-- package.json                        # Frontend package dependencies & scripts (dev, build, types)
+|   |   +-- next.config.ts                      # Next.js configuration
+|   |   +-- tsconfig.json                       # Web TypeScript configuration (@/* -> src/*, ./*)
+|   +-- runner/                             # Playwright Test Execution Environment
+|       +-- explore.ts                      # Playwright BFS web crawler
+|       +-- fixtures.ts                     # Test sandboxing fixtures (trace, video, screenshot)
+|       +-- playwright.config.ts            # Playwright configuration
+|       +-- tsconfig.json                   # Runner TypeScript configuration
++-- packages/
+|   +-- contracts/                          # Shared Architecture Contracts & Golden Samples
+|       +-- schemas/                        # Exported JSON Schemas
+|       +-- samples/                        # Golden sample fixtures across all stages
+|       +-- openapi.json                    # Exported OpenAPI 3.1.0 specification
+|       +-- types.ts                        # Shared TypeScript type definitions
++-- examples/
+|   +-- target-app/                         # Vulnerable Express.js Target Web Application
+|       +-- server.js                       # Express server (Port 4000)
+|       +-- spec.md                         # Target functional specification
+|       +-- selftest.mjs                    # Ground-truth verification script
+|       +-- package.json
++-- benchmarks/
+|   +-- planted-bugs/                       # Benchmark definitions & ground truth
+|       +-- ground_truth.json               # 9 planted defect definitions (GT01..GT09)
++-- demo-data/
+|   +-- golden/
+|       +-- run_golden_demo/                # Preserved golden demo run artifacts (13 files)
++-- docs/                                   # Architecture RFCs, ADRs, and documentation
+|   +-- adr/
+|   |   +-- 0001-baseline.md                # Phase 0 baseline architecture decision record
+|   +-- CONTRACTS.md                        # Master system contracts & invariants
+|   +-- refactor-progress.md                # Phase-by-phase refactor progress audit log
+|   +-- current_info.md                     # Living specification (this file)
 +-- .env                                    # Active environment configuration
-+-- .env.example                            # Template environment configuration
-+-- .gitignore                              # Git exclusion patterns
-+-- AGENTS.md                               # Framework rules and guidelines
-+-- current_info.md                         # LIVING GROUND-TRUTH SPECIFICATION (this file)
-+-- HANDOFF.md                              # Engineering handoff & architecture report
-+-- Makefile                                # Orchestration shortcuts (setup, run, test)
-+-- middleware.ts                           # Next.js API proxy and request routing
-+-- next.config.ts                          # Next.js 16 compiler configuration
-+-- package.json                            # Root package configuration (Next.js dependencies)
++-- .env.example                            # Template configuration
++-- .gitignore                              # Git exclusion rules
++-- .importlinter                            # Architectural dependency rule enforcement
++-- Makefile                                # Build & dev orchestration shortcuts
 +-- README.md                               # Project quickstart guide
-+-- tsconfig.json                           # TypeScript configuration for frontend
++-- package.json                            # Root workspace configuration
 ```
 
 ---
@@ -764,7 +729,7 @@ vithackie/
 
 #### 1. Start the Demo Target Application (Terminal 1)
 ```bash
-cd target-app
+cd examples/target-app
 npm install
 node server.js
 ```
@@ -772,22 +737,22 @@ node server.js
 #### 2. Start the FastAPI Agent Backend (Terminal 2)
 ```bash
 # In project root with active .venv:
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --port 8000 --reload
+.\.venv\Scripts\python.exe -m uvicorn kawach.main:app --port 8000 --reload
 ```
 
 #### 3. Start the Next.js Frontend Dashboard (Terminal 3)
 ```bash
-# In project root:
+cd apps/web
 npm install
 npm run dev
 ```
 
 #### 4. Run the Full Backend Test Suite
 ```bash
-cd backend
-..\.venv\Scripts\python.exe -m pytest -v
+.\.venv\Scripts\python.exe -m pytest apps/api/tests/ -v
 ```
-*(Currently 55 tests pass cleanly in ~35 seconds).*
+*(Currently 69 tests pass cleanly: 68 passed, 1 skipped in ~34 seconds).*
+
 
 ---
 

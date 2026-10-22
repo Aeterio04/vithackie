@@ -1,0 +1,121 @@
+{
+  "tests": [
+    {
+      "title": "Signup creates a new user account with valid credentials",
+      "description": "Verifies that registering with a valid unique email and an 8+ character password creates the account and navigates to the dashboard.",
+      "specRef": ["S1"],
+      "priority": "high",
+      "steps": [
+        {"action": "Navigate to /signup", "expected": null},
+        {"action": "Fill Email with a unique valid email address and Password with 'Passw0rd!23'", "expected": null},
+        {"action": "Click 'Sign up' button", "expected": "Lands the user on the dashboard URL (/dashboard)"}
+      ]
+    },
+    {
+      "title": "Signup rejects an invalid email address",
+      "description": "Verifies that providing an invalid email without standard domain structure displays the required error message.",
+      "specRef": ["S2"],
+      "priority": "medium",
+      "steps": [
+        {"action": "Navigate to /signup", "expected": null},
+        {"action": "Fill Email with 'not-an-email' and Password with 'Passw0rd!23'", "expected": null},
+        {"action": "Click 'Sign up' button", "expected": "Enter a valid email address"}
+      ]
+    },
+    {
+      "title": "Signup rejects passwords shorter than 8 characters",
+      "description": "Verifies password length requirement enforcement during user registration.",
+      "specRef": ["S3"],
+      "priority": "medium",
+      "steps": [
+        {"action": "Navigate to /signup", "expected": null},
+        {"action": "Fill Email with a unique valid email and Password with 'Pass7!'", "expected": null},
+        {"action": "Click 'Sign up' button", "expected": "Password must be at least 8 characters"}
+      ]
+    },
+    {
+      "title": "Login succeeds with valid seeded credentials",
+      "description": "Verifies that logging in with the correct email and password navigates to the dashboard.",
+      "specRef": ["S4"],
+      "priority": "high",
+      "steps": [
+        {"action": "Navigate to /login", "expected": null},
+        {"action": "Fill Email and Password with valid seeded tester credentials", "expected": null},
+        {"action": "Click 'Log in' button", "expected": "Lands the user on the dashboard (/dashboard)"}
+      ]
+    },
+    {
+      "title": "Login with an invalid password displays error message",
+      "description": "Verifies that incorrect password credentials show an error alert and keep the user on the login page.",
+      "specRef": ["S5"],
+      "priority": "high",
+      "steps": [
+        {"action": "Navigate to /login", "expected": null},
+        {"action": "Fill Email with valid tester email and Password with 'WrongPass123!'", "expected": null},
+        {"action": "Click 'Log in' button", "expected": "Invalid email or password"}
+      ]
+    },
+    {
+      "title": "Login handles email address casing insensitively",
+      "description": "Verifies that uppercase letters in the email address authenticate successfully without failure.",
+      "specRef": ["S6"],
+      "priority": "medium",
+      "steps": [
+        {"action": "Navigate to /login", "expected": null},
+        {"action": "Fill Email with 'QA.Tester@Example.com' and Password with valid password", "expected": null},
+        {"action": "Click 'Log in' button", "expected": "Lands the user on the dashboard (/dashboard)"}
+      ]
+    },
+    {
+      "title": "Dashboard adds and displays a new task item",
+      "description": "Verifies creating a new item with a valid title displays that item on the dashboard list.",
+      "specRef": ["S7"],
+      "priority": "high",
+      "steps": [
+        {"action": "Log in and navigate to /dashboard", "expected": null},
+        {"action": "Fill Item title with 'Buy groceries' and submit", "expected": "Shows 'Buy groceries' in the item list"}
+      ]
+    },
+    {
+      "title": "Dashboard rejects adding an item with an empty title",
+      "description": "Verifies that attempting to add an item without a title displays an alert and creates no item.",
+      "specRef": ["S8"],
+      "priority": "medium",
+      "steps": [
+        {"action": "Log in and navigate to /dashboard", "expected": null},
+        {"action": "Leave Item title blank and click 'Add item'", "expected": "Title is required"}
+      ]
+    },
+    {
+      "title": "Delete button removes only the selected item",
+      "description": "Verifies item removal specificity when multiple items are present in the list.",
+      "specRef": ["S9"],
+      "priority": "high",
+      "steps": [
+        {"action": "Log in and create items 'First Task' and 'Second Task'", "expected": null},
+        {"action": "Click Delete on 'First Task'", "expected": "Removes only 'First Task' while 'Second Task' remains"}
+      ]
+    },
+    {
+      "title": "Settings page updates display name without console errors",
+      "description": "Verifies that saving user profile settings shows a success confirmation message.",
+      "specRef": ["S10"],
+      "priority": "low",
+      "steps": [
+        {"action": "Log in and navigate to /settings", "expected": "Page loads without console errors"},
+        {"action": "Update Display name to 'Alex Rivera' and click 'Save settings'", "expected": "Settings saved"}
+      ]
+    },
+    {
+      "title": "Logout returns to login and browser back button prevents dashboard access",
+      "description": "Verifies session termination security and prevents accessing cached dashboard pages via browser history.",
+      "specRef": ["S11"],
+      "priority": "high",
+      "steps": [
+        {"action": "Log in and navigate to /dashboard", "expected": null},
+        {"action": "Click 'Log out' button", "expected": "Returns the user to the login page"},
+        {"action": "Press browser Back button", "expected": "Does not show the dashboard"}
+      ]
+    }
+  ]
+}

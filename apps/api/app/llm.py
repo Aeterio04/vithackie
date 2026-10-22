@@ -34,7 +34,7 @@ class LLM:
     """LLM client supporting Groq, OpenAI, Anthropic, and offline Fake providers."""
 
     def __init__(self) -> None:
-        self.cache_dir: Path = settings.repo_root / "backend" / ".llm_cache"
+        self.cache_dir: Path = settings.repo_root / "apps" / "api" / ".llm_cache"
         if settings.LLM_CACHE in ("on", "readonly"):
             self.cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -407,7 +407,7 @@ class LLM:
         """Complete prompt and return text response."""
         # 1. Fake provider
         if self._provider == "fake":
-            fake_path = settings.repo_root / "backend" / "app" / "fake_llm" / f"{schema_name}.txt"
+            fake_path = settings.repo_root / "apps" / "api" / "app" / "fake_llm" / f"{schema_name}.txt"
             if not fake_path.exists():
                 raise LLMError(f"no fake response for {schema_name}")
             text = fake_path.read_text(encoding="utf-8")
@@ -459,7 +459,7 @@ class LLM:
         """Complete prompt and return validated JSON data."""
         # 1. Fake provider
         if self._provider == "fake":
-            fake_path = settings.repo_root / "backend" / "app" / "fake_llm" / f"{schema_name}.json"
+            fake_path = settings.repo_root / "apps" / "api" / "app" / "fake_llm" / f"{schema_name}.json"
             if not fake_path.exists():
                 raise LLMError(f"no fake response for {schema_name}")
             try:

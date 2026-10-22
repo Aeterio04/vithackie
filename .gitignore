@@ -17,11 +17,14 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
+apps/api/.llm_cache/
 backend/.llm_cache/
 
 # QA Runs & Artifacts (git-ignored)
 runs/
 runs
+data/
+/data/
 
 # Environment variables
 .env
@@ -31,12 +34,17 @@ runs
 # Runner test results & Playwright reports
 runner/test-results/
 runner/playwright-report/
+apps/runner/test-results/
+apps/runner/playwright-report/
 
 # Frontend builds
 frontend/dist/
 .next/
 /out/
 /build
+apps/web/.next/
+apps/web/out/
+apps/web/build/
 
 # Testing coverage
 /coverage
@@ -56,3 +64,5 @@ yarn-error.log*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+.import_linter_cache/
+

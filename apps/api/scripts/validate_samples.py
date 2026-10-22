@@ -6,7 +6,7 @@ from pathlib import Path
 from pydantic import BaseModel, TypeAdapter
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-REPO_ROOT = BACKEND_DIR.parent
+REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
@@ -22,7 +22,7 @@ from app.models import (
     Verification,
 )
 
-SAMPLES_DIR = REPO_ROOT / "contracts" / "samples"
+SAMPLES_DIR = REPO_ROOT / "packages" / "contracts" / "samples"
 FILES_DIR = SAMPLES_DIR / "files"
 
 VALID_SPEC_REFS = {f"S{i}" for i in range(1, 12)}

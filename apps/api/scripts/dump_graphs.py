@@ -7,9 +7,9 @@ import os
 import sys
 from pathlib import Path
 
-repo_root = Path(__file__).resolve().parent.parent.parent
-backend_dir = repo_root / "backend"
-sys.path.insert(0, str(backend_dir))
+repo_root = Path(__file__).resolve().parents[3]
+api_dir = repo_root / "apps" / "api"
+sys.path.insert(0, str(api_dir))
 
 from app.graphs import build_explore_plan_graph, build_execute_graph
 

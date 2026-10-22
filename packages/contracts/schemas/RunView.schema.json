@@ -918,7 +918,9 @@
         "decision": {
           "enum": [
             "approve",
-            "reject"
+            "approved",
+            "reject",
+            "rejected"
           ],
           "title": "Decision",
           "type": "string"
@@ -987,7 +989,8 @@
             "verifying",
             "reporting",
             "done",
-            "failed"
+            "failed",
+            "cancelled"
           ],
           "title": "Stage",
           "type": "string"
@@ -1204,6 +1207,7 @@
         "priority": {
           "default": "medium",
           "enum": [
+            "critical",
             "high",
             "medium",
             "low"
@@ -1223,7 +1227,9 @@
           "enum": [
             "proposed",
             "approved",
-            "rejected"
+            "rejected",
+            "edited",
+            "pending"
           ],
           "title": "Status",
           "type": "string"
@@ -1233,7 +1239,9 @@
           "enum": [
             "planner",
             "human",
-            "fallback"
+            "fallback",
+            "llm",
+            "heuristic"
           ],
           "title": "Origin",
           "type": "string"

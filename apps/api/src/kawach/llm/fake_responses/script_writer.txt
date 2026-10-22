@@ -1,0 +1,6 @@
+import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';
+
+test('T00: Login heading visible', async ({ page }) => {
+  await page.goto('/login');
+  await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible();
+});

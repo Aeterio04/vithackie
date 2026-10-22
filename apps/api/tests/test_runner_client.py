@@ -182,12 +182,12 @@ def test_real_hand_written_runner_integration(monkeypatch):
     # Copy hand-written specs to run_dir/scripts
     scripts_dir = r_dir / "scripts"
     scripts_dir.mkdir(parents=True, exist_ok=True)
-    src_hand_written = storage.settings.repo_root / "runner" / "hand-written"
+    src_hand_written = storage.settings.repo_root / "apps" / "runner" / "hand-written"
 
-    # Adapt relative imports for scripts/ directory (../../../runner/fixtures)
+    # Adapt relative imports for scripts/ directory (../../../apps/runner/fixtures)
     for spec_file in src_hand_written.glob("*.spec.ts"):
         content = spec_file.read_text(encoding="utf-8")
-        adapted = content.replace("'../fixtures'", "'../../../runner/fixtures'")
+        adapted = content.replace("'../fixtures'", "'../../../apps/runner/fixtures'")
         (scripts_dir / spec_file.name).write_text(adapted, encoding="utf-8")
 
     # Set catalog

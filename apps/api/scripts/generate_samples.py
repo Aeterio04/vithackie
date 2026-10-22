@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-REPO_ROOT = BACKEND_DIR.parent
+REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
@@ -55,7 +55,7 @@ from app.models import (
     VerificationAttempt,
 )
 
-SAMPLES_DIR = REPO_ROOT / "contracts" / "samples"
+SAMPLES_DIR = REPO_ROOT / "packages" / "contracts" / "samples"
 FILES_DIR = SAMPLES_DIR / "files"
 SAMPLES_DIR.mkdir(parents=True, exist_ok=True)
 FILES_DIR.mkdir(parents=True, exist_ok=True)
@@ -795,7 +795,7 @@ def generate_all():
     # scripts/T02.spec.ts
     scripts_dir = FILES_DIR / "scripts"
     scripts_dir.mkdir(parents=True, exist_ok=True)
-    spec_content = '''import { test, expect, unique } from '../../../runner/fixtures';
+    spec_content = '''import { test, expect, unique } from '../../../apps/runner/fixtures';
 
 test('T02: Signing up with invalid email is rejected', async ({ page }) => {
   await page.goto('/signup');

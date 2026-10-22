@@ -47,7 +47,8 @@
         "verifying",
         "reporting",
         "done",
-        "failed"
+        "failed",
+        "cancelled"
       ],
       "title": "Stage",
       "type": "string"

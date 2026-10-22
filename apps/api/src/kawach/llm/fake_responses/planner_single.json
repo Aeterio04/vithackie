@@ -1,0 +1,12 @@
+{
+  "test": {
+    "title": "Dashboard title length validation",
+    "description": "Verifies that submitting an item title over 100 characters shows a length validation error.",
+    "specRef": ["S8"],
+    "priority": "medium",
+    "steps": [
+      {"action": "Navigate to /dashboard", "expected": null},
+      {"action": "Fill Item title with 150 characters and click 'Add item'", "expected": "Title must be 100 characters or fewer"}
+    ]
+  }
+}

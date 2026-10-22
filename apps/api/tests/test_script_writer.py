@@ -29,7 +29,7 @@ test('Signup rejects an invalid email address', async ({ page }) => {
     )
 
     lines = cleaned.splitlines()
-    assert lines[0] == "import { test, expect, credentials, unique } from '../../../runner/fixtures';"
+    assert lines[0] == "import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';"
     # Verify other imports are stripped
     assert not any("from '@playwright/test'" in l for l in lines)
     assert not any("import * as path" in l for l in lines)
@@ -40,7 +40,7 @@ test('Signup rejects an invalid email address', async ({ page }) => {
 
 def test_clean_and_sanitize_script_rejects_forbidden_patterns():
     # waitForTimeout
-    bad_code1 = """import { test } from '../../../runner/fixtures';
+    bad_code1 = """import { test } from '../../../apps/runner/fixtures';
 test('T01: Foo', async ({ page }) => {
   await page.waitForTimeout(500);
 });"""
@@ -49,7 +49,7 @@ test('T01: Foo', async ({ page }) => {
     assert "waitForTimeout is forbidden" in str(exc1.value)
 
     # process.env
-    bad_code2 = """import { test } from '../../../runner/fixtures';
+    bad_code2 = """import { test } from '../../../apps/runner/fixtures';
 test('T01: Foo', async ({ page }) => {
   const url = process.env.BASE_URL;
 });"""
@@ -58,7 +58,7 @@ test('T01: Foo', async ({ page }) => {
     assert "process.env is forbidden" in str(exc2.value)
 
     # absolute URL
-    bad_code3 = """import { test } from '../../../runner/fixtures';
+    bad_code3 = """import { test } from '../../../apps/runner/fixtures';
 test('T01: Foo', async ({ page }) => {
   await page.goto('http://google.com');
 });"""
@@ -188,7 +188,7 @@ def test_write_scripts_auto_healing_retry(run_fixture, monkeypatch):
     ])
     monkeypatch.setattr(runner_client, "list_tests", list_mock)
 
-    llm_call_mock = MagicMock(return_value="""import { test, expect } from '../../../runner/fixtures';
+    llm_call_mock = MagicMock(return_value="""import { test, expect } from '../../../apps/runner/fixtures';
 test('T01: Fixed', async ({ page }) => { await page.goto('/login'); });""")
     monkeypatch.setattr(llm, "complete_text", llm_call_mock)
 

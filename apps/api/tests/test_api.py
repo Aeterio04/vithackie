@@ -224,12 +224,21 @@ def test_manual_run_happy_path(api_env):
     assert "README.md" in namelist
 
     # Verify rewritten imports in passing scripts
-    script_files = [name for name in namelist if name.startswith("scripts/") and name.endswith(".ts")]
+    script_files = [name for name in namelist if name.startswith("scripts/") and name.endswith(".spec.ts")]
     assert len(script_files) > 0
     for sfile in script_files:
         script_code = zf.read(sfile).decode("utf-8")
         assert "../../../runner/fixtures" not in script_code
+        assert "../../../apps/runner/fixtures" not in script_code
         assert "./fixtures" in script_code
+
+    # Verify exported test project resolves ./fixtures from script location
+    assert "fixtures.ts" in namelist
+    assert "scripts/fixtures.ts" in namelist
+    for sfile in script_files:
+        spec_parent = Path(sfile).parent
+        resolved_fixture = (spec_parent / "fixtures.ts").as_posix()
+        assert resolved_fixture in namelist
 
     # Verify password is NOT in export zip
     for name in namelist:

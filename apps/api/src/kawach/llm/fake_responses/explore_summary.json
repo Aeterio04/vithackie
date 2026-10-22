@@ -1,0 +1,30 @@
+{
+  "summary": "TaskBoard is a team collaboration and task management web application providing user authentication, task organization, item deletion, and account preference settings.",
+  "features": [
+    {
+      "name": "User Registration",
+      "description": "Sign up new user accounts with email validation and password requirements.",
+      "pages": ["/signup"]
+    },
+    {
+      "name": "Authentication",
+      "description": "User login session management and credential authentication.",
+      "pages": ["/login"]
+    },
+    {
+      "name": "Dashboard & Task Management",
+      "description": "View, create, and remove task items with real-time updates.",
+      "pages": ["/dashboard", "/items"]
+    },
+    {
+      "name": "User Preferences & Settings",
+      "description": "Update user display name, profile details, and account configuration.",
+      "pages": ["/settings"]
+    },
+    {
+      "name": "Session Termination",
+      "description": "Securely log out and clear authenticated browser session state.",
+      "pages": ["/logout"]
+    }
+  ]
+}

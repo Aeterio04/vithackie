@@ -20,7 +20,7 @@ from app import runner_client
 from app import storage
 
 
-CANONICAL_EXAMPLE = """import { test, expect, credentials, unique } from '../../../runner/fixtures';
+CANONICAL_EXAMPLE = """import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';
 
 test('T02: Signup rejects an invalid email address', async ({ page }) => {
   await page.goto('/signup');
@@ -54,7 +54,7 @@ def clean_and_sanitize_script(code: str, test_id: str, test_title: str) -> str:
     body_lines = [line for line in lines if not re.match(r"^\s*import\s+", line)]
     cleaned_body = "\n".join(body_lines).strip()
 
-    required_import = "import { test, expect, credentials, unique } from '../../../runner/fixtures';"
+    required_import = "import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';"
     full_code = f"{required_import}\n\n{cleaned_body}"
 
     # 2. Force test title prefix to match f"{test_id}: ..."
@@ -111,7 +111,7 @@ def clean_and_sanitize_script(code: str, test_id: str, test_title: str) -> str:
 def _list_tests_fallback(run_id: str, rel_file: str) -> runner_client.ListResult:
     """Fallback syntax verification using npx playwright test <file> --list if runner_client is not ready."""
     script_abs = (storage.run_dir(run_id) / rel_file).resolve()
-    runner_dir = (settings.repo_root / "runner").resolve()
+    runner_dir = (settings.repo_root / "apps" / "runner").resolve()
 
     cmd = ["npx", "playwright", "test", str(script_abs), "--list"]
     if os.name == "nt":

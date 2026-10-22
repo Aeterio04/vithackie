@@ -13,7 +13,7 @@ from app.config import settings
 from app.models import BugsFile, Catalog, ReviewLog
 from app import storage
 
-SAMPLES_DIR = settings.repo_root / "contracts" / "samples"
+SAMPLES_DIR = settings.repo_root / "packages" / "contracts" / "samples"
 
 
 def _now_iso() -> str:
@@ -89,7 +89,7 @@ def stub_write_scripts(run_id: str) -> None:
     storage.set_stage(run_id, "scripting", step="Writing Playwright scripts (stub)", done=0, total=len(approved))
 
     sample_script_file = SAMPLES_DIR / "files" / "scripts" / "T02.spec.ts"
-    template_code = sample_script_file.read_text(encoding="utf-8") if sample_script_file.exists() else """import { test, expect } from '../../../runner/fixtures';
+    template_code = sample_script_file.read_text(encoding="utf-8") if sample_script_file.exists() else """import { test, expect } from '../../../apps/runner/fixtures';
 test('T02: Placeholder', async ({ page }) => { await page.goto('/login'); });"""
 
     scripts_dir = storage.run_dir(run_id) / "scripts"

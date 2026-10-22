@@ -1,4 +1,4 @@
-import { test, expect, unique } from '../../../runner/fixtures';
+import { test, expect, unique } from '../../../apps/runner/fixtures';
 
 test('T02: Signing up with invalid email is rejected', async ({ page }) => {
   await page.goto('/signup');

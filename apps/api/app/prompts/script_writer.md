@@ -24,7 +24,7 @@ CANONICAL EXAMPLE:
 STRICT RULES:
 1. Output ONLY the raw TypeScript source of one Playwright test file. No explanations. No markdown formatting or code fences.
 2. The first line of the file must be EXACTLY:
-   import { test, expect, credentials, unique } from '../../../runner/fixtures';
+   import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';
    Never import anything else.
 3. Exactly ONE test per file:
    test('{{test_id}}: {{test_title}}', async ({ page }) => {

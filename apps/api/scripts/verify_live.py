@@ -22,7 +22,7 @@ def main():
     # 2. Write scripts
     # Note: clicking button:has-text("Save settings") clicks the form button, not the nav logout button
     flaky_spec = (
-        "import { test, expect, unique } from '../../../runner/fixtures';\n\n"
+        "import { test, expect, unique } from '../../../apps/runner/fixtures';\n\n"
         "test('T_flaky: Settings save succeeds', async ({ page }) => {\n"
         "  await page.goto('/login');\n"
         "  await page.fill('#email', 'qa.tester@example.com');\n"
@@ -38,7 +38,7 @@ def main():
     (scripts_dir / "T_flaky.spec.ts").write_text(flaky_spec, encoding="utf-8")
 
     conf_spec = (
-        "import { test, expect } from '../../../runner/fixtures';\n\n"
+        "import { test, expect } from '../../../apps/runner/fixtures';\n\n"
         "test('T_confirmed: Empty title rejected', async ({ page }) => {\n"
         "  await page.goto('/login');\n"
         "  await page.fill('#email', 'qa.tester@example.com');\n"

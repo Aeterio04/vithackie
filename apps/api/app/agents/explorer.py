@@ -36,8 +36,8 @@ def run_explorer(run_id: str) -> AppMap:
 
     out_file = (storage.run_dir(run_id) / "explore_raw.json").resolve()
 
-    # 2. Setup environment for runner/explore.ts
-    runner_dir = (settings.repo_root / "runner").resolve()
+    # 2. Setup environment for apps/runner/explore.ts
+    runner_dir = (settings.repo_root / "apps" / "runner").resolve()
     env = os.environ.copy()
     env["BASE_URL"] = base_url
     env["TEST_USERNAME"] = username

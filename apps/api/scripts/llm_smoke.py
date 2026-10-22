@@ -7,10 +7,10 @@ import sys
 import os
 from pathlib import Path
 
-# Ensure repo root and backend/ are on python path
-repo_root = Path(__file__).resolve().parent.parent.parent
-backend_dir = repo_root / "backend"
-sys.path.insert(0, str(backend_dir))
+# Ensure repo root and apps/api/ are on python path
+repo_root = Path(__file__).resolve().parents[3]
+api_dir = repo_root / "apps" / "api"
+sys.path.insert(0, str(api_dir))
 
 from app.config import settings
 from app.llm import get_llm, LLMError, usage

@@ -6,8 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "types": "openapi-typescript ../../packages/contracts/openapi.json -o src/generated/api-types.ts"
   },
+
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",
     "@radix-ui/react-checkbox": "^1.4.1",

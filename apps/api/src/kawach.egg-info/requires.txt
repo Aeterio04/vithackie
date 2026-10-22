@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pydantic>=2
+langgraph
+anthropic
+openai
+python-dotenv
+httpx
+python-multipart
+import-linter

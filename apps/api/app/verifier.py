@@ -48,7 +48,7 @@ def verify_bug(run_id: str, bug_id: str) -> Verification:
 
     # Determine spec_dir and extra_env
     if target_bug.file.startswith("probes/"):
-        spec_dir = str(settings.repo_root / "runner" / "probes")
+        spec_dir = str(settings.repo_root / "apps" / "runner" / "probes")
         extra_env = {"APP_MAP_PATH": str(r_dir / "app_map.json")}
     else:
         bug_file_path = r_dir / target_bug.file

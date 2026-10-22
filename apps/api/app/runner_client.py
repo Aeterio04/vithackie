@@ -203,7 +203,7 @@ def run_playwright(
 
     # Locate npx
     npx_bin = shutil.which("npx.cmd") or shutil.which("npx") or "npx"
-    runner_cwd = normalize_path(settings.repo_root / "runner")
+    runner_cwd = normalize_path(settings.repo_root / "apps" / "runner")
 
     cmd = [npx_bin, "playwright", "test", "--config", "playwright.config.ts"]
 
@@ -284,7 +284,7 @@ def list_tests(run_id: str, file: str) -> ListResult:
         file_path = storage.run_dir(run_id) / file
 
     spec_folder = file_path.parent
-    runner_cwd = normalize_path(settings.repo_root / "runner")
+    runner_cwd = normalize_path(settings.repo_root / "apps" / "runner")
     npx_bin = shutil.which("npx.cmd") or shutil.which("npx") or "npx"
 
     env = os.environ.copy()
@@ -396,7 +396,7 @@ def run_tests(
 
     probes_run = None
     if include_probes:
-        probes_dir = settings.repo_root / "runner" / "probes"
+        probes_dir = settings.repo_root / "apps" / "runner" / "probes"
         if probes_dir.exists():
             probes_run = run_playwright(
                 run_id,

@@ -40,12 +40,12 @@ def run_fixture(tmp_path, monkeypatch):
     storage.save_model(run_id, "run.json", run_obj)
 
     # Load samples
-    catalog_sample = settings.repo_root / "contracts" / "samples" / "catalog.sample.json"
+    catalog_sample = settings.repo_root / "packages" / "contracts" / "samples" / "catalog.sample.json"
     with open(catalog_sample, "r", encoding="utf-8") as f:
         cat_data = json.load(f)
     storage.write_json(run_id, "catalog.json", cat_data)
 
-    bugs_sample = settings.repo_root / "contracts" / "samples" / "bugs.sample.json"
+    bugs_sample = settings.repo_root / "packages" / "contracts" / "samples" / "bugs.sample.json"
     with open(bugs_sample, "r", encoding="utf-8") as f:
         bugs_data = json.load(f)
     storage.write_json(run_id, "bugs.json", bugs_data)

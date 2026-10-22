@@ -30,7 +30,7 @@ def temp_run(tmp_path, monkeypatch):
     rdir = tmp_path / run_id
     rdir.mkdir(parents=True, exist_ok=True)
 
-    samples_dir = settings.repo_root / "contracts" / "samples"
+    samples_dir = settings.repo_root / "packages" / "contracts" / "samples"
     files_dir = samples_dir / "files"
 
     # Copy sample files

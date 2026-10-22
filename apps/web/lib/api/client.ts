@@ -265,3 +265,34 @@ export function uploadWithProgress<TResponse = unknown>(params: {
     xhr.send(formData);
   });
 }
+
+apiClient.get = <TResponse = unknown>(
+  endpoint: string,
+  options?: Omit<RequestOptions<TResponse>, "method">
+): Promise<TResponse> => {
+  return apiClient<TResponse>(endpoint, { ...options, method: "GET" });
+};
+
+apiClient.post = <TResponse = unknown>(
+  endpoint: string,
+  body?: unknown,
+  options?: Omit<RequestOptions<TResponse>, "method" | "body">
+): Promise<TResponse> => {
+  return apiClient<TResponse>(endpoint, { ...options, method: "POST", body });
+};
+
+apiClient.put = <TResponse = unknown>(
+  endpoint: string,
+  body?: unknown,
+  options?: Omit<RequestOptions<TResponse>, "method" | "body">
+): Promise<TResponse> => {
+  return apiClient<TResponse>(endpoint, { ...options, method: "PUT", body });
+};
+
+apiClient.delete = <TResponse = unknown>(
+  endpoint: string,
+  options?: Omit<RequestOptions<TResponse>, "method">
+): Promise<TResponse> => {
+  return apiClient<TResponse>(endpoint, { ...options, method: "DELETE" });
+};
+

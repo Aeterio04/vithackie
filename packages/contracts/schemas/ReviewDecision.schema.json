@@ -7,7 +7,9 @@
     "decision": {
       "enum": [
         "approve",
-        "reject"
+        "approved",
+        "reject",
+        "rejected"
       ],
       "title": "Decision",
       "type": "string"

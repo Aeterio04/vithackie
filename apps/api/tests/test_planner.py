@@ -56,8 +56,8 @@ def run_fixture(tmp_path, monkeypatch):
     )
     storage.save_model(run_id, "run.json", run_obj)
 
-    # Load sample app map from contracts/samples/app_map.sample.json
-    sample_path = settings.repo_root / "contracts" / "samples" / "app_map.sample.json"
+    # Load sample app map from packages/contracts/samples/app_map.sample.json
+    sample_path = settings.repo_root / "packages" / "contracts" / "samples" / "app_map.sample.json"
     with open(sample_path, "r", encoding="utf-8") as f:
         map_data = json.load(f)
     storage.write_json(run_id, "app_map.json", map_data)
