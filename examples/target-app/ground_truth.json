@@ -1,0 +1,65 @@
+[
+  {
+    "id": "GT01",
+    "description": "Signup accepts an invalid email",
+    "specRef": ["S2"],
+    "route": "/signup",
+    "severity": "medium"
+  },
+  {
+    "id": "GT02",
+    "description": "Signup accepts passwords shorter than 8 (it only checks for 4)",
+    "specRef": ["S3"],
+    "route": "/signup",
+    "severity": "medium"
+  },
+  {
+    "id": "GT03",
+    "description": "Wrong password shows no error message",
+    "specRef": ["S5"],
+    "route": "/login",
+    "severity": "high"
+  },
+  {
+    "id": "GT04",
+    "description": "Login fails when the email has capital letters",
+    "specRef": ["S6"],
+    "route": "/login",
+    "severity": "high"
+  },
+  {
+    "id": "GT05",
+    "description": "Dashboard accepts an empty item title",
+    "specRef": ["S8"],
+    "route": "/dashboard",
+    "severity": "medium"
+  },
+  {
+    "id": "GT06",
+    "description": "Delete removes the first item in the list instead of the clicked one",
+    "specRef": ["S9"],
+    "route": "/dashboard",
+    "severity": "high"
+  },
+  {
+    "id": "GT07",
+    "description": "After logout, Back shows the cached dashboard (response is cacheable)",
+    "specRef": ["S11"],
+    "route": "/dashboard",
+    "severity": "high"
+  },
+  {
+    "id": "GT08",
+    "description": "The settings page logs a console error and throws an uncaught TypeError on load",
+    "specRef": ["S10"],
+    "route": "/settings",
+    "severity": "low"
+  },
+  {
+    "id": "GT09",
+    "description": "Every second settings save fails with HTTP 500 (global counter; the planned \"flaky\" demo bug)",
+    "specRef": ["S10"],
+    "route": "/settings",
+    "severity": "medium"
+  }
+]
