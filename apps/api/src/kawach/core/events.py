@@ -1,5 +1,7 @@
 """In-memory event bus supporting pub/sub for real-time SSE streaming and pipeline events."""
 
+from __future__ import annotations
+
 import asyncio
 from collections import defaultdict
 from typing import Any, Callable, Dict, List, Optional

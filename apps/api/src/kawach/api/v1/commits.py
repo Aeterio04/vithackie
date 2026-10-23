@@ -8,7 +8,8 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from kawach.api.deps import get_db, get_owned_project
+from kawach.api.deps import get_db, get_owned_project, require_scope
+from kawach.db.models.identity import User
 from kawach.db.models.project import Project
 from kawach.schemas.commit_loop import (
     CommitEventCreate,
@@ -24,6 +25,7 @@ router = APIRouter(prefix="/projects/{project_id}/commits", tags=["commits"])
 @router.get("", response_model=List[CommitEventRead])
 def list_commits(
     project_id: str,
+    _user: User = Depends(require_scope("tests:read")),
     project: Project = Depends(get_owned_project),
     db: Session = Depends(get_db),
 ):
@@ -38,6 +40,7 @@ def list_commits(
 def trigger_commit_regression(
     project_id: str,
     payload: CommitEventCreate,
+    _user: User = Depends(require_scope("tests:write")),
     project: Project = Depends(get_owned_project),
     db: Session = Depends(get_db),
 ):
@@ -52,6 +55,7 @@ def trigger_commit_regression(
 def get_failure_analysis(
     project_id: str,
     commit_id: str,
+    _user: User = Depends(require_scope("tests:read")),
     project: Project = Depends(get_owned_project),
     db: Session = Depends(get_db),
 ):
@@ -66,6 +70,7 @@ def get_failure_analysis(
 def request_fix_suggestion(
     project_id: str,
     commit_id: str,
+    _user: User = Depends(require_scope("fixes:apply")),
     project: Project = Depends(get_owned_project),
     db: Session = Depends(get_db),
 ):
@@ -81,6 +86,7 @@ def trigger_auto_fix_pr(
     project_id: str,
     commit_id: str,
     action: FixSuggestionActionRequest,
+    _user: User = Depends(require_scope("fixes:apply")),
     project: Project = Depends(get_owned_project),
     db: Session = Depends(get_db),
 ):

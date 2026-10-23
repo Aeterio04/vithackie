@@ -8,6 +8,7 @@ from kawach.repositories.bug_repo import BugRepository
 from kawach.repositories.artifact_repo import ArtifactRepository
 from kawach.repositories.user_repo import UserRepository
 from kawach.repositories.audit_repo import AuditRepository
+from kawach.repositories.token_repo import ApiTokenRepository
 
 __all__ = [
     "BaseRepository",
@@ -19,4 +20,5 @@ __all__ = [
     "ArtifactRepository",
     "UserRepository",
     "AuditRepository",
+    "ApiTokenRepository",
 ]

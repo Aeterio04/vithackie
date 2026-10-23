@@ -23,6 +23,7 @@ class User(Base, TimestampMixin):
 
     # Relationships
     refresh_tokens: Mapped[list["RefreshToken"]] = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
+    api_tokens: Mapped[list["ApiToken"]] = relationship("ApiToken", back_populates="user", cascade="all, delete-orphan")
 
 
 class RefreshToken(Base):
@@ -39,3 +40,24 @@ class RefreshToken(Base):
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="refresh_tokens")
+
+
+class ApiToken(Base):
+    """Personal API tokens for MCP and CLI clients, hashed at rest."""
+
+    __tablename__ = "api_tokens"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    token_prefix: Mapped[str] = mapped_column(String(16), nullable=False)  # e.g. "kw_live_abc1"
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)  # SHA-256
+    scopes: Mapped[str] = mapped_column(String(255), default="read,write", nullable=False)
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
+
+    # Relationships
+    user: Mapped["User"] = relationship("User", back_populates="api_tokens")
+

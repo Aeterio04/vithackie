@@ -104,6 +104,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Tokens
+         * @description List all active and revoked API tokens belonging to the authenticated user.
+         */
+        get: operations["list_tokens_api_v1_auth_tokens_get"];
+        put?: never;
+        /**
+         * Create Token
+         * @description Create a new personal API token.
+         *
+         *     The plaintext bearer secret (kw_live_...) is returned ONCE upon creation.
+         *     Only its SHA-256 hash is retained on the server.
+         */
+        post: operations["create_token_api_v1_auth_tokens_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/tokens/{token_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Revoke Token
+         * @description Revoke an existing API token. Immediate and irreversible.
+         */
+        delete: operations["revoke_token_api_v1_auth_tokens__token_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -1271,6 +1318,24 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ActionEdge */
+        ActionEdge: {
+            /** Edgeid */
+            edgeId: string;
+            /** Fromstate */
+            fromState: string;
+            /** Tostate */
+            toState: string;
+            /** Action */
+            action: string;
+            /**
+             * Locator
+             * @default
+             */
+            locator: string;
+            /** Value */
+            value?: string | null;
+        };
         /** AddTestPayload */
         AddTestPayload: {
             /** Prompt */
@@ -1280,6 +1345,77 @@ export interface components {
         AddTestRequest: {
             /** Prompt */
             prompt: string;
+        };
+        /**
+         * ApiTokenCreate
+         * @description Payload to create a new scoped API token.
+         */
+        ApiTokenCreate: {
+            /**
+             * Name
+             * @description Descriptive token label
+             */
+            name: string;
+            /**
+             * Scopes
+             * @description Authorized access scopes
+             */
+            scopes?: string[];
+            /**
+             * Expires In Days
+             * @description Token validity duration in days
+             * @default 30
+             */
+            expires_in_days: number | null;
+        };
+        /**
+         * ApiTokenCreated
+         * @description Returned once upon token creation; contains plaintext bearer secret.
+         */
+        ApiTokenCreated: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Token Prefix */
+            token_prefix: string;
+            /** Scopes */
+            scopes: string[];
+            /** Expires At */
+            expires_at?: string | null;
+            /** Revoked At */
+            revoked_at?: string | null;
+            /** Last Used At */
+            last_used_at?: string | null;
+            /** Created At */
+            created_at: string;
+            /**
+             * Token Secret
+             * @description Full bearer token secret; displayed once and cannot be recovered
+             */
+            token_secret: string;
+        };
+        /**
+         * ApiTokenRead
+         * @description Public metadata for an API token (hash never exposed).
+         */
+        ApiTokenRead: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Token Prefix */
+            token_prefix: string;
+            /** Scopes */
+            scopes: string[];
+            /** Expires At */
+            expires_at?: string | null;
+            /** Revoked At */
+            revoked_at?: string | null;
+            /** Last Used At */
+            last_used_at?: string | null;
+            /** Created At */
+            created_at: string;
         };
         /** AppMap */
         AppMap: {
@@ -1298,6 +1434,14 @@ export interface components {
             /** Features */
             features?: components["schemas"]["Feature"][];
             stats?: components["schemas"]["AppMapStats"];
+            /** States */
+            states?: components["schemas"]["StateNode"][];
+            /** Edges */
+            edges?: components["schemas"]["ActionEdge"][];
+            /** Journeys */
+            journeys?: components["schemas"]["Journey"][];
+            /** Unexploredfrontier */
+            unexploredFrontier?: components["schemas"]["FrontierState"][];
             /** Error */
             error?: string | null;
         };
@@ -1764,6 +1908,23 @@ export interface components {
             /** Fields */
             fields?: components["schemas"]["FieldInfo"][];
         };
+        /** FrontierState */
+        FrontierState: {
+            /** Stateid */
+            stateId: string;
+            /** Url */
+            url: string;
+            /**
+             * Depth
+             * @default 0
+             */
+            depth: number;
+            /**
+             * Reason
+             * @default
+             */
+            reason: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -1775,6 +1936,20 @@ export interface components {
             level: number;
             /** Text */
             text: string;
+        };
+        /** Journey */
+        Journey: {
+            /** Journeyid */
+            journeyId: string;
+            /** Title */
+            title: string;
+            /**
+             * Depth
+             * @default 1
+             */
+            depth: number;
+            /** Steps */
+            steps?: string[];
         };
         /** LinkInfo */
         LinkInfo: {
@@ -2296,6 +2471,31 @@ export interface components {
             /** Endedat */
             endedAt?: string | null;
         };
+        /** StateNode */
+        StateNode: {
+            /** Stateid */
+            stateId: string;
+            /** Url */
+            url: string;
+            /**
+             * Depth
+             * @default 0
+             */
+            depth: number;
+            /**
+             * Domsignature
+             * @default
+             */
+            domSignature: string;
+            /** Uistate */
+            uiState?: {
+                [key: string]: unknown;
+            };
+            /** Signals */
+            signals?: {
+                [key: string]: unknown;
+            };
+        };
         /** Step */
         Step: {
             /** N */
@@ -2304,6 +2504,12 @@ export interface components {
             action: string;
             /** Expected */
             expected?: string | null;
+            /** Checkpoint */
+            checkpoint?: string | null;
+            /** Assertion */
+            assertion?: string | null;
+            /** Locator */
+            locator?: string | null;
         };
         /** TargetCheckPayload */
         TargetCheckPayload: {
@@ -2326,6 +2532,30 @@ export interface components {
              * @enum {string}
              */
             priority: "critical" | "high" | "medium" | "low";
+            /**
+             * Depth
+             * @default 1
+             */
+            depth: number;
+            /**
+             * Category
+             * @default single_step
+             * @enum {string}
+             */
+            category: "single_step" | "journey" | "deep_path" | "edge_case";
+            /** Preconditions */
+            preconditions?: string[];
+            /** Setup */
+            setup?: string[];
+            /** Edgetags */
+            edgeTags?: string[];
+            /** Coverageref */
+            coverageRef?: string[];
+            /**
+             * Riskscore
+             * @default 0
+             */
+            riskScore: number;
             /** Steps */
             steps?: components["schemas"]["Step"][];
             /**
@@ -2606,6 +2836,107 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_tokens_api_v1_auth_tokens_get: {
+        parameters: {
+            query?: {
+                token?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiTokenRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_token_api_v1_auth_tokens_post: {
+        parameters: {
+            query?: {
+                token?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApiTokenCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiTokenCreated"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_token_api_v1_auth_tokens__token_id__delete: {
+        parameters: {
+            query?: {
+                token?: string | null;
+            };
+            header?: never;
+            path: {
+                token_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -3022,7 +3353,9 @@ export interface operations {
             query?: {
                 token?: string | null;
             };
-            header?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -3118,7 +3451,9 @@ export interface operations {
     };
     start_run_pipeline_api_v1_runs__run_id__start_post: {
         parameters: {
-            query?: never;
+            query?: {
+                token?: string | null;
+            };
             header?: never;
             path: {
                 run_id: string;
@@ -3149,7 +3484,9 @@ export interface operations {
     };
     resume_run_endpoint_api_v1_runs__run_id__resume_post: {
         parameters: {
-            query?: never;
+            query?: {
+                token?: string | null;
+            };
             header?: never;
             path: {
                 run_id: string;
@@ -4383,8 +4720,12 @@ export interface operations {
     };
     start_run_runs_post: {
         parameters: {
-            query?: never;
-            header?: never;
+            query?: {
+                token?: string | null;
+            };
+            header?: {
+                "Idempotency-Key"?: string | null;
+            };
             path?: never;
             cookie?: never;
         };

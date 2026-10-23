@@ -222,3 +222,11 @@ def verify_all(run_id: str) -> List[Verification]:
 
     results.sort(key=lambda v: v.bugId)
     return results
+
+
+from kawach.execution.verifier import (
+    prepare_script_workspace,
+    rewrite_fixtures_import,
+    verify_script,
+)
+

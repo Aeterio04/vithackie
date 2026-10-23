@@ -12,7 +12,7 @@ RiskClass = Literal["small", "large"]
 PROTECTED_BRANCHES: tuple = ("main", "master", "prod", "production", "release")
 
 DEFAULT_MAX_FILES: int = 1
-DEFAULT_MAX_LINES: int = 50
+DEFAULT_MAX_LINES: int = 20
 DEFAULT_FORBIDDEN_PATHS: List[str] = [
     "auth",
     "login",
@@ -53,7 +53,7 @@ def is_small_fix(
 
     A fix qualifies as 'small' only if:
     1. The number of changed files <= max_files (default: 1).
-    2. The number of lines changed <= max_lines (default: 50).
+    2. The number of lines changed <= max_lines (default: 20).
     3. None of the changed files reside within forbidden paths (auth, payment, migrations).
     """
     if len(files_changed) == 0:

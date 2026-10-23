@@ -268,6 +268,194 @@
         }
       }
     },
+    "/api/v1/auth/tokens": {
+      "post": {
+        "tags": [
+          "auth-tokens"
+        ],
+        "summary": "Create Token",
+        "description": "Create a new personal API token.\n\nThe plaintext bearer secret (kw_live_...) is returned ONCE upon creation.\nOnly its SHA-256 hash is retained on the server.",
+        "operationId": "create_token_api_v1_auth_tokens_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiTokenCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTokenCreated"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "auth-tokens"
+        ],
+        "summary": "List Tokens",
+        "description": "List all active and revoked API tokens belonging to the authenticated user.",
+        "operationId": "list_tokens_api_v1_auth_tokens_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiTokenRead"
+                  },
+                  "title": "Response List Tokens Api V1 Auth Tokens Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/tokens/{token_id}": {
+      "delete": {
+        "tags": [
+          "auth-tokens"
+        ],
+        "summary": "Revoke Token",
+        "description": "Revoke an existing API token. Immediate and irreversible.",
+        "operationId": "revoke_token_api_v1_auth_tokens__token_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Revoke Token Api V1 Auth Tokens  Token Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/health": {
       "get": {
         "tags": [
@@ -932,6 +1120,22 @@
               ],
               "title": "Token"
             }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
           }
         ],
         "requestBody": {
@@ -1075,6 +1279,11 @@
         "summary": "Start Run Pipeline",
         "description": "Start or restart a run.",
         "operationId": "start_run_pipeline_api_v1_runs__run_id__start_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "run_id",
@@ -1083,6 +1292,22 @@
             "schema": {
               "type": "string",
               "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
             }
           }
         ],
@@ -1116,6 +1341,11 @@
         "summary": "Resume Run Endpoint",
         "description": "Resume execution of an approved test catalog.",
         "operationId": "resume_run_endpoint_api_v1_runs__run_id__resume_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "run_id",
@@ -1124,6 +1354,22 @@
             "schema": {
               "type": "string",
               "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
             }
           }
         ],
@@ -3316,10 +3562,10 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/RunListItem"
                   },
-                  "type": "array",
                   "title": "Response List Runs Runs Get"
                 }
               }
@@ -3334,15 +3580,54 @@
         "summary": "Start Run",
         "description": "Start a new QA test run conforming strictly to Section 8 contract.",
         "operationId": "start_run_runs_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/CreateRunRequest"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "201": {
@@ -3779,6 +4064,50 @@
   },
   "components": {
     "schemas": {
+      "ActionEdge": {
+        "properties": {
+          "edgeId": {
+            "type": "string",
+            "title": "Edgeid"
+          },
+          "fromState": {
+            "type": "string",
+            "title": "Fromstate"
+          },
+          "toState": {
+            "type": "string",
+            "title": "Tostate"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "locator": {
+            "type": "string",
+            "title": "Locator",
+            "default": ""
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "edgeId",
+          "fromState",
+          "toState",
+          "action"
+        ],
+        "title": "ActionEdge"
+      },
       "AddTestPayload": {
         "properties": {
           "prompt": {
@@ -3804,6 +4133,192 @@
           "prompt"
         ],
         "title": "AddTestRequest"
+      },
+      "ApiTokenCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "description": "Descriptive token label"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes",
+            "description": "Authorized access scopes"
+          },
+          "expires_in_days": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 365.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires In Days",
+            "description": "Token validity duration in days",
+            "default": 30
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "ApiTokenCreate",
+        "description": "Payload to create a new scoped API token."
+      },
+      "ApiTokenCreated": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "token_prefix": {
+            "type": "string",
+            "title": "Token Prefix"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "token_secret": {
+            "type": "string",
+            "title": "Token Secret",
+            "description": "Full bearer token secret; displayed once and cannot be recovered"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "token_prefix",
+          "scopes",
+          "created_at",
+          "token_secret"
+        ],
+        "title": "ApiTokenCreated",
+        "description": "Returned once upon token creation; contains plaintext bearer secret."
+      },
+      "ApiTokenRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "token_prefix": {
+            "type": "string",
+            "title": "Token Prefix"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "token_prefix",
+          "scopes",
+          "created_at"
+        ],
+        "title": "ApiTokenRead",
+        "description": "Public metadata for an API token (hash never exposed)."
       },
       "AppMap": {
         "properties": {
@@ -3839,6 +4354,34 @@
           },
           "stats": {
             "$ref": "#/components/schemas/AppMapStats"
+          },
+          "states": {
+            "items": {
+              "$ref": "#/components/schemas/StateNode"
+            },
+            "type": "array",
+            "title": "States"
+          },
+          "edges": {
+            "items": {
+              "$ref": "#/components/schemas/ActionEdge"
+            },
+            "type": "array",
+            "title": "Edges"
+          },
+          "journeys": {
+            "items": {
+              "$ref": "#/components/schemas/Journey"
+            },
+            "type": "array",
+            "title": "Journeys"
+          },
+          "unexploredFrontier": {
+            "items": {
+              "$ref": "#/components/schemas/FrontierState"
+            },
+            "type": "array",
+            "title": "Unexploredfrontier"
           },
           "error": {
             "anyOf": [
@@ -4909,6 +5452,34 @@
         ],
         "title": "FormInfo"
       },
+      "FrontierState": {
+        "properties": {
+          "stateId": {
+            "type": "string",
+            "title": "Stateid"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth",
+            "default": 0
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "stateId",
+          "url"
+        ],
+        "title": "FrontierState"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -4939,6 +5510,36 @@
           "text"
         ],
         "title": "HeadingInfo"
+      },
+      "Journey": {
+        "properties": {
+          "journeyId": {
+            "type": "string",
+            "title": "Journeyid"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth",
+            "default": 1
+          },
+          "steps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Steps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "journeyId",
+          "title"
+        ],
+        "title": "Journey"
       },
       "LinkInfo": {
         "properties": {
@@ -6076,6 +6677,44 @@
         ],
         "title": "StageTime"
       },
+      "StateNode": {
+        "properties": {
+          "stateId": {
+            "type": "string",
+            "title": "Stateid"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth",
+            "default": 0
+          },
+          "domSignature": {
+            "type": "string",
+            "title": "Domsignature",
+            "default": ""
+          },
+          "uiState": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Uistate"
+          },
+          "signals": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Signals"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stateId",
+          "url"
+        ],
+        "title": "StateNode"
+      },
       "Step": {
         "properties": {
           "n": {
@@ -6096,6 +6735,39 @@
               }
             ],
             "title": "Expected"
+          },
+          "checkpoint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkpoint"
+          },
+          "assertion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assertion"
+          },
+          "locator": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locator"
           }
         },
         "type": "object",
@@ -6149,6 +6821,55 @@
             ],
             "title": "Priority",
             "default": "medium"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth",
+            "default": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "single_step",
+              "journey",
+              "deep_path",
+              "edge_case"
+            ],
+            "title": "Category",
+            "default": "single_step"
+          },
+          "preconditions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Preconditions"
+          },
+          "setup": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Setup"
+          },
+          "edgeTags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Edgetags"
+          },
+          "coverageRef": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Coverageref"
+          },
+          "riskScore": {
+            "type": "number",
+            "title": "Riskscore",
+            "default": 0.0
           },
           "steps": {
             "items": {

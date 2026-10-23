@@ -2,9 +2,13 @@
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+import os
 from pathlib import Path
+import re
+import shutil
 import threading
-from typing import List, Optional
+from typing import List, Optional, Tuple, Union
+import uuid
 
 from kawach.core.config import settings
 from kawach.schemas import (
@@ -13,14 +17,187 @@ from kawach.schemas import (
     BugsFile,
     Outcome,
     Progress,
+    RunInput,
     Verification,
     VerificationAttempt,
 )
 from kawach.execution.runner import clean_error_message, is_assertion_failure, parse_report, run_playwright
 from kawach.execution.triage import signature
 from kawach.storage import artifacts as storage
+from kawach.storage.secrets import write_secret_password
 
 _bugs_lock = threading.RLock()
+
+
+def rewrite_fixtures_import(script_content: str, source_dir: Path, repo_root: Path) -> str:
+    """Rewrite any relative runner fixtures import to point accurately to repo_root/apps/runner/fixtures."""
+    fixtures_target = (repo_root / "apps" / "runner" / "fixtures").resolve()
+    try:
+        rel = os.path.relpath(fixtures_target, source_dir).replace("\\", "/")
+        if not rel.startswith("."):
+            rel = "./" + rel
+        pattern = r"from\s+['\"][^'\"]*runner/fixtures['\"]"
+        replacement = f"from '{rel}'"
+        return re.sub(pattern, replacement, script_content)
+    except Exception:
+        return script_content
+
+
+def prepare_script_workspace(
+    script_path: Union[str, Path],
+    run_id: Optional[str] = None,
+    target_url: str = "http://localhost:4000",
+    username: str = "",
+    password: str = "",
+) -> Tuple[str, Path]:
+    """Mirror canonical runs/<run_id>/scripts/ workspace depth for standalone scripts.
+
+    Stages the script into a workspace directory at depth 3 from repo_root (runs/<run_id>/scripts/)
+    so relative imports like '../../../apps/runner/fixtures' resolve exactly to repo_root.
+    Also rewrites fixtures import to be safe if moved elsewhere.
+    Creates minimal input.json and secrets if needed.
+    """
+    workspace_id = run_id or f"replay_{uuid.uuid4().hex[:8]}"
+    r_dir = storage.run_dir(workspace_id)
+    scripts_dir = r_dir / "scripts"
+    scripts_dir.mkdir(parents=True, exist_ok=True)
+
+    src = Path(script_path).resolve()
+    target = scripts_dir / src.name
+
+    content = src.read_text(encoding="utf-8")
+    rewritten = rewrite_fixtures_import(content, scripts_dir, settings.repo_root)
+    target.write_text(rewritten, encoding="utf-8")
+
+    # Write input.json if not present
+    input_file = r_dir / "input.json"
+    if not input_file.exists():
+        now_str = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        run_input = RunInput(
+            runId=workspace_id,
+            createdAt=now_str,
+            targetUrl=target_url,
+            username=username,
+            mode="autonomous",
+            specRaw="S1: Replay script",
+            spec=[],
+        )
+        storage.save_model(workspace_id, "input.json", run_input)
+
+    if password:
+        try:
+            write_secret_password(workspace_id, password)
+        except Exception:
+            pass
+
+    return workspace_id, target
+
+
+def verify_script(
+    script_path: Union[str, Path],
+    target_url: str = "http://localhost:4000",
+    grep: Optional[str] = None,
+    run_id: Optional[str] = None,
+    username: str = "",
+    password: str = "",
+    expected_error: Optional[str] = None,
+    expected_signature: Optional[str] = None,
+    workers: int = 1,
+) -> Verification:
+    """Standalone 3x deterministic replay verifier for any stored test script.
+
+    Callable directly on any stored script with NO agent involved.
+    Stages the script into a depth-matched workspace, executes 3 replay passes,
+    and returns a certified Verification object.
+    """
+    workspace_id, staged_script = prepare_script_workspace(
+        script_path=script_path,
+        run_id=run_id,
+        target_url=target_url,
+        username=username,
+        password=password,
+    )
+
+    test_identifier = grep or staged_script.stem
+    attempts: List[VerificationAttempt] = []
+
+    for attempt_num in range(1, 4):
+        out_name = f"verify/{test_identifier}/{attempt_num}"
+        raw_run = run_playwright(
+            workspace_id,
+            files=[str(staged_script)],
+            grep=grep,
+            workers=workers,
+            out_name=out_name,
+            spec_dir=str(staged_script.parent),
+        )
+
+        outcome: Outcome = "test_error"
+        reproduced = False
+        err_msg: Optional[str] = None
+        duration_ms = int(raw_run.duration_s * 1000)
+
+        if raw_run.report_path:
+            records = parse_report(raw_run.report_path)
+            matching = records
+            if grep:
+                matching = [
+                    r for r in records
+                    if r.get("title", "").startswith(grep) or grep in r.get("title", "")
+                ]
+
+            if matching:
+                rec = matching[0]
+                status = rec.get("status")
+                rec_err = clean_error_message(rec.get("errorMessage", ""))
+                duration_ms = rec.get("durationMs", duration_ms)
+                err_msg = rec_err[:500] if rec_err else None
+
+                if status == "passed":
+                    outcome = "passed"
+                    reproduced = False
+                elif is_assertion_failure(rec_err):
+                    outcome = "assertion_failure"
+                    if expected_signature:
+                        reproduced = signature(rec_err) == expected_signature
+                    elif expected_error:
+                        reproduced = expected_error in rec_err
+                    else:
+                        reproduced = True
+                else:
+                    outcome = "test_error"
+                    reproduced = False
+            else:
+                err_msg = "No matching test record in report"
+        else:
+            err_msg = f"Playwright execution error: {raw_run.stderr[:500]}"
+
+        attempts.append(
+            VerificationAttempt(
+                attempt=attempt_num,
+                reproduced=reproduced,
+                outcome=outcome,
+                errorMessage=err_msg,
+                durationMs=duration_ms,
+            )
+        )
+
+    reproduced_count = sum(1 for a in attempts if a.reproduced)
+    if reproduced_count == 3:
+        status_label = "confirmed"
+    elif reproduced_count in (1, 2):
+        status_label = "flaky"
+    else:
+        status_label = "not_reproduced"
+
+    now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return Verification(
+        bugId=test_identifier,
+        verifiedAt=now_iso,
+        attempts=attempts,
+        reproduced=reproduced_count,
+        status=status_label,
+    )
 
 
 def _first_line(msg: Optional[str]) -> str:

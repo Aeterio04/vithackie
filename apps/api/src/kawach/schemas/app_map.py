@@ -1,6 +1,6 @@
 """Pydantic schemas for the application map discovered during exploration."""
 
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -75,6 +75,42 @@ class AppMapStats(BaseModel):
     budgetHit: Optional[Literal["pages", "time"]] = None
 
 
+class StateNode(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    stateId: str
+    url: str
+    depth: int = 0
+    domSignature: str = ""
+    uiState: Dict[str, Any] = Field(default_factory=dict)
+    signals: Dict[str, Any] = Field(default_factory=dict)
+
+
+class ActionEdge(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    edgeId: str
+    fromState: str
+    toState: str
+    action: str
+    locator: str = ""
+    value: Optional[str] = None
+
+
+class Journey(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    journeyId: str
+    title: str
+    depth: int = 1
+    steps: List[str] = Field(default_factory=list)
+
+
+class FrontierState(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    stateId: str
+    url: str
+    depth: int = 0
+    reason: str = ""
+
+
 class AppMap(BaseModel):
     model_config = ConfigDict(extra="ignore")
     baseUrl: str
@@ -84,4 +120,8 @@ class AppMap(BaseModel):
     summary: str = ""
     features: List[Feature] = Field(default_factory=list)
     stats: AppMapStats = Field(default_factory=AppMapStats)
+    states: List[StateNode] = Field(default_factory=list)
+    edges: List[ActionEdge] = Field(default_factory=list)
+    journeys: List[Journey] = Field(default_factory=list)
+    unexploredFrontier: List[FrontierState] = Field(default_factory=list)
     error: Optional[str] = None

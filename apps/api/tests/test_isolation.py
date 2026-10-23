@@ -292,3 +292,30 @@ def test_audit_logging_of_sensitive_actions(isolation_client):
         cred_log = next(l for l in logs if l.action == "credential_change")
         assert "password" not in str(cred_log.metadata_json)
         assert "DaveSecretPass!123" not in str(cred_log.metadata_json)
+
+
+def test_system_user_fallback_gating(isolation_client, monkeypatch):
+    """Verify unauthenticated system user fallback is gated behind config flag and ENV=dev."""
+    from kawach.core.config import settings
+    client, _ = isolation_client
+
+    # Case 1: Default OFF -> 401 Unauthorized
+    monkeypatch.setattr(settings, "ALLOW_SYSTEM_USER_FALLBACK", False)
+    monkeypatch.setattr(settings, "ENV", "development")
+    res_default = client.get("/api/v1/auth/me")
+    assert res_default.status_code == 401
+    assert "Authentication required" in res_default.text
+
+    # Case 2: Flag ON, but ENV is production -> 401 Unauthorized
+    monkeypatch.setattr(settings, "ALLOW_SYSTEM_USER_FALLBACK", True)
+    monkeypatch.setattr(settings, "ENV", "production")
+    res_prod = client.get("/api/v1/auth/me")
+    assert res_prod.status_code == 401
+
+    # Case 3: Flag ON and ENV is dev -> 200 OK with system demo user
+    monkeypatch.setattr(settings, "ALLOW_SYSTEM_USER_FALLBACK", True)
+    monkeypatch.setattr(settings, "ENV", "dev")
+    res_dev = client.get("/api/v1/auth/me")
+    assert res_dev.status_code == 200
+    assert res_dev.json()["email"] == "system@kawach.local"
+

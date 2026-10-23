@@ -1,6 +1,6 @@
 """Database models registry and package exports."""
 
-from kawach.db.models.identity import User, RefreshToken
+from kawach.db.models.identity import User, RefreshToken, ApiToken
 from kawach.db.models.project import Project, SpecItem, ProjectCredential, ProjectIntegration
 from kawach.db.models.runs import Run, RunStageTime, AppMap, RunMetric, LlmUsage
 from kawach.db.models.tests import TestCase, TestCaseSpecRef, TestScript, ReviewDecision, TestResult
@@ -13,6 +13,7 @@ from kawach.db.models.audit import AuditLog
 __all__ = [
     "User",
     "RefreshToken",
+    "ApiToken",
     "Project",
     "SpecItem",
     "ProjectCredential",

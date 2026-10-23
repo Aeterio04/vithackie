@@ -28,7 +28,7 @@ from kawach.services.regression_service import RegressionService
 from kawach.workflows.regression import build_regression_graph, regression_graph
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="module", autouse=True)
 def setup_db():
     Base.metadata.create_all(bind=engine)
     yield
@@ -45,9 +45,9 @@ def test_domain_policies_small_fix():
     assert is_small_fix(["src/components/Button.tsx", "src/styles.css"], 20) is False
     assert classify_fix_risk(["src/components/Button.tsx", "src/styles.css"], 20) == "large"
 
-    # 1 file, 60 lines (> max_lines=50) -> Large
-    assert is_small_fix(["src/components/Button.tsx"], 60) is False
-    assert classify_fix_risk(["src/components/Button.tsx"], 60) == "large"
+    # 1 file, 21 lines (> max_lines=20) -> Large
+    assert is_small_fix(["src/components/Button.tsx"], 21) is False
+    assert classify_fix_risk(["src/components/Button.tsx"], 21) == "large"
 
     # Forbidden paths: auth, login, payment, migrations -> Large regardless of size
     assert is_small_fix(["src/auth/jwt_handler.py"], 5) is False

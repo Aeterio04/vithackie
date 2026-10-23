@@ -1,10 +1,11 @@
 from typing import Any, Dict, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
-from kawach.api.deps import get_current_user, get_owned_run, get_user_scope
+from kawach.api.deps import get_current_user, get_owned_run, get_user_scope, require_scope
 from kawach.api.v1.config import UPLOADED_SPECS
 from kawach.api.v1.mappers.run_mapper import transform_run_to_frontend
 from kawach.core.config import settings
@@ -15,6 +16,7 @@ from kawach.repositories.audit_repo import AuditRepository
 from kawach.repositories.base import Scope
 from kawach.repositories.run_repo import RunRepository
 from kawach.schemas import Budgets
+from kawach.services.idempotency import IdempotencyService
 from kawach.services.run_service import cancel_run as cancel_run_service
 from kawach.services.run_service import create_run as create_run_service
 from kawach.services.run_service import delete_run as delete_run_service
@@ -37,6 +39,7 @@ class CreateRunPayload(BaseModel):
 
 @router.get("/runs")
 def list_runs(
+    _user: User = Depends(require_scope("runs:read")),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
 ):
@@ -61,10 +64,21 @@ def list_runs(
 @router.post("/runs", status_code=status.HTTP_201_CREATED)
 def create_run(
     payload: CreateRunPayload,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_scope("runs:write")),
     db: Session = Depends(get_db),
+    idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key"),
 ):
     """Create a new QA test run and begin exploration/planning."""
+    # 0. Check idempotency
+    cached = IdempotencyService.check_or_record(
+        user_id=current_user.id,
+        idempotency_key=idempotency_key,
+        payload=payload,
+    )
+    if cached:
+        status_code, response_data = cached
+        return JSONResponse(status_code=status_code, content=response_data)
+
     spec_raw = ""
     if payload.spec_id and payload.spec_id in UPLOADED_SPECS:
         spec_raw = UPLOADED_SPECS[payload.spec_id]["content"]
@@ -105,12 +119,21 @@ def create_run(
         details={"run_id": run.runId, "target_url": payload.target_url, "mode": payload.review_mode},
     )
 
-    return transform_run_to_frontend(run.runId)
+    res = transform_run_to_frontend(run.runId)
+    IdempotencyService.store_response(
+        user_id=current_user.id,
+        idempotency_key=idempotency_key,
+        payload=payload,
+        status_code=status.HTTP_201_CREATED,
+        response_data=res,
+    )
+    return res
 
 
 @router.get("/runs/{run_id}")
 def get_single_run(
     run_id: str,
+    _user: User = Depends(require_scope("runs:read")),
     _run: DbRun = Depends(get_owned_run),
 ):
     """Retrieve detailed state of a single run. Returns 404 for foreign runs."""
@@ -121,7 +144,11 @@ def get_single_run(
 
 
 @router.post("/runs/{run_id}/start")
-def start_run_pipeline(run_id: str):
+def start_run_pipeline(
+    run_id: str,
+    _user: User = Depends(require_scope("runs:write")),
+    _run: DbRun = Depends(get_owned_run),
+):
     """Start or restart a run."""
     run = storage.load_model(run_id, "run.json", storage.Run)
     if not run:
@@ -131,7 +158,11 @@ def start_run_pipeline(run_id: str):
 
 
 @router.post("/runs/{run_id}/resume")
-def resume_run_endpoint(run_id: str):
+def resume_run_endpoint(
+    run_id: str,
+    _user: User = Depends(require_scope("runs:write")),
+    _run: DbRun = Depends(get_owned_run),
+):
     """Resume execution of an approved test catalog."""
     try:
         resume_run_service(run_id)

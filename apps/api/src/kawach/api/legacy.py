@@ -12,9 +12,13 @@ import time
 from typing import List, Optional
 import urllib.parse
 
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict
+
+from kawach.api.deps import get_optional_user
+from kawach.db.models.identity import User
+from kawach.services.idempotency import IdempotencyService
 
 try:
     from app import graphs
@@ -146,8 +150,24 @@ def list_runs() -> List[RunListItem]:
 
 
 @router.post("/runs", status_code=status.HTTP_201_CREATED)
-def start_run(payload: CreateRunRequest):
+def start_run(
+    payload: CreateRunRequest,
+    idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key"),
+    current_user: Optional[User] = Depends(get_optional_user),
+):
     """Start a new QA test run conforming strictly to Section 8 contract."""
+    user_id = current_user.id if current_user else "anonymous"
+
+    # 0. Idempotency Check
+    cached = IdempotencyService.check_or_record(
+        user_id=user_id,
+        idempotency_key=idempotency_key,
+        payload=payload,
+    )
+    if cached:
+        status_code, response_data = cached
+        return JSONResponse(status_code=status_code, content=response_data)
+
     errors: List[dict] = []
 
     # 1. Target URL validation
@@ -230,7 +250,15 @@ def start_run(payload: CreateRunRequest):
 
     _start_pipeline_background(run_id)
 
-    return {"runId": run_id}
+    res = {"runId": run_id}
+    IdempotencyService.store_response(
+        user_id=user_id,
+        idempotency_key=idempotency_key,
+        payload=payload,
+        status_code=status.HTTP_201_CREATED,
+        response_data=res,
+    )
+    return res
 
 
 @router.get("/runs/{run_id}")

@@ -15,6 +15,9 @@ class Step(BaseModel):
     n: int
     action: str
     expected: Optional[str] = None
+    checkpoint: Optional[str] = None
+    assertion: Optional[str] = None
+    locator: Optional[str] = None
 
 
 class TestCase(BaseModel):
@@ -24,6 +27,13 @@ class TestCase(BaseModel):
     description: str
     specRef: List[str] = Field(default_factory=list)
     priority: Literal["critical", "high", "medium", "low"] = "medium"
+    depth: int = 1
+    category: Literal["single_step", "journey", "deep_path", "edge_case"] = "single_step"
+    preconditions: List[str] = Field(default_factory=list)
+    setup: List[str] = Field(default_factory=list)
+    edgeTags: List[str] = Field(default_factory=list)
+    coverageRef: List[str] = Field(default_factory=list)
+    riskScore: float = 0.0
     steps: List[Step] = Field(default_factory=list)
     status: Literal["proposed", "approved", "rejected", "edited", "pending"] = "proposed"
     origin: Literal["planner", "human", "fallback", "llm", "heuristic"] = "planner"

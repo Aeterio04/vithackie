@@ -32,9 +32,15 @@ as specified in Section 8 and Appendix A of the architecture contracts.
 | **Workflow Graph** | `kawach.workflows.regression` | Scaffold / Tested | LangGraph state machine skeleton with 6 named nodes |
 | **API Endpoints** | `kawach.api.v1.saved_tests` | Scaffold (501) | `GET/POST /projects/{id}/saved-tests`, `DELETE .../{test_id}` |
 | **API Endpoints** | `kawach.api.v1.commits` | Scaffold (501) | `GET/POST /projects/{id}/commits`, `/analysis`, `/suggest-fix`, `/auto-fix` |
-| **API Endpoints** | `kawach.api.v1.webhooks` | Scaffold (501) | `POST /api/v1/webhooks/github` (active HMAC check -> 501 response) |
-
----
+| **DB Models** | `kawach.db.models.identity.ApiToken` | Active / Tested | API tokens with SHA-256 hash at rest, prefix, scopes, revocation |
+| **Audit Log** | `kawach.db.models.audit.AuditLog` | Active / Tested | Added `client_type` ("web" \| "github" \| "mcp") |
+| **Pydantic Schemas** | `kawach.schemas.tokens` | Active / Tested | `ApiTokenCreate`, `ApiTokenRead`, `ApiTokenCreated`, `ApiClient` |
+| **Pydantic Schemas** | `kawach.schemas.catalog` | Active / Tested | Extended `TestCase` (`depth`, `edgeTags`, `riskScore`, `coverageRef`) and `Step` |
+| **Pydantic Schemas** | `kawach.schemas.app_map` | Active / Tested | Extended `StateNode`, `ActionEdge`, `Journey`, `FrontierState` |
+| **Token Service** | `kawach.services.token_service` | Active / Tested | Token lifecycle, scoping, verification, audit logging |
+| **API Endpoints** | `kawach.api.v1.tokens` | Active / Tested | `POST /tokens`, `GET /tokens`, `DELETE /tokens/{id}` |
+| **Use-Case Catalogue**| `docs/USE_CASES.md` | Active | 11 core use-cases mapped across Web, GitHub, MCP doors |
+| **Contracts & Types** | `packages/contracts/openapi.json` | Active (63 paths)| Exported OpenAPI 3.1.0 schema & generated TypeScript types |
 
 ## 2. Scaffolded API Routes (HTTP 501 Not Implemented)
 

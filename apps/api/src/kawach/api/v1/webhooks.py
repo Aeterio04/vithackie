@@ -46,6 +46,15 @@ async def receive_github_webhook(
             detail=f"Duplicate webhook delivery ID: {x_github_delivery}",
         )
 
+    from kawach.repositories.audit_repo import AuditRepository
+
+    AuditRepository(db).record(
+        action="webhook_receive",
+        entity_type="integration",
+        metadata={"delivery_id": x_github_delivery, "provider": "github"},
+        client_type="github",
+    )
+
     # Cryptographically verified, but execution pipeline is scaffolded
     raise HTTPException(
         status_code=status.HTTP_501_NOT_IMPLEMENTED,

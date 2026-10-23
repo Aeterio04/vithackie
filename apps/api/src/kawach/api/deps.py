@@ -15,6 +15,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from kawach.core.config import settings
 from kawach.db.models.artifacts import Artifact
 from kawach.db.models.bugs import Bug
 from kawach.db.models.identity import User
@@ -28,6 +29,7 @@ from kawach.repositories.project_repo import ProjectRepository
 from kawach.repositories.run_repo import RunRepository
 from kawach.repositories.user_repo import UserRepository
 from kawach.services.auth_service import AuthService
+from kawach.services.token_service import ApiTokenService
 
 logger = logging.getLogger("kawach.api.deps")
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -55,7 +57,36 @@ def get_token_from_request(
     return None
 
 
+class AuthContext:
+    """Authentication context tracking identity, client door, and granular permissions."""
+
+    def __init__(
+        self,
+        user: User,
+        client_type: str,
+        scopes: set[str],
+        is_session: bool,
+        token_id: Optional[str] = None,
+    ):
+        self.user = user
+        self.client_type = client_type
+        self.scopes = scopes
+        self.is_session = is_session
+        self.token_id = token_id
+
+
+ALL_SCOPES = [
+    "runs:read",
+    "runs:write",
+    "tests:read",
+    "tests:write",
+    "fixes:apply",
+    "tokens:admin",
+]
+
+
 def get_current_user(
+    request: Request,
     token: Optional[str] = Depends(get_token_from_request),
     db: Session = Depends(get_db),
 ) -> User:
@@ -63,6 +94,28 @@ def get_current_user(
     auth_service = AuthService(db)
 
     if token:
+        # 1. API Token authentication (MCP and CLI clients: kw_live_...)
+        if token.startswith("kw_"):
+            token_svc = ApiTokenService(db)
+            res = token_svc.verify_token(token)
+            if not res:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid, expired, or revoked API token",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            user, token_scopes, token_id = res
+            request.state.auth_context = AuthContext(
+                user=user,
+                client_type="mcp",
+                scopes=set(token_scopes),
+                is_session=False,
+                token_id=token_id,
+            )
+            return user
+
+        # 2. JWT Access Token authentication (Web sessions)
+        auth_service = AuthService(db)
         payload = auth_service.verify_access_token(token)
         if not payload:
             raise HTTPException(
@@ -77,24 +130,47 @@ def get_current_user(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User account inactive or not found",
             )
+        # Web sessions possess full operational scopes and interactive session privileges
+        request.state.auth_context = AuthContext(
+            user=user,
+            client_type="web",
+            scopes={"*", *ALL_SCOPES},
+            is_session=True,
+            token_id=None,
+        )
         return user
+
+    # Gated fallback to system demo user: default OFF; ON only when ALLOW_SYSTEM_USER_FALLBACK is True and ENV=dev
+    is_dev = settings.ENV.lower() in ("dev", "development")
+    if not (settings.ALLOW_SYSTEM_USER_FALLBACK and is_dev):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     # Fallback to system demo user for local test suite and unauthenticated CLI requests
     system_user = db.scalar(select(User).where(User.email == "system@kawach.local"))
-    if system_user:
-        return system_user
+    if not system_user:
+        user_repo = UserRepository(db)
+        system_user = user_repo.create_user(
+            email="system@kawach.local",
+            password_hash="system_demo_hash",
+            display_name="KAWACH System",
+        )
 
-    # Auto-create system user on first unauthenticated boot
-    user_repo = UserRepository(db)
-    system_user = user_repo.create_user(
-        email="system@kawach.local",
-        password_hash="system_demo_hash",
-        display_name="KAWACH System",
+    request.state.auth_context = AuthContext(
+        user=system_user,
+        client_type="web",
+        scopes={"*", *ALL_SCOPES},
+        is_session=True,
+        token_id=None,
     )
     return system_user
 
 
 def get_current_user_required(
+    request: Request,
     token: Optional[str] = Depends(get_token_from_request),
     db: Session = Depends(get_db),
 ) -> User:
@@ -105,25 +181,83 @@ def get_current_user_required(
             detail="Authentication required",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    auth_service = AuthService(db)
-    payload = auth_service.verify_access_token(token)
-    if not payload:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired access token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    user_id = payload.get("sub")
-    user = db.get(User, user_id)
-    if not user or not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User account inactive or not found",
-        )
-    return user
+    return get_current_user(request=request, token=token, db=db)
 
 
-def get_user_scope(current_user: User = Depends(get_current_user)) -> Scope:
+def get_optional_user(
+    request: Request,
+    token: Optional[str] = Depends(get_token_from_request),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """Resolve current user if credentials are provided; return None if unauthenticated."""
+    if not token:
+        return None
+    try:
+        return get_current_user(request=request, token=token, db=db)
+    except HTTPException:
+        return None
+
+
+def get_client_type(
+    request: Request,
+    token: Optional[str] = Depends(get_token_from_request),
+) -> str:
+    """Identify which front door is making the request: 'web' | 'github' | 'mcp'."""
+    auth_ctx: Optional[AuthContext] = getattr(request.state, "auth_context", None)
+    if auth_ctx:
+        return auth_ctx.client_type
+    if request.headers.get("x-github-event") or request.headers.get("x-hub-signature-256"):
+        return "github"
+    if token and token.startswith("kw_"):
+        return "mcp"
+    if request.headers.get("x-client-type") == "mcp":
+        return "mcp"
+    return "web"
+
+
+def require_scope(*required_scopes: str):
+    """Dependency factory checking that caller has at least one of the required scopes."""
+
+    def dependency(
+        request: Request,
+        current_user: User = Depends(get_current_user),
+    ) -> User:
+        auth_ctx: Optional[AuthContext] = getattr(request.state, "auth_context", None)
+        if not auth_ctx:
+            return current_user
+
+        if "*" in auth_ctx.scopes:
+            return current_user
+
+        has_permission = any(scope in auth_ctx.scopes for scope in required_scopes)
+        if not has_permission:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Insufficient permissions: requires one of {list(required_scopes)}",
+            )
+        return current_user
+
+    return dependency
+
+
+def require_session_auth(
+    request: Request,
+    current_user: User = Depends(get_current_user_required),
+) -> User:
+    """Ensure endpoint is accessed via an interactive user session (JWT), never via API token."""
+    auth_ctx: Optional[AuthContext] = getattr(request.state, "auth_context", None)
+    if auth_ctx and not auth_ctx.is_session:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Token management requires an interactive user session",
+        )
+    return current_user
+
+
+def get_user_scope(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+) -> Scope:
     """Generate multi-tenant repository Scope from current authenticated user."""
     is_system = (current_user.email == "system@kawach.local")
     return Scope(user_id=current_user.id, is_system=is_system)

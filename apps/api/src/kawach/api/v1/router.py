@@ -15,11 +15,13 @@ from kawach.api.v1.reports import router as reports_router
 from kawach.api.v1.runs import router as runs_router
 from kawach.api.v1.saved_tests import router as saved_tests_router
 from kawach.api.v1.streams import router as streams_router
+from kawach.api.v1.tokens import router as tokens_router
 from kawach.api.v1.webhooks import router as webhooks_router
 
 router = APIRouter()
 
 router.include_router(auth_router)
+router.include_router(tokens_router)
 router.include_router(health_router)
 router.include_router(config_router)
 router.include_router(projects_router)

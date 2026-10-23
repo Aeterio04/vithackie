@@ -4,7 +4,7 @@ Grouped settings management powered by pydantic-settings.
 """
 
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     ALLOW_SIGNUP: bool = True
+    ALLOW_SYSTEM_USER_FALLBACK: bool = False
 
     # 4. Storage & Persistence
     RUNS_DIR: str = "runs"
@@ -72,7 +73,7 @@ class Settings(BaseSettings):
 
     # 9. Automated Fix Policies
     FIX_POLICY_MAX_FILES: int = 1
-    FIX_POLICY_MAX_LINES: int = 50
+    FIX_POLICY_MAX_LINES: int = 20
     FIX_POLICY_FORBIDDEN_PATHS: Union[List[str], str] = Field(
         default_factory=lambda: ["auth", "payment", "migrations"]
     )

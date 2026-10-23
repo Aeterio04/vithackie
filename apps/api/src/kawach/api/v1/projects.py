@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
-from kawach.api.deps import get_owned_project, get_user_scope
+from kawach.api.deps import get_owned_project, get_user_scope, require_scope
+from kawach.db.models.identity import User
 from kawach.db.models.project import Project
 from kawach.db.session import get_db
 from kawach.repositories.base import Scope
@@ -62,6 +63,7 @@ def format_project_response(project: Project) -> Dict[str, Any]:
 
 @router.get("", response_model=List[Dict[str, Any]])
 def list_projects(
+    _user: User = Depends(require_scope("runs:read")),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
 ):
@@ -74,6 +76,7 @@ def list_projects(
 @router.post("", status_code=status.HTTP_201_CREATED)
 def create_project(
     payload: CreateProjectRequest,
+    _user: User = Depends(require_scope("runs:write")),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
 ):
@@ -98,6 +101,7 @@ def create_project(
 
 @router.get("/{project_id}")
 def get_project(
+    _user: User = Depends(require_scope("runs:read")),
     project: Project = Depends(get_owned_project),
 ):
     """Get project details. Returns 404 if project is not owned by user."""
@@ -108,6 +112,7 @@ def get_project(
 def update_project(
     project_id: str,
     payload: UpdateProjectRequest,
+    _user: User = Depends(require_scope("runs:write")),
     project: Project = Depends(get_owned_project),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
@@ -131,6 +136,7 @@ def update_project(
 @router.delete("/{project_id}")
 def delete_project(
     project_id: str,
+    _user: User = Depends(require_scope("runs:write")),
     project: Project = Depends(get_owned_project),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
@@ -145,6 +151,7 @@ def delete_project(
 def set_credentials(
     project_id: str,
     payload: SetCredentialsRequest,
+    _user: User = Depends(require_scope("runs:write")),
     project: Project = Depends(get_owned_project),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
@@ -163,6 +170,7 @@ def set_credentials(
 @router.get("/{project_id}/credentials")
 def get_credentials_info(
     project_id: str,
+    _user: User = Depends(require_scope("runs:read")),
     project: Project = Depends(get_owned_project),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),

@@ -25,5 +25,6 @@ class AuditLog(Base):
     entity_type: Mapped[str] = mapped_column(String(64), nullable=False)  # user|project|run|export
     entity_id: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     metadata_json: Mapped[Dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    client_type: Mapped[str] = mapped_column(String(20), default="web", nullable=False)  # web|github|mcp
     ip: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)  # Supports IPv4 and IPv6
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)

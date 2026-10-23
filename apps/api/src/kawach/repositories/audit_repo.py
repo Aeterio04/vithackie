@@ -21,6 +21,7 @@ class AuditRepository(BaseRepository):
         metadata: Optional[Dict[str, Any]] = None,
         details: Optional[Dict[str, Any]] = None,
         ip: Optional[str] = None,
+        client_type: str = "web",
     ) -> AuditLog:
         """Create an immutable audit log record."""
         meta = metadata or details or {}
@@ -31,6 +32,7 @@ class AuditRepository(BaseRepository):
             user_id=user_id,
             project_id=project_id,
             metadata_json=meta,
+            client_type=client_type,
             ip=ip,
         )
         self.db.add(log)

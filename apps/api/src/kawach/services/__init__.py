@@ -21,9 +21,13 @@ from kawach.services.run_service import (
     record_event,
     resume_run,
 )
+from kawach.services.idempotency import IdempotencyService
 from kawach.services.spec_parser import parse_spec_raw
+from kawach.services.token_service import ApiTokenService
 
 __all__ = [
+    "IdempotencyService",
+    "ApiTokenService",
     "parse_spec_raw",
     "create_run",
     "resume_run",
