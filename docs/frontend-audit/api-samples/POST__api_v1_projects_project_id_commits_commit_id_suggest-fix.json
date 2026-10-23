@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "path": "/api/v1/projects/{project_id}/commits/{commit_id}/suggest-fix",
+  "operationId": "request_fix_suggestion_api_v1_projects__project_id__commits__commit_id__suggest_fix_post",
+  "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/commits/c0ffee123456/suggest-fix",
+  "status_code": 404,
+  "latency_ms": 8.8,
+  "sample_response": {
+    "detail": "No failure analysis available for commit c0ffee123456 to generate a fix from."
+  }
+}

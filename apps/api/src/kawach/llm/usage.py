@@ -59,8 +59,8 @@ def record_usage(
             with open(temp_file, "w", encoding="utf-8") as f:
                 json.dump(cur_usage, f, indent=2)
                 f.flush()
-            import os
-            os.fsync(f.fileno())
+                import os
+                os.fsync(f.fileno())
 
             replaced = False
             for attempt in range(8):

@@ -1,0 +1,30 @@
+{
+  "method": "POST",
+  "path": "/api/v1/runs/{run_id}/catalog/test",
+  "operationId": "add_custom_test_api_v1_runs__run_id__catalog_test_post",
+  "test_url": "/api/v1/runs/20261023-115801-89d6/catalog/test",
+  "status_code": 422,
+  "latency_ms": 3.7,
+  "sample_response": {
+    "detail": [
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "prompt"
+        ],
+        "msg": "Field required",
+        "input": {
+          "testId": "adhoc_01",
+          "title": "Ad-hoc login test",
+          "steps": [
+            {
+              "action": "click",
+              "locator": "#btn"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "path": "/runs/{run_id}/execute",
+  "operationId": "execute_run_runs__run_id__execute_post",
+  "test_url": "/runs/20261023-115801-89d6/execute",
+  "status_code": 404,
+  "latency_ms": 5.6,
+  "sample_response": {
+    "detail": "Run not found"
+  }
+}

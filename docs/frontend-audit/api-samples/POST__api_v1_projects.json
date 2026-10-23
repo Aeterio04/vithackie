@@ -1,0 +1,23 @@
+{
+  "method": "POST",
+  "path": "/api/v1/projects",
+  "operationId": "create_project_api_v1_projects_post",
+  "test_url": "/api/v1/projects",
+  "status_code": 201,
+  "latency_ms": 18.0,
+  "sample_response": {
+    "id": "4b1b91b7-541f-439d-bbf3-98f12b36aabe",
+    "ownerId": "e58539e9-d79e-434a-9657-11c3669a0c9a",
+    "name": "P_1792756781",
+    "slug": "p-1792756781",
+    "targetUrl": "http://localhost:4000",
+    "description": null,
+    "defaultMode": "manual",
+    "budgets": {},
+    "allowedHosts": [],
+    "specVersion": 1,
+    "createdAt": "2026-10-23T11:59:41.858613+00:00",
+    "updatedAt": "2026-10-23T11:59:41.858618+00:00",
+    "archivedAt": null
+  }
+}

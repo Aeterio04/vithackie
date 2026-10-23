@@ -1,0 +1,17 @@
+{
+  "method": "POST",
+  "path": "/api/v1/auth/login",
+  "operationId": "login_api_v1_auth_login_post",
+  "test_url": "/api/v1/auth/login",
+  "status_code": 200,
+  "latency_ms": 94.2,
+  "sample_response": {
+    "id": "e58539e9-d79e-434a-9657-11c3669a0c9a",
+    "email": "audit_engineer@example.com",
+    "displayName": "Audit Engineer",
+    "name": "Audit Engineer",
+    "username": "audit_engineer",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNTg1MzllOS1kNzllLTQzNGEtOTY1Ny0xMWMzNjY5YTBjOWEiLCJlbWFpbCI6ImF1ZGl0X2VuZ2luZWVyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzkyODQzMTgxLCJpYXQiOjE3OTI3NTY3ODEsImlzcyI6Imthd2FjaCJ9.-AZYDHwf0zuvjgY0opN5IECNQ5swpCyDHi0bqXtvAes",
+    "refreshToken": "S-MIZ4y7FGNMubbQWN-1fHmY3LBdf4-EPtjVuhjjMa18W8_MSlm7joLsINhka-GI"
+  }
+}

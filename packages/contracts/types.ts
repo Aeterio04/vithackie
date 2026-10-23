@@ -1061,7 +1061,7 @@ export interface paths {
          *     Verifies HMAC-SHA256 signature using GITHUB_WEBHOOK_SECRET.
          *     Rejects unauthorized requests with 401 Unauthorized.
          *     Rejects duplicate delivery IDs with 409 Conflict.
-         *     Returns 501 Not Implemented because the downstream execution loop is scaffolded.
+         *     Triggers commit regression suite and returns 202 Accepted.
          */
         post: operations["receive_github_webhook_api_v1_webhooks_github_post"];
         delete?: never;
@@ -1335,6 +1335,11 @@ export interface components {
             locator: string;
             /** Value */
             value?: string | null;
+            /**
+             * Depth
+             * @default 0
+             */
+            depth: number;
         };
         /** AddTestPayload */
         AddTestPayload: {
@@ -1458,7 +1463,17 @@ export interface components {
              */
             durationSeconds: number;
             /** Budgethit */
-            budgetHit?: ("pages" | "time") | null;
+            budgetHit?: string | null;
+            /**
+             * Statesdiscovered
+             * @default 0
+             */
+            statesDiscovered: number;
+            /**
+             * Transitionsexecuted
+             * @default 0
+             */
+            transitionsExecuted: number;
         };
         /** Body_upload_spec_api_v1_specs_upload_post */
         Body_upload_spec_api_v1_specs_upload_post: {
@@ -1538,6 +1553,14 @@ export interface components {
              */
             status: "candidate" | "confirmed" | "flaky" | "not_reproduced";
             replay?: components["schemas"]["BugReplay"] | null;
+            /** Depth */
+            depth?: number | null;
+            /** Failingpath */
+            failingPath?: string[];
+            /** Checkpoint */
+            checkpoint?: string | null;
+            /** Reproductionscript */
+            reproductionScript?: string | null;
         };
         /** BugReplay */
         BugReplay: {
@@ -1559,6 +1582,7 @@ export interface components {
             generatedAt: string;
             /** Tests */
             tests?: components["schemas"]["TestCase"][];
+            coverageMatrix?: components["schemas"]["CoverageMatrix"] | null;
         };
         /**
          * CommitEventCreate
@@ -1651,6 +1675,25 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /** CoverageMatrix */
+        CoverageMatrix: {
+            /** Specitems */
+            specItems?: string[];
+            /** Depthlevels */
+            depthLevels?: {
+                [key: string]: number;
+            };
+            /** Edgecategories */
+            edgeCategories?: {
+                [key: string]: number;
+            };
+            /** Matrix */
+            matrix?: {
+                [key: string]: {
+                    [key: string]: string[];
+                };
+            };
         };
         /** CreateProjectRequest */
         CreateProjectRequest: {
@@ -2605,6 +2648,14 @@ export interface components {
             errorMessage?: string | null;
             /** Evidencedir */
             evidenceDir?: string | null;
+            /** Failedstep */
+            failedStep?: number | null;
+            /** Totalsteps */
+            totalSteps?: number | null;
+            /** Depth */
+            depth?: number | null;
+            /** Checkpoint */
+            checkpoint?: string | null;
         };
         /** UpdateCatalogRequest */
         UpdateCatalogRequest: {
@@ -4347,6 +4398,8 @@ export interface operations {
     list_saved_tests_api_v1_projects__project_id__saved_tests_get: {
         parameters: {
             query?: {
+                /** @description Filter tests by tag */
+                tag?: string | null;
                 token?: string | null;
             };
             header?: never;
@@ -4624,16 +4677,29 @@ export interface operations {
     };
     receive_github_webhook_api_v1_webhooks_github_post: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Optional target project ID */
+                project_id?: string | null;
+            };
             header?: {
                 "X-Hub-Signature-256"?: string;
                 "X-GitHub-Delivery"?: string;
+                "X-GitHub-Event"?: string;
             };
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
             /** @description Validation Error */
             422: {
                 headers: {
@@ -4641,15 +4707,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Successful Response */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
                 };
             };
         };

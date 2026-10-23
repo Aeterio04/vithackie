@@ -1,0 +1,30 @@
+{
+  "method": "GET",
+  "path": "/api/v1/projects",
+  "operationId": "list_projects_api_v1_projects_get",
+  "test_url": "/api/v1/projects",
+  "status_code": 200,
+  "latency_ms": 9.5,
+  "sample_response": [
+    {
+      "id": "0eaa9c6a-033f-45b1-8f60-880c0bafe3d2",
+      "ownerId": "e58539e9-d79e-434a-9657-11c3669a0c9a",
+      "name": "Audit E-Commerce App",
+      "slug": "audit-e-commerce-app",
+      "targetUrl": "http://localhost:4000",
+      "description": "Target store for autonomous QA audit",
+      "defaultMode": "manual",
+      "budgets": {
+        "maxPages": 10,
+        "exploreSeconds": 60,
+        "maxTests": 12,
+        "testTimeoutMs": 30000
+      },
+      "allowedHosts": [],
+      "specVersion": 1,
+      "createdAt": "2026-10-23T11:59:41.028227",
+      "updatedAt": "2026-10-23T11:59:41.028230",
+      "archivedAt": null
+    }
+  ]
+}

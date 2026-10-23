@@ -1,0 +1,24 @@
+{
+  "method": "POST",
+  "path": "/api/v1/runs",
+  "operationId": "create_run_api_v1_runs_post",
+  "test_url": "/api/v1/runs",
+  "status_code": 422,
+  "latency_ms": 6.4,
+  "sample_response": {
+    "detail": [
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "target_url"
+        ],
+        "msg": "Field required",
+        "input": {
+          "targetUrl": "http://localhost:4000",
+          "mode": "manual"
+        }
+      }
+    ]
+  }
+}

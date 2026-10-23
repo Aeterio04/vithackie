@@ -1,0 +1,11 @@
+{
+  "method": "GET",
+  "path": "/api/v1/runs/{run_id}/logs",
+  "operationId": "get_logs_api_v1_runs__run_id__logs_get",
+  "test_url": "/api/v1/runs/20261023-115801-89d6/logs",
+  "status_code": 404,
+  "latency_ms": 7.2,
+  "sample_response": {
+    "detail": "Run not found"
+  }
+}

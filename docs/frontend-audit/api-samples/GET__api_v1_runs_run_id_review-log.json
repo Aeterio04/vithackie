@@ -1,0 +1,9 @@
+{
+  "method": "GET",
+  "path": "/api/v1/runs/{run_id}/review-log",
+  "operationId": "get_review_log_api_v1_runs__run_id__review_log_get",
+  "test_url": "/api/v1/runs/20261023-115801-89d6/review-log",
+  "status_code": 200,
+  "latency_ms": 6.3,
+  "sample_response": []
+}

@@ -1,0 +1,17 @@
+{
+  "method": "GET",
+  "path": "/api/v1/auth/me",
+  "operationId": "auth_me_api_v1_auth_me_get",
+  "test_url": "/api/v1/auth/me",
+  "status_code": 200,
+  "latency_ms": 5.4,
+  "sample_response": {
+    "id": "e58539e9-d79e-434a-9657-11c3669a0c9a",
+    "email": "audit_engineer@example.com",
+    "displayName": "Audit Engineer",
+    "name": "Audit Engineer",
+    "username": "audit_engineer",
+    "role": "qa_engineer",
+    "isActive": true
+  }
+}

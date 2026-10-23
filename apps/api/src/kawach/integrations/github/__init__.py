@@ -1,5 +1,6 @@
 """GitHub webhook verification and policy constants."""
 
+from kawach.integrations.github.client import GitHubClient
 from kawach.integrations.github.policy import ALLOW_DIRECT_PUSH, AUTO_FIX_TARGET
 from kawach.integrations.github.webhook_signature import (
     compute_github_signature,
@@ -8,6 +9,7 @@ from kawach.integrations.github.webhook_signature import (
 )
 
 __all__ = [
+    "GitHubClient",
     "ALLOW_DIRECT_PUSH",
     "AUTO_FIX_TARGET",
     "compute_github_signature",

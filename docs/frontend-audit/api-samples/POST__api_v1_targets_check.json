@@ -1,0 +1,23 @@
+{
+  "method": "POST",
+  "path": "/api/v1/targets/check",
+  "operationId": "check_target_api_v1_targets_check_post",
+  "test_url": "/api/v1/targets/check",
+  "status_code": 422,
+  "latency_ms": 3.4,
+  "sample_response": {
+    "detail": [
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "target_url"
+        ],
+        "msg": "Field required",
+        "input": {
+          "targetUrl": "http://localhost:4000"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "method": "GET",
+  "path": "/api/v1/health",
+  "operationId": "get_health_api_v1_health_get",
+  "test_url": "/api/v1/health",
+  "status_code": 200,
+  "latency_ms": 3.1,
+  "sample_response": {
+    "ok": true,
+    "status": "active",
+    "workers_up": 2,
+    "queue_depth": 0,
+    "message": "KAWACH Autonomous QA Engine is active and operational"
+  }
+}

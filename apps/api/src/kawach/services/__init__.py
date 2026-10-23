@@ -22,12 +22,16 @@ from kawach.services.run_service import (
     resume_run,
 )
 from kawach.services.idempotency import IdempotencyService
+from kawach.services.regression_service import RegressionService
+from kawach.services.saved_test_service import SavedTestService
 from kawach.services.spec_parser import parse_spec_raw
 from kawach.services.token_service import ApiTokenService
 
 __all__ = [
     "IdempotencyService",
     "ApiTokenService",
+    "RegressionService",
+    "SavedTestService",
     "parse_spec_raw",
     "create_run",
     "resume_run",

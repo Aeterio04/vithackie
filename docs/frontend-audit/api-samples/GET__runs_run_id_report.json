@@ -1,0 +1,11 @@
+{
+  "method": "GET",
+  "path": "/runs/{run_id}/report",
+  "operationId": "get_report_runs__run_id__report_get",
+  "test_url": "/runs/20261023-115801-89d6/report",
+  "status_code": 404,
+  "latency_ms": 5.4,
+  "sample_response": {
+    "detail": "Report not generated yet"
+  }
+}

@@ -1,6 +1,6 @@
 """Pydantic schemas for test catalogs, test cases, and specs."""
 
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -42,8 +42,17 @@ class TestCase(BaseModel):
     scriptError: Optional[str] = None
 
 
+class CoverageMatrix(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    specItems: List[str] = Field(default_factory=list)
+    depthLevels: Dict[str, int] = Field(default_factory=dict)
+    edgeCategories: Dict[str, int] = Field(default_factory=dict)
+    matrix: Dict[str, Dict[str, List[str]]] = Field(default_factory=dict)
+
+
 class Catalog(BaseModel):
     model_config = ConfigDict(extra="ignore")
     runId: str
     generatedAt: str
     tests: List[TestCase] = Field(default_factory=list)
+    coverageMatrix: Optional[CoverageMatrix] = None

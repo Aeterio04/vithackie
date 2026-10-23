@@ -1,0 +1,11 @@
+{
+  "method": "GET",
+  "path": "/runs/{run_id}/export",
+  "operationId": "export_passing_tests_runs__run_id__export_get",
+  "test_url": "/runs/20261023-115801-89d6/export",
+  "status_code": 404,
+  "latency_ms": 5.8,
+  "sample_response": {
+    "detail": "Run results not found"
+  }
+}

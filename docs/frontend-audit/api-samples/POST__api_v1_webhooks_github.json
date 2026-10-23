@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "path": "/api/v1/webhooks/github",
+  "operationId": "receive_github_webhook_api_v1_webhooks_github_post",
+  "test_url": "/api/v1/webhooks/github",
+  "status_code": 401,
+  "latency_ms": 4.7,
+  "sample_response": {
+    "detail": "Invalid HMAC-SHA256 signature"
+  }
+}

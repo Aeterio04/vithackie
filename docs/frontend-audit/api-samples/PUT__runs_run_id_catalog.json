@@ -1,0 +1,11 @@
+{
+  "method": "PUT",
+  "path": "/runs/{run_id}/catalog",
+  "operationId": "update_catalog_runs__run_id__catalog_put",
+  "test_url": "/runs/20261023-115801-89d6/catalog",
+  "status_code": 404,
+  "latency_ms": 6.4,
+  "sample_response": {
+    "detail": "Run not found"
+  }
+}

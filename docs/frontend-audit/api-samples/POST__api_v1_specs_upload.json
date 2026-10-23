@@ -1,0 +1,14 @@
+{
+  "method": "POST",
+  "path": "/api/v1/specs/upload",
+  "operationId": "upload_spec_api_v1_specs_upload_post",
+  "test_url": "/api/v1/specs/upload",
+  "status_code": 200,
+  "latency_ms": 4.4,
+  "sample_response": {
+    "spec_id": "spec_8f5b4ab8",
+    "filename": "default_spec.md",
+    "file_size_bytes": 1279,
+    "item_count": 11
+  }
+}

@@ -18,11 +18,13 @@ from typing import Any, Dict, List, Optional, Union
 from kawach.core.config import settings
 from kawach.execution.triage import clean_error_message, is_assertion_failure
 from kawach.schemas import (
+    AppMap,
     Catalog,
     Outcome,
     Results,
     ResultsSummary,
     RunInput,
+    TestCase,
     TestResult,
 )
 from kawach.storage import artifacts as storage
@@ -54,8 +56,36 @@ def normalize_path(p: Union[Path, str]) -> str:
     return resolved
 
 
+def is_infrastructure_flake(error_message: Optional[str]) -> bool:
+    """Return True if error is caused by runner/network/browser infrastructure, never assertion failure.
+
+    Gated strictly: assertion failures (expect(...).to...) are NEVER considered infrastructure flakes.
+    """
+    if not error_message:
+        return False
+    if is_assertion_failure(error_message):
+        return False
+    cleaned = clean_error_message(error_message).lower()
+    infra_markers = [
+        "econnrefused",
+        "econnreset",
+        "etimedout",
+        "enotfound",
+        "net::err_",
+        "target closed",
+        "browser closed",
+        "browser has been closed",
+        "browser.newcontext: timeout",
+        "execution context was destroyed",
+        "navigation timeout",
+        "socket hang up",
+        "connection refused",
+    ]
+    return any(marker in cleaned for marker in infra_markers)
+
+
 def parse_report(report_path: str) -> List[Dict[str, Any]]:
-    """Walk a Playwright JSON report and return a flat list of test records."""
+    """Walk a Playwright JSON report and return a flat list of test records with step-level telemetry."""
     p = Path(report_path)
     if not p.exists():
         return []
@@ -80,6 +110,17 @@ def parse_report(report_path: str) -> List[Dict[str, Any]]:
                     elif res.get("error"):
                         err_msg = res["error"].get("message", "")
 
+                    failed_step = None
+                    failed_checkpoint = None
+                    steps = res.get("steps", [])
+                    total_steps = len(steps) if steps else None
+                    if steps:
+                        for s_idx, st in enumerate(steps, start=1):
+                            if st.get("error") or st.get("errors"):
+                                failed_step = s_idx
+                                failed_checkpoint = st.get("title")
+                                break
+
                     records.append({
                         "title": spec_title,
                         "file": spec_file,
@@ -87,6 +128,9 @@ def parse_report(report_path: str) -> List[Dict[str, Any]]:
                         "durationMs": int(res.get("duration", 0)),
                         "errorMessage": err_msg,
                         "attachments": res.get("attachments", []),
+                        "failedStep": failed_step,
+                        "totalSteps": total_steps,
+                        "checkpoint": failed_checkpoint,
                     })
         for child in suite.get("suites", []):
             walk_suite(child, file)
@@ -282,48 +326,6 @@ def list_tests(run_id: str, file: str) -> ListResult:
         return ListResult(ok=False, error=clean_error_message(str(exc))[-1500:])
 
 
-def run_tests(
-    run_id: str,
-    workers: Optional[int] = None,
-    include_probes: bool = False,
-) -> Results:
-    """Execute test suite against target app, record evidence, and return Results."""
-    r_dir = storage.run_dir(run_id)
-    catalog = storage.load_model(run_id, "catalog.json", Catalog)
-    approved_tests = (
-        [t for t in catalog.tests if t.status == "approved"]
-        if catalog
-        else []
-    )
-
-    storage.set_stage(
-        run_id,
-        "running",
-        step="Running tests",
-        done=0,
-        total=len(approved_tests),
-    )
-
-    test_results: List[TestResult] = []
-    tests_to_run: List[str] = []
-
-    for t in approved_tests:
-        if t.scriptStatus == "error":
-            test_results.append(
-                TestResult(
-                    testId=t.id,
-                    title=t.title,
-                    file=t.script or f"scripts/{t.id}.spec.ts",
-                    source="planned",
-                    outcome="test_error",
-                    durationMs=0,
-                    errorMessage=f"Script did not load: {t.scriptError}",
-                    evidenceDir=None,
-                )
-            )
-        else:
-            tests_to_run.append(t.id)
-
 def _clean_code_fence(raw_text: str) -> str:
     """Extract code from markdown code fences or return raw text."""
     trimmed = raw_text.strip()
@@ -389,6 +391,73 @@ def clean_and_sanitize_script(code: str, test_id: str, test_title: str) -> str:
     return full_code
 
 
+def run_tests(
+    run_id: str,
+    workers: Optional[int] = None,
+    include_probes: bool = False,
+) -> Results:
+    """Execute test suite against target app, record evidence, and return Results."""
+    r_dir = storage.run_dir(run_id)
+    catalog = storage.load_model(run_id, "catalog.json", Catalog)
+    catalog_map: Dict[str, TestCase] = {t.id: t for t in catalog.tests} if catalog else {}
+
+    approved_tests = (
+        [t for t in catalog.tests if t.status == "approved"]
+        if catalog
+        else []
+    )
+
+    storage.set_stage(
+        run_id,
+        "running",
+        step="Running tests",
+        done=0,
+        total=len(approved_tests),
+    )
+
+    test_results: List[TestResult] = []
+    tests_to_run: List[str] = []
+
+    for t in approved_tests:
+        if t.scriptStatus == "error":
+            test_results.append(
+                TestResult(
+                    testId=t.id,
+                    title=t.title,
+                    file=t.script or f"scripts/{t.id}.spec.ts",
+                    source="planned",
+                    outcome="test_error",
+                    durationMs=0,
+                    errorMessage=f"Script did not load: {t.scriptError}",
+                    evidenceDir=None,
+                    depth=t.depth,
+                    totalSteps=len(t.steps) if t.steps else 1,
+                )
+            )
+        else:
+            tests_to_run.append(t.id)
+
+    # Exploratory tester: generate targeted mutations starting from deepest frontier states & journeys
+    run_input = storage.load_model(run_id, "input.json", RunInput)
+    target_url = run_input.targetUrl if run_input else "http://localhost:4000"
+    app_map = storage.load_model(run_id, "app_map.json", AppMap)
+    if app_map and (app_map.unexploredFrontier or app_map.journeys):
+        try:
+            from kawach.execution.exploratory import ExploratoryTester
+            exp_tester = ExploratoryTester(run_id=run_id, budget_tests=5)
+            exploratory_cases = exp_tester.plan_exploratory_tests(app_map)
+            if exploratory_cases:
+                exp_tester.generate_exploratory_specs(
+                    exploratory_cases,
+                    target_url=target_url,
+                    scripts_dir=r_dir / "scripts",
+                )
+                for ec in exploratory_cases:
+                    catalog_map[ec.id] = ec
+                    tests_to_run.append(ec.id)
+        except Exception:
+            pass
+
     def _log(msg: str, **kwargs):
         try:
             from kawach.storage.artifacts import log_pipeline
@@ -452,6 +521,31 @@ def clean_and_sanitize_script(code: str, test_id: str, test_title: str) -> str:
         else:
             outcome = "test_error"
 
+        test_case = catalog_map.get(test_id)
+        depth = test_case.depth if test_case else 1
+        failed_step = r.get("failedStep")
+        total_steps = r.get("totalSteps")
+        checkpoint = r.get("checkpoint")
+
+        if total_steps is None and test_case and test_case.steps:
+            total_steps = len(test_case.steps)
+
+        if outcome != "passed":
+            if failed_step is not None and test_case and test_case.steps and 1 <= failed_step <= len(test_case.steps):
+                if not checkpoint:
+                    step_obj = test_case.steps[failed_step - 1]
+                    checkpoint = step_obj.checkpoint or step_obj.action
+            elif failed_step is None and test_case and test_case.steps:
+                # Deduce failed step from assertions or checkpoints
+                for s_idx, st in enumerate(test_case.steps, start=1):
+                    if st.assertion or (st.checkpoint and st.checkpoint.lower() in err_msg.lower()):
+                        failed_step = s_idx
+                        checkpoint = st.checkpoint or st.action
+                        break
+                if failed_step is None:
+                    failed_step = len(test_case.steps)
+                    checkpoint = test_case.steps[-1].checkpoint or test_case.steps[-1].action
+
         evidence_dir_rel: Optional[str] = None
         if outcome != "passed":
             ev_dir = r_dir / "evidence" / test_id
@@ -497,6 +591,10 @@ def clean_and_sanitize_script(code: str, test_id: str, test_title: str) -> str:
                 durationMs=r["durationMs"],
                 errorMessage=err_msg if err_msg else None,
                 evidenceDir=evidence_dir_rel,
+                failedStep=failed_step,
+                totalSteps=total_steps,
+                depth=depth,
+                checkpoint=checkpoint,
             )
         )
 
@@ -513,12 +611,40 @@ def clean_and_sanitize_script(code: str, test_id: str, test_title: str) -> str:
                     durationMs=0,
                     errorMessage="No result recorded",
                     evidenceDir=None,
+                    depth=t.depth,
+                    totalSteps=len(t.steps) if t.steps else 1,
                 )
             )
 
+    # 1. Retry infrastructure flakes (network timeouts, connection refused, browser context drops)
+    # Strictly gated: assertion failures are NEVER retried.
+    infra_flakes = [
+        t for t in test_results
+        if t.outcome == "test_error" and is_infrastructure_flake(t.errorMessage)
+    ]
+    if infra_flakes:
+        _log(f"Runner: Detected {len(infra_flakes)} infrastructure flake(s). Attempting 1-time automated infra retry...", source="runner")
+        for t in infra_flakes:
+            retry_run = run_playwright(
+                run_id,
+                grep=f"{t.testId}:",
+                out_name=f"infra_retry_{t.testId}",
+                workers=1,
+                timeout_s=30,
+            )
+            if retry_run.report_path:
+                re_records = parse_report(retry_run.report_path)
+                match_rec = next((rec for rec in re_records if t.testId in rec.get("title", "")), None)
+                if match_rec and match_rec.get("status") == "passed":
+                    t.outcome = "passed"
+                    t.errorMessage = None
+                    t.durationMs = int(match_rec.get("durationMs", 0))
+                    _log(f"Runner: {t.testId} passed after infrastructure retry.", source="runner")
+
+    # 2. Self-Healing: For test_error scripts with syntax/locator timeouts (NOT assertion failures and NOT infra flakes)
     recoverable_failures = [
         t for t in test_results
-        if t.outcome == "test_error" and t.testId.startswith("T")
+        if t.outcome == "test_error" and t.testId.startswith("T") and not is_infrastructure_flake(t.errorMessage)
     ]
 
     if recoverable_failures:
@@ -625,3 +751,4 @@ def clean_and_sanitize_script(code: str, test_id: str, test_title: str) -> str:
 
     storage.save_model(run_id, "results.json", results_obj)
     return results_obj
+

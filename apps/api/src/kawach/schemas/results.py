@@ -16,6 +16,10 @@ class TestResult(BaseModel):
     durationMs: int
     errorMessage: Optional[str] = None
     evidenceDir: Optional[str] = None
+    failedStep: Optional[int] = None
+    totalSteps: Optional[int] = None
+    depth: Optional[int] = None
+    checkpoint: Optional[str] = None
 
 
 class ResultsSummary(BaseModel):

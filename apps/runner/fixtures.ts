@@ -187,6 +187,9 @@ export const test = base.extend<{ evidence: void }>({
       }
 
       try {
+        // Ensure shared test data / state reset between workers
+        await context.clearCookies().catch(() => {});
+        await context.clearPermissions().catch(() => {});
         await use();
       } finally {
         if (liveDir && testId) {

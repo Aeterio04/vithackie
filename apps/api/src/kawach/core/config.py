@@ -17,7 +17,11 @@ class Settings(BaseSettings):
     """Application settings grouped according to Section 11 specifications."""
 
     model_config = SettingsConfigDict(
-        env_file=str(REPO_ROOT / ".env"),
+        env_file=(
+            str(REPO_ROOT / ".env"),
+            str(REPO_ROOT / "apps" / "api" / ".env"),
+            ".env",
+        ),
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -48,9 +52,14 @@ class Settings(BaseSettings):
     )
 
     # 6. LLM Engine & Provider
-    LLM_PROVIDER: str = "anthropic"
-    LLM_MODEL: str = "claude-sonnet-5-5"
+    LLM_PROVIDER: str = "groq"
+    LLM_MODEL: str = "llama-3.3-70b-versatile"
     GROQ_API_KEY: str = ""
+    GROQ_RPM_LIMIT: int = 30
+    GROQ_TPM_LIMIT: int = 6000
+    GROQ_MIN_INTERVAL: float = 2.0
+    GROQ_DEFAULT_MODEL: str = "llama-3.3-70b-versatile"
+    GROQ_FALLBACK_MODEL: str = "llama-3.1-8b-instant"
     ANTHROPIC_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
     LLM_PRICE_IN_PER_MTOK: float = 0.0

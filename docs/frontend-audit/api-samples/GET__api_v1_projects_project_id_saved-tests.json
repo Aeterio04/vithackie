@@ -1,0 +1,27 @@
+{
+  "method": "GET",
+  "path": "/api/v1/projects/{project_id}/saved-tests",
+  "operationId": "list_saved_tests_api_v1_projects__project_id__saved_tests_get",
+  "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/saved-tests",
+  "status_code": 200,
+  "latency_ms": 10.0,
+  "sample_response": [
+    {
+      "id": "fc969083-1822-4221-ab27-7c1fd19863bc",
+      "project_id": "0eaa9c6a-033f-45b1-8f60-880c0bafe3d2",
+      "origin_run_id": null,
+      "origin_test_case_id": "test_01",
+      "name": "Saved Test test_01",
+      "description": null,
+      "script_path": "C:\\projects\\aiqa\\data\\artifacts\\saved_tests\\0eaa9c6a-033f-45b1-8f60-880c0bafe3d2\\fc969083-1822-4221-ab27-7c1fd19863bc.spec.ts",
+      "tags": [
+        "checkout",
+        "cart",
+        "p0"
+      ],
+      "is_active": true,
+      "created_at": "2026-10-23T11:59:41.353944",
+      "updated_at": "2026-10-23T11:59:41.353949"
+    }
+  ]
+}

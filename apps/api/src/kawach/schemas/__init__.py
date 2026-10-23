@@ -33,7 +33,7 @@ from kawach.schemas.tokens import (
     ApiTokenRead,
 )
 from kawach.schemas.bug import Bug, BugReplay, BugsFile, Evidence
-from kawach.schemas.catalog import Catalog, SpecItem, Step, TestCase
+from kawach.schemas.catalog import Catalog, CoverageMatrix, SpecItem, Step, TestCase
 from kawach.schemas.metrics import (
     Benchmark,
     BenchmarkMatch,
@@ -91,6 +91,7 @@ __all__ = [
     "SpecItem",
     "Step",
     "TestCase",
+    "CoverageMatrix",
     "Catalog",
     # Bug
     "Evidence",

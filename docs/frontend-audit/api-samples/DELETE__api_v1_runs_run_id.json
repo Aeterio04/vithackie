@@ -1,0 +1,12 @@
+{
+  "method": "DELETE",
+  "path": "/api/v1/runs/{run_id}",
+  "operationId": "delete_run_endpoint_api_v1_runs__run_id__delete",
+  "test_url": "/api/v1/runs/20261023-115801-89d6",
+  "status_code": 200,
+  "latency_ms": 6.7,
+  "sample_response": {
+    "ok": true,
+    "run_id": "20261023-115801-89d6"
+  }
+}

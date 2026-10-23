@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "path": "/api/runs/{run_id}/stream",
+  "operationId": "stream_run_progress_api_runs__run_id__stream_get",
+  "test_url": "/api/runs/20261023-115801-89d6/stream",
+  "status_code": 404,
+  "latency_ms": 4.9,
+  "sample_response": {
+    "stream": "SSE stream connected",
+    "status": 404
+  }
+}

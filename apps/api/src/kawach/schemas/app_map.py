@@ -72,7 +72,9 @@ class AppMapStats(BaseModel):
     model_config = ConfigDict(extra="ignore")
     pagesVisited: int = 0
     durationSeconds: float = 0.0
-    budgetHit: Optional[Literal["pages", "time"]] = None
+    budgetHit: Optional[str] = None
+    statesDiscovered: int = 0
+    transitionsExecuted: int = 0
 
 
 class StateNode(BaseModel):
@@ -93,6 +95,7 @@ class ActionEdge(BaseModel):
     action: str
     locator: str = ""
     value: Optional[str] = None
+    depth: int = 0
 
 
 class Journey(BaseModel):

@@ -39,6 +39,7 @@ class LLM:
         self._provider = settings.LLM_PROVIDER.lower()
         self._openai_client = None
         self._groq_client = None
+        self._groq_handler = None
         self._anthropic_client = None
 
     def _get_groq_client(self):
@@ -48,11 +49,22 @@ class LLM:
             except ImportError:
                 raise LLMError("openai package is required for groq provider. Install openai>=1.0.0")
 
-            api_key = os.getenv("GROQ_API_KEY") or settings.OPENAI_API_KEY
+            api_key = (
+                os.getenv("GROQ_API_KEY")
+                or getattr(settings, "GROQ_API_KEY", "")
+                or os.getenv("OPENAI_API_KEY")
+                or settings.OPENAI_API_KEY
+            )
             if not api_key:
                 raise LLMError("Missing or invalid API key for provider groq (GROQ_API_KEY not set)")
             self._groq_client = openai.OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
         return self._groq_client
+
+    def _get_groq_handler(self):
+        if self._groq_handler is None:
+            from kawach.llm.groq_handler import GroqHandler
+            self._groq_handler = GroqHandler(self._get_groq_client)
+        return self._groq_handler
 
     def _get_openai_client(self):
         if self._openai_client is None:
@@ -98,43 +110,31 @@ class LLM:
         max_tokens: int,
         temperature: float,
         is_json: bool,
+        schema_name: str = "text",
+        run_id: Optional[str] = None,
     ) -> Tuple[str, int, int]:
         provider = self._provider
         model = settings.LLM_MODEL
         max_attempts = 5
         last_err: Optional[Exception] = None
 
+        if provider == "groq":
+            handler = self._get_groq_handler()
+            return handler.complete(
+                system=system,
+                prompt=prompt,
+                model=model,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                is_json=is_json,
+                schema_name=schema_name,
+                run_id=run_id,
+                max_attempts=max_attempts,
+            )
+
         for attempt in range(max_attempts):
             try:
-                if provider == "groq":
-                    global _groq_last_call_time
-                    with _groq_pace_lock:
-                        now = time.time()
-                        elapsed_since_last = now - _groq_last_call_time
-                        if elapsed_since_last < 1.8:
-                            time.sleep(1.8 - elapsed_since_last)
-                        _groq_last_call_time = time.time()
-
-                    client = self._get_groq_client()
-                    kwargs = {
-                        "model": model or "qwen/qwen3.8-27b",
-                        "messages": [
-                            {"role": "system", "content": system},
-                            {"role": "user", "content": prompt},
-                        ],
-                        "temperature": temperature,
-                        "max_tokens": max_tokens,
-                    }
-                    if is_json:
-                        kwargs["response_format"] = {"type": "json_object"}
-
-                    resp = client.chat.completions.create(**kwargs)
-                    text = resp.choices[0].message.content or ""
-                    in_tok = resp.usage.prompt_tokens if resp.usage else len(prompt) // 4
-                    out_tok = resp.usage.completion_tokens if resp.usage else len(text) // 4
-                    return (text, in_tok, out_tok)
-
-                elif provider == "openai":
+                if provider == "openai":
                     client = self._get_openai_client()
                     kwargs = {
                         "model": model or "gpt-4o",
@@ -259,6 +259,10 @@ class LLM:
             record_usage(run_id, in_tok, out_tok, is_cache_hit=False)
             return text
 
+        if self._provider == "groq":
+            from kawach.llm.groq_handler import get_budgeted_max_tokens
+            max_tokens = get_budgeted_max_tokens(schema_name, max_tokens)
+
         cache_k = compute_cache_key(
             provider=self._provider,
             model=settings.LLM_MODEL,
@@ -280,6 +284,8 @@ class LLM:
             max_tokens=max_tokens,
             temperature=temperature,
             is_json=False,
+            schema_name=schema_name,
+            run_id=run_id,
         )
 
         write_cache(self.cache_dir, cache_k, raw_text, in_tok, out_tok)
@@ -311,6 +317,10 @@ class LLM:
             record_usage(run_id, in_tok, out_tok, is_cache_hit=False)
             return data
 
+        if self._provider == "groq":
+            from kawach.llm.groq_handler import get_budgeted_max_tokens
+            max_tokens = get_budgeted_max_tokens(schema_name, max_tokens)
+
         cache_k = compute_cache_key(
             provider=self._provider,
             model=settings.LLM_MODEL,
@@ -340,6 +350,8 @@ class LLM:
             max_tokens=max_tokens,
             temperature=temperature,
             is_json=True,
+            schema_name=schema_name,
+            run_id=run_id,
         )
 
         data = self._parse_json_defensive(
@@ -409,6 +421,8 @@ class LLM:
                 max_tokens=max_tokens,
                 temperature=temperature,
                 is_json=True,
+                schema_name=f"{schema_name}_repair",
+                run_id=run_id,
             )
             record_usage(run_id, rep_in, rep_out, is_cache_hit=False)
 

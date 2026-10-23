@@ -24,21 +24,34 @@ as specified in Section 8 and Appendix A of the architecture contracts.
 | **Domain Policies** | `kawach.domain.policies` | Active / Tested | `is_small_fix()`, `classify_fix_risk()`, `is_fix_allowed()` |
 | **GitHub Policy** | `kawach.integrations.github.policy` | Active / Tested | Invariant: `ALLOW_DIRECT_PUSH = False`, `AUTO_FIX_TARGET = "pull_request"` |
 | **Webhook Verifier** | `kawach.integrations.github.webhook_signature` | Active / Tested | HMAC-SHA256 verification and delivery ID idempotency |
-| **Service Interface** | `kawach.services.regression_service` | Scaffold (501/NIE) | `RegressionServiceProtocol`, `RegressionService` |
+| **GitHub Client** | `kawach.integrations.github.client` | Active / Tested | Local-first git diff & tree inspection, PR comment formatting |
+| **Saved Test Service** | `kawach.services.saved_test_service` | Active / Tested | Script artifact storage (SHA-256), coverage touchpoint indexing, CRUD |
+| **Regression Service**| `kawach.services.regression_service` | Active / Tested | Diff-aware test selection, commit triggers, regression run initiation |
+| **Workflow Graph** | `kawach.workflows.regression` | Active / Tested | LangGraph state machine with 6 real nodes (select, run, verify, localize, fix, validate) |
+| **API Endpoints** | `kawach.api.v1.saved_tests` | Active / Tested | `GET/POST /projects/{id}/saved-tests`, `DELETE .../{test_id}` |
+| **API Endpoints** | `kawach.api.v1.commits` | Active / Tested | `GET/POST /projects/{id}/commits`, `/analysis`, `/suggest-fix`, `/auto-fix` |
+| **API Endpoints** | `kawach.api.v1.webhooks` | Active / Tested | `POST /api/v1/webhooks/github` (HMAC verified, triggers regression) |
 | **Service Interface** | `kawach.services.localization_service` | Scaffold (501/NIE) | `LocalizationServiceProtocol`, `LocalizationService` |
 | **Service Interface** | `kawach.services.fix_service` | Scaffold (501/NIE) | `FixServiceProtocol`, `FixService` |
 | **Agent Interface** | `kawach.agents.localizer.interface` | Scaffold (NIE) | `LocalizerAgentProtocol`, `LocalizerAgent` |
 | **Agent Interface** | `kawach.agents.fix_suggest.interface` | Scaffold (NIE) | `FixSuggesterAgentProtocol`, `FixSuggesterAgent` |
-| **Workflow Graph** | `kawach.workflows.regression` | Scaffold / Tested | LangGraph state machine skeleton with 6 named nodes |
-| **API Endpoints** | `kawach.api.v1.saved_tests` | Scaffold (501) | `GET/POST /projects/{id}/saved-tests`, `DELETE .../{test_id}` |
-| **API Endpoints** | `kawach.api.v1.commits` | Scaffold (501) | `GET/POST /projects/{id}/commits`, `/analysis`, `/suggest-fix`, `/auto-fix` |
 | **DB Models** | `kawach.db.models.identity.ApiToken` | Active / Tested | API tokens with SHA-256 hash at rest, prefix, scopes, revocation |
 | **Audit Log** | `kawach.db.models.audit.AuditLog` | Active / Tested | Added `client_type` ("web" \| "github" \| "mcp") |
 | **Pydantic Schemas** | `kawach.schemas.tokens` | Active / Tested | `ApiTokenCreate`, `ApiTokenRead`, `ApiTokenCreated`, `ApiClient` |
-| **Pydantic Schemas** | `kawach.schemas.catalog` | Active / Tested | Extended `TestCase` (`depth`, `edgeTags`, `riskScore`, `coverageRef`) and `Step` |
-| **Pydantic Schemas** | `kawach.schemas.app_map` | Active / Tested | Extended `StateNode`, `ActionEdge`, `Journey`, `FrontierState` |
+| **Pydantic Schemas** | `kawach.schemas.catalog` | Active / Tested | Extended `TestCase` (`depth`, `edgeTags`, `riskScore`, `coverageRef`), `Step`, `CoverageMatrix` |
+| **Pydantic Schemas** | `kawach.schemas.app_map` | Active / Tested | Extended `StateNode`, `ActionEdge` (with `depth`), `Journey`, `FrontierState` |
+| **Explorer Crawler** | `apps/runner/explore.ts` | Active / Tested | State-graph exploration, L0–L3+ frontier priority queue, DOM+UI state fingerprinting, loop/stuck watchdog, a11y & signal tracking |
+| **Explorer Agent** | `kawach.agents.explorer` | Active / Tested | Multi-depth execution coordinator, journey extractor (depth >= 3), AppMap assembler with untrusted LLM summary |
+| **Planner Agent** | `kawach.agents.planner` | Active / Tested | Multi-level test generation (4 archetypes: single-step, journey, deep-path, edge-case), 14-category edge library, risk scoring, coverage matrix |
+| **Reviewer Agent** | `kawach.agents.reviewer` | Active / Tested | Autonomous catalog review with approve/reject powers and logged audit reasons |
 | **Token Service** | `kawach.services.token_service` | Active / Tested | Token lifecycle, scoping, verification, audit logging |
 | **API Endpoints** | `kawach.api.v1.tokens` | Active / Tested | `POST /tokens`, `GET /tokens`, `DELETE /tokens/{id}` |
+| **Test Runner** | `kawach.execution.runner` | Active / Tested | Multi-step execution, checkpoint failure reporting (`failed at step k of n, depth d`), worker state reset, infra flake retry gating |
+| **Exploratory Engine**| `kawach.execution.exploratory` | Active / Tested | Deepest frontier mutation planner (reorder, interrupt, repeat, perturb), loop watchdog, path shrinker |
+| **Triage Deduplication**| `kawach.execution.triage` | Active / Tested | Defect deduplication by `(failing state, symptom signature)`, minimal Playwright repro script writer |
+| **Replay Verifier** | `kawach.execution.verifier` | Active / Tested | Standalone LLM-free 3x deterministic replay certification (`confirmed`, `flaky`, `not_reproduced`) |
+| **Pydantic Schemas** | `kawach.schemas.results` | Active / Tested | Added `failedStep`, `totalSteps`, `depth`, `checkpoint` to `TestResult` |
+| **Pydantic Schemas** | `kawach.schemas.bug` | Active / Tested | Added `depth`, `failingPath`, `checkpoint`, `reproductionScript` to `Bug` |
 | **Use-Case Catalogue**| `docs/USE_CASES.md` | Active | 11 core use-cases mapped across Web, GitHub, MCP doors |
 | **Contracts & Types** | `packages/contracts/openapi.json` | Active (63 paths)| Exported OpenAPI 3.1.0 schema & generated TypeScript types |
 

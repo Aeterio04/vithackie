@@ -1,0 +1,1269 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/register",
+    "operationId": "register_api_v1_auth_register_post",
+    "tags": [
+      "auth"
+    ],
+    "summary": "Register",
+    "security": [],
+    "test_url": "/api/v1/auth/register",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 104.0,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "operationId": "login_api_v1_auth_login_post",
+    "tags": [
+      "auth"
+    ],
+    "summary": "Login",
+    "security": [],
+    "test_url": "/api/v1/auth/login",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 94.2,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/refresh",
+    "operationId": "refresh_session_api_v1_auth_refresh_post",
+    "tags": [
+      "auth"
+    ],
+    "summary": "Refresh Session",
+    "security": [],
+    "test_url": "/api/v1/auth/refresh",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 15.7,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/auth/me",
+    "operationId": "auth_me_api_v1_auth_me_get",
+    "tags": [
+      "auth"
+    ],
+    "summary": "Auth Me",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/auth/me",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 5.4,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/logout",
+    "operationId": "logout_api_v1_auth_logout_post",
+    "tags": [
+      "auth"
+    ],
+    "summary": "Logout",
+    "security": [],
+    "test_url": "/api/v1/auth/logout",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 12.3,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/tokens",
+    "operationId": "create_token_api_v1_auth_tokens_post",
+    "tags": [
+      "auth-tokens"
+    ],
+    "summary": "Create Token",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/auth/tokens",
+    "status_code": 201,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 18.9,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/auth/tokens",
+    "operationId": "list_tokens_api_v1_auth_tokens_get",
+    "tags": [
+      "auth-tokens"
+    ],
+    "summary": "List Tokens",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/auth/tokens",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 6.6,
+    "error": null
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/auth/tokens/{token_id}",
+    "operationId": "revoke_token_api_v1_auth_tokens__token_id__delete",
+    "tags": [
+      "auth-tokens"
+    ],
+    "summary": "Revoke Token",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/auth/tokens/4bae3342-e378-4f67-9856-ced172b6f967",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 19.3,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/health",
+    "operationId": "get_health_api_v1_health_get",
+    "tags": [
+      "health"
+    ],
+    "summary": "Get Health",
+    "security": [],
+    "test_url": "/api/v1/health",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 3.1,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/stats",
+    "operationId": "get_stats_api_v1_stats_get",
+    "tags": [
+      "health"
+    ],
+    "summary": "Get Stats",
+    "security": [],
+    "test_url": "/api/v1/stats",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 131.2,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/config/defaults",
+    "operationId": "get_config_defaults_api_v1_config_defaults_get",
+    "tags": [
+      "config"
+    ],
+    "summary": "Get Config Defaults",
+    "security": [],
+    "test_url": "/api/v1/config/defaults",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 29.9,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/targets/check",
+    "operationId": "check_target_api_v1_targets_check_post",
+    "tags": [
+      "config"
+    ],
+    "summary": "Check Target",
+    "security": [],
+    "test_url": "/api/v1/targets/check",
+    "status_code": 422,
+    "backend_classification": "REAL-CLIENT-STATUS-422",
+    "latency_ms": 3.4,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/specs/upload",
+    "operationId": "upload_spec_api_v1_specs_upload_post",
+    "tags": [
+      "config"
+    ],
+    "summary": "Upload Spec",
+    "security": [],
+    "test_url": "/api/v1/specs/upload",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 4.4,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/projects",
+    "operationId": "list_projects_api_v1_projects_get",
+    "tags": [
+      "projects"
+    ],
+    "summary": "List Projects",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 9.5,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/projects",
+    "operationId": "create_project_api_v1_projects_post",
+    "tags": [
+      "projects"
+    ],
+    "summary": "Create Project",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects",
+    "status_code": 201,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 18.0,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/projects/{project_id}",
+    "operationId": "get_project_api_v1_projects__project_id__get",
+    "tags": [
+      "projects"
+    ],
+    "summary": "Get Project",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 10.5,
+    "error": null
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/projects/{project_id}",
+    "operationId": "update_project_api_v1_projects__project_id__put",
+    "tags": [
+      "projects"
+    ],
+    "summary": "Update Project",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2",
+    "status_code": 500,
+    "backend_classification": "SERVER-ERROR-500",
+    "latency_ms": 81.2,
+    "error": null
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/projects/{project_id}",
+    "operationId": "delete_project_api_v1_projects__project_id__delete",
+    "tags": [
+      "projects"
+    ],
+    "summary": "Delete Project",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2",
+    "status_code": 500,
+    "backend_classification": "SERVER-ERROR-500",
+    "latency_ms": 2063.7,
+    "error": null
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/projects/{project_id}/credentials",
+    "operationId": "set_credentials_api_v1_projects__project_id__credentials_put",
+    "tags": [
+      "projects"
+    ],
+    "summary": "Set Credentials",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/credentials",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 2070.2,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/projects/{project_id}/credentials",
+    "operationId": "get_credentials_info_api_v1_projects__project_id__credentials_get",
+    "tags": [
+      "projects"
+    ],
+    "summary": "Get Credentials Info",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/credentials",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 9.1,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs",
+    "operationId": "list_runs_api_v1_runs_get",
+    "tags": [
+      "runs"
+    ],
+    "summary": "List Runs",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 249.6,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/runs",
+    "operationId": "create_run_api_v1_runs_post",
+    "tags": [
+      "runs"
+    ],
+    "summary": "Create Run",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs",
+    "status_code": 422,
+    "backend_classification": "REAL-CLIENT-STATUS-422",
+    "latency_ms": 6.4,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}",
+    "operationId": "get_single_run_api_v1_runs__run_id__get",
+    "tags": [
+      "runs"
+    ],
+    "summary": "Get Single Run",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.4,
+    "error": null
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/runs/{run_id}",
+    "operationId": "delete_run_endpoint_api_v1_runs__run_id__delete",
+    "tags": [
+      "runs"
+    ],
+    "summary": "Delete Run Endpoint",
+    "security": [],
+    "test_url": "/api/v1/runs/20261023-115801-89d6",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 6.7,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/runs/{run_id}/start",
+    "operationId": "start_run_pipeline_api_v1_runs__run_id__start_post",
+    "tags": [
+      "runs"
+    ],
+    "summary": "Start Run Pipeline",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/start",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 8.7,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/runs/{run_id}/resume",
+    "operationId": "resume_run_endpoint_api_v1_runs__run_id__resume_post",
+    "tags": [
+      "runs"
+    ],
+    "summary": "Resume Run Endpoint",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/resume",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 8.2,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/runs/{run_id}/cancel",
+    "operationId": "cancel_run_endpoint_api_v1_runs__run_id__cancel_post",
+    "tags": [
+      "runs"
+    ],
+    "summary": "Cancel Run Endpoint",
+    "security": [],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/cancel",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 6.9,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/runs/{run_id}/retry",
+    "operationId": "retry_run_api_v1_runs__run_id__retry_post",
+    "tags": [
+      "runs"
+    ],
+    "summary": "Retry Run",
+    "security": [],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/retry",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 5.9,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/catalog",
+    "operationId": "get_catalog_api_v1_runs__run_id__catalog_get",
+    "tags": [
+      "catalog"
+    ],
+    "summary": "Get Catalog",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/catalog",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.5,
+    "error": null
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/runs/{run_id}/catalog/{test_id}",
+    "operationId": "patch_test_api_v1_runs__run_id__catalog__test_id__patch",
+    "tags": [
+      "catalog"
+    ],
+    "summary": "Patch Test",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/catalog/test_01",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.6,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/runs/{run_id}/catalog/test",
+    "operationId": "add_custom_test_api_v1_runs__run_id__catalog_test_post",
+    "tags": [
+      "catalog"
+    ],
+    "summary": "Add Custom Test",
+    "security": [],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/catalog/test",
+    "status_code": 422,
+    "backend_classification": "REAL-CLIENT-STATUS-422",
+    "latency_ms": 3.7,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/runs/{run_id}/review",
+    "operationId": "submit_review_api_v1_runs__run_id__review_post",
+    "tags": [
+      "catalog"
+    ],
+    "summary": "Submit Review",
+    "security": [],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/review",
+    "status_code": 422,
+    "backend_classification": "REAL-CLIENT-STATUS-422",
+    "latency_ms": 3.9,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/review-log",
+    "operationId": "get_review_log_api_v1_runs__run_id__review_log_get",
+    "tags": [
+      "catalog"
+    ],
+    "summary": "Get Review Log",
+    "security": [],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/review-log",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 6.3,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/bugs",
+    "operationId": "get_run_bugs_api_v1_runs__run_id__bugs_get",
+    "tags": [
+      "bugs"
+    ],
+    "summary": "Get Run Bugs",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/bugs",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.2,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/bugs/{bug_id}",
+    "operationId": "get_single_bug_api_v1_bugs__bug_id__get",
+    "tags": [
+      "bugs"
+    ],
+    "summary": "Get Single Bug",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/bugs/bug_01",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 136.1,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/runs/{run_id}/bugs/{bug_id}/retest",
+    "operationId": "retest_bug_endpoint_api_v1_runs__run_id__bugs__bug_id__retest_post",
+    "tags": [
+      "bugs"
+    ],
+    "summary": "Retest Bug Endpoint",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/bugs/bug_01/retest",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 8.2,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/report",
+    "operationId": "get_report_api_v1_runs__run_id__report_get",
+    "tags": [
+      "reports"
+    ],
+    "summary": "Get Report",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/report",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 8.4,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/results",
+    "operationId": "get_results_api_v1_runs__run_id__results_get",
+    "tags": [
+      "reports"
+    ],
+    "summary": "Get Results",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/results",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 8.0,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/metrics",
+    "operationId": "get_metrics_api_v1_runs__run_id__metrics_get",
+    "tags": [
+      "reports"
+    ],
+    "summary": "Get Metrics",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/metrics",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.8,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/report/export",
+    "operationId": "export_passing_tests_api_v1_runs__run_id__report_export_get",
+    "tags": [
+      "exports"
+    ],
+    "summary": "Export Passing Tests",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/report/export",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 6.9,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/tests/export",
+    "operationId": "export_passing_tests_api_v1_runs__run_id__tests_export_get",
+    "tags": [
+      "exports"
+    ],
+    "summary": "Export Passing Tests",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/tests/export",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.3,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/export",
+    "operationId": "export_passing_tests_api_v1_runs__run_id__export_get",
+    "tags": [
+      "exports"
+    ],
+    "summary": "Export Passing Tests",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/export",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.7,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/export/scripts",
+    "operationId": "export_scripts_only_api_v1_runs__run_id__export_scripts_get",
+    "tags": [
+      "exports"
+    ],
+    "summary": "Export Scripts Only",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/export/scripts",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.3,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/execution",
+    "operationId": "get_execution_state_api_v1_runs__run_id__execution_get",
+    "tags": [
+      "streams"
+    ],
+    "summary": "Get Execution State",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/execution",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 8.6,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/tests",
+    "operationId": "get_tests_api_v1_runs__run_id__tests_get",
+    "tags": [
+      "streams"
+    ],
+    "summary": "Get Tests",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/tests",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.4,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/logs",
+    "operationId": "get_logs_api_v1_runs__run_id__logs_get",
+    "tags": [
+      "streams"
+    ],
+    "summary": "Get Logs",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/logs",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.2,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/events",
+    "operationId": "poll_run_events_api_v1_runs__run_id__events_get",
+    "tags": [
+      "streams"
+    ],
+    "summary": "Poll Run Events",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/events",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.0,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/stream",
+    "operationId": "stream_run_sse_api_v1_runs__run_id__stream_get",
+    "tags": [
+      "streams"
+    ],
+    "summary": "Stream Run Sse",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/stream",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 7.2,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/artifacts/{artifact_id}",
+    "operationId": "get_artifact_api_v1_artifacts__artifact_id__get",
+    "tags": [
+      "artifacts"
+    ],
+    "summary": "Get Artifact",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/artifacts/art_01",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 2061.0,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/files/{path}",
+    "operationId": "get_run_file_api_v1_runs__run_id__files__path__get",
+    "tags": [
+      "artifacts"
+    ],
+    "summary": "Get Run File",
+    "security": [],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/files/report.md",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 5.9,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/runs/{run_id}/app-map",
+    "operationId": "get_app_map_api_v1_runs__run_id__app_map_get",
+    "tags": [
+      "artifacts"
+    ],
+    "summary": "Get App Map",
+    "security": [],
+    "test_url": "/api/v1/runs/20261023-115801-89d6/app-map",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 9.0,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/projects/{project_id}/saved-tests",
+    "operationId": "list_saved_tests_api_v1_projects__project_id__saved_tests_get",
+    "tags": [
+      "saved-tests"
+    ],
+    "summary": "List Saved Tests",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/saved-tests",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 10.0,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/projects/{project_id}/saved-tests",
+    "operationId": "save_test_api_v1_projects__project_id__saved_tests_post",
+    "tags": [
+      "saved-tests"
+    ],
+    "summary": "Save Test",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/saved-tests",
+    "status_code": 201,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 25.1,
+    "error": null
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/projects/{project_id}/saved-tests/{test_id}",
+    "operationId": "delete_saved_test_api_v1_projects__project_id__saved_tests__test_id__delete",
+    "tags": [
+      "saved-tests"
+    ],
+    "summary": "Delete Saved Test",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/saved-tests/fc969083-1822-4221-ab27-7c1fd19863bc",
+    "status_code": 204,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 22.0,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/projects/{project_id}/commits",
+    "operationId": "list_commits_api_v1_projects__project_id__commits_get",
+    "tags": [
+      "commits"
+    ],
+    "summary": "List Commits",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/commits",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 11.0,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/projects/{project_id}/commits",
+    "operationId": "trigger_commit_regression_api_v1_projects__project_id__commits_post",
+    "tags": [
+      "commits"
+    ],
+    "summary": "Trigger Commit Regression",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/commits",
+    "status_code": 422,
+    "backend_classification": "REAL-CLIENT-STATUS-422",
+    "latency_ms": 8.2,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/projects/{project_id}/commits/{commit_id}/analysis",
+    "operationId": "get_failure_analysis_api_v1_projects__project_id__commits__commit_id__analysis_get",
+    "tags": [
+      "commits"
+    ],
+    "summary": "Get Failure Analysis",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/commits/c0ffee123456/analysis",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 11.2,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/projects/{project_id}/commits/{commit_id}/suggest-fix",
+    "operationId": "request_fix_suggestion_api_v1_projects__project_id__commits__commit_id__suggest_fix_post",
+    "tags": [
+      "commits"
+    ],
+    "summary": "Request Fix Suggestion",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/commits/c0ffee123456/suggest-fix",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 8.8,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/projects/{project_id}/commits/{commit_id}/auto-fix",
+    "operationId": "trigger_auto_fix_pr_api_v1_projects__project_id__commits__commit_id__auto_fix_post",
+    "tags": [
+      "commits"
+    ],
+    "summary": "Trigger Auto Fix Pr",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/commits/c0ffee123456/auto-fix",
+    "status_code": 422,
+    "backend_classification": "REAL-CLIENT-STATUS-422",
+    "latency_ms": 8.4,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/webhooks/github",
+    "operationId": "receive_github_webhook_api_v1_webhooks_github_post",
+    "tags": [
+      "webhooks"
+    ],
+    "summary": "Receive Github Webhook",
+    "security": [],
+    "test_url": "/api/v1/webhooks/github",
+    "status_code": 401,
+    "backend_classification": "REAL-CLIENT-STATUS-401",
+    "latency_ms": 4.7,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/health",
+    "operationId": "health_health_get",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Health",
+    "security": [],
+    "test_url": "/health",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 3.4,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/config",
+    "operationId": "get_config_config_get",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Get Config",
+    "security": [],
+    "test_url": "/config",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 3.2,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/runs",
+    "operationId": "list_runs_runs_get",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "List Runs",
+    "security": [],
+    "test_url": "/runs",
+    "status_code": 200,
+    "backend_classification": "REAL-SUCCESS",
+    "latency_ms": 98.5,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/runs",
+    "operationId": "start_run_runs_post",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Start Run",
+    "security": [
+      {
+        "HTTPBearer": []
+      }
+    ],
+    "test_url": "/runs",
+    "status_code": 422,
+    "backend_classification": "REAL-CLIENT-STATUS-422",
+    "latency_ms": 6.5,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/runs/{run_id}",
+    "operationId": "get_run_runs__run_id__get",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Get Run",
+    "security": [],
+    "test_url": "/runs/20261023-115801-89d6",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 5.0,
+    "error": null
+  },
+  {
+    "method": "PUT",
+    "path": "/runs/{run_id}/catalog",
+    "operationId": "update_catalog_runs__run_id__catalog_put",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Update Catalog",
+    "security": [],
+    "test_url": "/runs/20261023-115801-89d6/catalog",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 6.4,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/runs/{run_id}/tests",
+    "operationId": "add_test_runs__run_id__tests_post",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Add Test",
+    "security": [],
+    "test_url": "/runs/20261023-115801-89d6/tests",
+    "status_code": 422,
+    "backend_classification": "REAL-CLIENT-STATUS-422",
+    "latency_ms": 3.1,
+    "error": null
+  },
+  {
+    "method": "POST",
+    "path": "/runs/{run_id}/execute",
+    "operationId": "execute_run_runs__run_id__execute_post",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Execute Run",
+    "security": [],
+    "test_url": "/runs/20261023-115801-89d6/execute",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 5.6,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/runs/{run_id}/report",
+    "operationId": "get_report_runs__run_id__report_get",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Get Report",
+    "security": [],
+    "test_url": "/runs/20261023-115801-89d6/report",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 5.4,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/runs/{run_id}/files/{path}",
+    "operationId": "get_run_file_runs__run_id__files__path__get",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Get Run File",
+    "security": [],
+    "test_url": "/runs/20261023-115801-89d6/files/report.md",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 6.4,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/runs/{run_id}/export",
+    "operationId": "export_passing_tests_runs__run_id__export_get",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Export Passing Tests",
+    "security": [],
+    "test_url": "/runs/20261023-115801-89d6/export",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 5.8,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/api/runs/{run_id}/stream",
+    "operationId": "stream_run_progress_api_runs__run_id__stream_get",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Stream Run Progress",
+    "security": [],
+    "test_url": "/api/runs/20261023-115801-89d6/stream",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 4.9,
+    "error": null
+  },
+  {
+    "method": "GET",
+    "path": "/runs/{run_id}/stream",
+    "operationId": "stream_run_progress_runs__run_id__stream_get",
+    "tags": [
+      "legacy-contracts"
+    ],
+    "summary": "Stream Run Progress",
+    "security": [],
+    "test_url": "/runs/20261023-115801-89d6/stream",
+    "status_code": 404,
+    "backend_classification": "REAL-CLIENT-STATUS-404",
+    "latency_ms": 2032.4,
+    "error": null
+  }
+]

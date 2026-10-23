@@ -1,0 +1,413 @@
+{
+  "method": "GET",
+  "path": "/runs",
+  "operationId": "list_runs_runs_get",
+  "test_url": "/runs",
+  "status_code": 200,
+  "latency_ms": 98.5,
+  "sample_response": [
+    {
+      "runId": "reg_12345678_9378d6",
+      "createdAt": "2026-10-23T11:30:42Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_HEAD_cfc50a",
+      "createdAt": "2026-10-23T11:30:41Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_99998888_eed4a3",
+      "createdAt": "2026-10-23T11:30:05Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_c1a2b3c4_32db28",
+      "createdAt": "2026-10-23T11:30:04Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_12345678_66eb12",
+      "createdAt": "2026-10-23T11:14:04Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_HEAD_3b7ff8",
+      "createdAt": "2026-10-23T11:14:04Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_99998888_3ca24c",
+      "createdAt": "2026-10-23T11:13:26Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_c1a2b3c4_ee9ce2",
+      "createdAt": "2026-10-23T11:13:26Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_99998888_4b3608",
+      "createdAt": "2026-10-23T11:13:05Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_c1a2b3c4_909e02",
+      "createdAt": "2026-10-23T11:13:05Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_12345678_2e3e9d",
+      "createdAt": "2026-10-23T11:11:09Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_HEAD_a81572",
+      "createdAt": "2026-10-23T11:11:09Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "reg_HEAD_34a3a7",
+      "createdAt": "2026-10-23T11:10:57Z",
+      "stage": "failed",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261018-034136-aba5",
+      "createdAt": "2026-10-18T03:41:36Z",
+      "stage": "done",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 11,
+        "bugs": 6,
+        "confirmed": 5,
+        "flaky": 1
+      }
+    },
+    {
+      "runId": "20261018-030946-bdab",
+      "createdAt": "2026-10-18T03:09:46Z",
+      "stage": "done",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 11,
+        "bugs": 6,
+        "confirmed": 5,
+        "flaky": 1
+      }
+    },
+    {
+      "runId": "20261018-025507-953c",
+      "createdAt": "2026-10-18T02:55:07Z",
+      "stage": "done",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 11,
+        "bugs": 5,
+        "confirmed": 4,
+        "flaky": 1
+      }
+    },
+    {
+      "runId": "run_golden_demo",
+      "createdAt": "2026-10-18T02:00:00Z",
+      "stage": "done",
+      "mode": "autonomous",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 11,
+        "bugs": 10,
+        "confirmed": 8,
+        "flaky": 1
+      }
+    },
+    {
+      "runId": "20261017-224755-de5a",
+      "createdAt": "2026-10-17T22:47:55Z",
+      "stage": "done",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 11,
+        "bugs": 9,
+        "confirmed": 9,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-222234-21e4",
+      "createdAt": "2026-10-17T22:22:34Z",
+      "stage": "done",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 11,
+        "bugs": 8,
+        "confirmed": 8,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-221707-db1c",
+      "createdAt": "2026-10-17T22:17:07Z",
+      "stage": "failed",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 11,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-221618-7be4",
+      "createdAt": "2026-10-17T22:16:18Z",
+      "stage": "failed",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-221534-d05a",
+      "createdAt": "2026-10-17T22:15:34Z",
+      "stage": "created",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-221325-7763",
+      "createdAt": "2026-10-17T22:13:25Z",
+      "stage": "failed",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-221234-2e14",
+      "createdAt": "2026-10-17T22:12:34Z",
+      "stage": "failed",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-214756-d7c9",
+      "createdAt": "2026-10-17T21:47:56Z",
+      "stage": "done",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 11,
+        "bugs": 6,
+        "confirmed": 6,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-214701-65a2",
+      "createdAt": "2026-10-17T21:47:01Z",
+      "stage": "created",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-213948-db88",
+      "createdAt": "2026-10-17T21:39:48Z",
+      "stage": "cancelled",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-213322-5985",
+      "createdAt": "2026-10-17T21:33:22Z",
+      "stage": "cancelled",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-213253-5e22",
+      "createdAt": "2026-10-17T21:32:53Z",
+      "stage": "cancelled",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-213158-46e1",
+      "createdAt": "2026-10-17T21:31:58Z",
+      "stage": "created",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 0,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "runId": "20261017-212814-ab14",
+      "createdAt": "2026-10-17T21:28:14Z",
+      "stage": "created",
+      "mode": "manual",
+      "targetUrl": "http://localhost:4000",
+      "counts": {
+        "tests": 1,
+        "bugs": 0,
+        "confirmed": 0,
+        "flaky": 0
+      }
+    }
+  ]
+}

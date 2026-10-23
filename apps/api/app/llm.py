@@ -50,7 +50,12 @@ class LLM:
             except ImportError:
                 raise LLMError("openai package is required for groq provider. Install openai>=1.0.0")
 
-            api_key = os.getenv("GROQ_API_KEY") or settings.OPENAI_API_KEY
+            api_key = (
+                os.getenv("GROQ_API_KEY")
+                or getattr(settings, "GROQ_API_KEY", "")
+                or os.getenv("OPENAI_API_KEY")
+                or settings.OPENAI_API_KEY
+            )
             if not api_key:
                 raise LLMError("Missing or invalid API key for provider groq (GROQ_API_KEY not set)")
             self._groq_client = openai.OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
@@ -266,8 +271,11 @@ class LLM:
                         _groq_last_call_time = time.time()
 
                     client = self._get_groq_client()
+                    active_model = model or getattr(settings, "GROQ_DEFAULT_MODEL", "llama-3.3-70b-versatile")
+                    if "qwen" in active_model.lower() or "claude" in active_model.lower() or "gpt" in active_model.lower():
+                        active_model = "llama-3.3-70b-versatile"
                     kwargs = {
-                        "model": model or "qwen/qwen3.8-27b",
+                        "model": active_model,
                         "messages": [
                             {"role": "system", "content": system},
                             {"role": "user", "content": prompt},

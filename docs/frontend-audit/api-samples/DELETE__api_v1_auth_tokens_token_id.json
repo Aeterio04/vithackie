@@ -1,0 +1,12 @@
+{
+  "method": "DELETE",
+  "path": "/api/v1/auth/tokens/{token_id}",
+  "operationId": "revoke_token_api_v1_auth_tokens__token_id__delete",
+  "test_url": "/api/v1/auth/tokens/4bae3342-e378-4f67-9856-ced172b6f967",
+  "status_code": 200,
+  "latency_ms": 19.3,
+  "sample_response": {
+    "ok": true,
+    "message": "Token revoked successfully"
+  }
+}

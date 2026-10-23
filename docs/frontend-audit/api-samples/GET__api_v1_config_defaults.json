@@ -1,0 +1,39 @@
+{
+  "method": "GET",
+  "path": "/api/v1/config/defaults",
+  "operationId": "get_config_defaults_api_v1_config_defaults_get",
+  "test_url": "/api/v1/config/defaults",
+  "status_code": 200,
+  "latency_ms": 29.9,
+  "sample_response": {
+    "allowedHosts": [
+      "localhost",
+      "127.0.0.1"
+    ],
+    "default_budgets": {
+      "max_pages": 10,
+      "max_steps_per_test": 30,
+      "max_run_minutes": 15,
+      "parallel_workers": 2
+    },
+    "limits": {
+      "min_pages": 1,
+      "max_pages": 100,
+      "min_steps": 5,
+      "max_steps": 100,
+      "min_minutes": 1,
+      "max_minutes": 60,
+      "min_workers": 1,
+      "max_workers": 4
+    },
+    "accepted_spec_extensions": [
+      ".md",
+      ".txt",
+      ".pdf",
+      ".json",
+      ".yaml",
+      ".yml"
+    ],
+    "max_spec_file_size_mb": 10
+  }
+}

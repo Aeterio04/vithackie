@@ -2899,6 +2899,24 @@
             }
           },
           {
+            "name": "tag",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter tests by tag",
+              "title": "Tag"
+            },
+            "description": "Filter tests by tag"
+          },
+          {
             "name": "token",
             "in": "query",
             "required": false,
@@ -3456,9 +3474,27 @@
           "webhooks"
         ],
         "summary": "Receive Github Webhook",
-        "description": "Receive and verify GitHub push / pull_request webhook events.\n\nVerifies HMAC-SHA256 signature using GITHUB_WEBHOOK_SECRET.\nRejects unauthorized requests with 401 Unauthorized.\nRejects duplicate delivery IDs with 409 Conflict.\nReturns 501 Not Implemented because the downstream execution loop is scaffolded.",
+        "description": "Receive and verify GitHub push / pull_request webhook events.\n\nVerifies HMAC-SHA256 signature using GITHUB_WEBHOOK_SECRET.\nRejects unauthorized requests with 401 Unauthorized.\nRejects duplicate delivery IDs with 409 Conflict.\nTriggers commit regression suite and returns 202 Accepted.",
         "operationId": "receive_github_webhook_api_v1_webhooks_github_post",
         "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Optional target project ID",
+              "title": "Project Id"
+            },
+            "description": "Optional target project ID"
+          },
           {
             "name": "X-Hub-Signature-256",
             "in": "header",
@@ -3476,10 +3512,20 @@
               "type": "string",
               "title": "X-Github-Delivery"
             }
+          },
+          {
+            "name": "X-GitHub-Event",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "push",
+              "title": "X-Github-Event"
+            }
           }
         ],
         "responses": {
-          "501": {
+          "202": {
             "description": "Successful Response",
             "content": {
               "application/json": {
@@ -4097,6 +4143,11 @@
               }
             ],
             "title": "Value"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth",
+            "default": 0
           }
         },
         "type": "object",
@@ -4417,17 +4468,23 @@
           "budgetHit": {
             "anyOf": [
               {
-                "type": "string",
-                "enum": [
-                  "pages",
-                  "time"
-                ]
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
             "title": "Budgethit"
+          },
+          "statesDiscovered": {
+            "type": "integer",
+            "title": "Statesdiscovered",
+            "default": 0
+          },
+          "transitionsExecuted": {
+            "type": "integer",
+            "title": "Transitionsexecuted",
+            "default": 0
           }
         },
         "type": "object",
@@ -4601,6 +4658,46 @@
                 "type": "null"
               }
             ]
+          },
+          "depth": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Depth"
+          },
+          "failingPath": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Failingpath"
+          },
+          "checkpoint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkpoint"
+          },
+          "reproductionScript": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reproductionscript"
           }
         },
         "type": "object",
@@ -4668,6 +4765,16 @@
             },
             "type": "array",
             "title": "Tests"
+          },
+          "coverageMatrix": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CoverageMatrix"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -4838,6 +4945,46 @@
         ],
         "title": "CommitEventRead",
         "description": "Commit event model returned to clients."
+      },
+      "CoverageMatrix": {
+        "properties": {
+          "specItems": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Specitems"
+          },
+          "depthLevels": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Depthlevels"
+          },
+          "edgeCategories": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Edgecategories"
+          },
+          "matrix": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Matrix"
+          }
+        },
+        "type": "object",
+        "title": "CoverageMatrix"
       },
       "CreateProjectRequest": {
         "properties": {
@@ -6999,6 +7146,50 @@
               }
             ],
             "title": "Evidencedir"
+          },
+          "failedStep": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failedstep"
+          },
+          "totalSteps": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalsteps"
+          },
+          "depth": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Depth"
+          },
+          "checkpoint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkpoint"
           }
         },
         "type": "object",

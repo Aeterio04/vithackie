@@ -1,0 +1,11 @@
+{
+  "method": "GET",
+  "path": "/api/v1/runs/{run_id}/metrics",
+  "operationId": "get_metrics_api_v1_runs__run_id__metrics_get",
+  "test_url": "/api/v1/runs/20261023-115801-89d6/metrics",
+  "status_code": 404,
+  "latency_ms": 7.8,
+  "sample_response": {
+    "detail": "Run not found"
+  }
+}

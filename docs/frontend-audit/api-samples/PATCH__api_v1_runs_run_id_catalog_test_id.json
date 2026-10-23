@@ -1,0 +1,11 @@
+{
+  "method": "PATCH",
+  "path": "/api/v1/runs/{run_id}/catalog/{test_id}",
+  "operationId": "patch_test_api_v1_runs__run_id__catalog__test_id__patch",
+  "test_url": "/api/v1/runs/20261023-115801-89d6/catalog/test_01",
+  "status_code": 404,
+  "latency_ms": 7.6,
+  "sample_response": {
+    "detail": "Run not found"
+  }
+}

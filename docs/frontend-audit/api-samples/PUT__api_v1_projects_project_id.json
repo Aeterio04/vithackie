@@ -1,0 +1,9 @@
+{
+  "method": "PUT",
+  "path": "/api/v1/projects/{project_id}",
+  "operationId": "update_project_api_v1_projects__project_id__put",
+  "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2",
+  "status_code": 500,
+  "latency_ms": 81.2,
+  "sample_response": "Internal Server Error"
+}

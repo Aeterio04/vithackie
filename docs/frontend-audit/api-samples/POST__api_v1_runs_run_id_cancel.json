@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "path": "/api/v1/runs/{run_id}/cancel",
+  "operationId": "cancel_run_endpoint_api_v1_runs__run_id__cancel_post",
+  "test_url": "/api/v1/runs/20261023-115801-89d6/cancel",
+  "status_code": 404,
+  "latency_ms": 6.9,
+  "sample_response": {
+    "detail": "Run not found"
+  }
+}

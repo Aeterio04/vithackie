@@ -1,0 +1,21 @@
+{
+  "method": "POST",
+  "path": "/api/v1/projects/{project_id}/saved-tests",
+  "operationId": "save_test_api_v1_projects__project_id__saved_tests_post",
+  "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/saved-tests",
+  "status_code": 201,
+  "latency_ms": 25.1,
+  "sample_response": {
+    "id": "75ccdec9-5438-4e54-be2f-d38d42f44708",
+    "project_id": "0eaa9c6a-033f-45b1-8f60-880c0bafe3d2",
+    "origin_run_id": null,
+    "origin_test_case_id": "test_01",
+    "name": "Saved Test test_01",
+    "description": null,
+    "script_path": "C:\\projects\\aiqa\\data\\artifacts\\saved_tests\\0eaa9c6a-033f-45b1-8f60-880c0bafe3d2\\75ccdec9-5438-4e54-be2f-d38d42f44708.spec.ts",
+    "tags": [],
+    "is_active": true,
+    "created_at": "2026-10-23T11:59:48.814676",
+    "updated_at": "2026-10-23T11:59:48.814681"
+  }
+}

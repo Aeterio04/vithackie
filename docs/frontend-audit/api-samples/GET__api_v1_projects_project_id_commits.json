@@ -1,0 +1,9 @@
+{
+  "method": "GET",
+  "path": "/api/v1/projects/{project_id}/commits",
+  "operationId": "list_commits_api_v1_projects__project_id__commits_get",
+  "test_url": "/api/v1/projects/0eaa9c6a-033f-45b1-8f60-880c0bafe3d2/commits",
+  "status_code": 200,
+  "latency_ms": 11.0,
+  "sample_response": []
+}

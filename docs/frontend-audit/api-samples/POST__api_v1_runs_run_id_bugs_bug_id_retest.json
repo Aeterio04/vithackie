@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "path": "/api/v1/runs/{run_id}/bugs/{bug_id}/retest",
+  "operationId": "retest_bug_endpoint_api_v1_runs__run_id__bugs__bug_id__retest_post",
+  "test_url": "/api/v1/runs/20261023-115801-89d6/bugs/bug_01/retest",
+  "status_code": 404,
+  "latency_ms": 8.2,
+  "sample_response": {
+    "detail": "Run not found"
+  }
+}

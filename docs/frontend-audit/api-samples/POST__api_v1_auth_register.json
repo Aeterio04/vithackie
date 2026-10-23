@@ -1,0 +1,16 @@
+{
+  "method": "POST",
+  "path": "/api/v1/auth/register",
+  "operationId": "register_api_v1_auth_register_post",
+  "test_url": "/api/v1/auth/register",
+  "status_code": 200,
+  "latency_ms": 104.0,
+  "sample_response": {
+    "id": "29f4d780-2de3-4077-ae67-27476b00c2c3",
+    "email": "test_1792756781@example.com",
+    "displayName": "test_1792756781",
+    "name": "test_1792756781",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOWY0ZDc4MC0yZGUzLTQwNzctYWU2Ny0yNzQ3NmIwMGMyYzMiLCJlbWFpbCI6InRlc3RfMTc5Mjc1Njc4MUBleGFtcGxlLmNvbSIsImV4cCI6MTc5Mjg0MzE4MSwiaWF0IjoxNzkyNzU2NzgxLCJpc3MiOiJrYXdhY2gifQ.SAAjVORqAGEo8IzqyUyT38LLW4wHdvlwdzsEGRQc0zE",
+    "refreshToken": "cpdTBbi59pvw9R3Q3BDYrxNE7gRJCTqIQVftsWp9K8MxcIb5LGgdLzZq43whi1oU"
+  }
+}

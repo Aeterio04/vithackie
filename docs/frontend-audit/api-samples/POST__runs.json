@@ -1,0 +1,16 @@
+{
+  "method": "POST",
+  "path": "/runs",
+  "operationId": "start_run_runs_post",
+  "test_url": "/runs",
+  "status_code": 422,
+  "latency_ms": 6.5,
+  "sample_response": {
+    "errors": [
+      {
+        "field": "spec",
+        "message": "Spec must contain at least one item like 'S1: ...'"
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "method": "GET",
+  "path": "/api/v1/stats",
+  "operationId": "get_stats_api_v1_stats_get",
+  "test_url": "/api/v1/stats",
+  "status_code": 200,
+  "latency_ms": 131.2,
+  "sample_response": {
+    "total_runs": 32,
+    "confirmed_bugs": 45,
+    "flaky_bugs": 4,
+    "pending_reviews": 0
+  }
+}

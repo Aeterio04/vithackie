@@ -1,0 +1,11 @@
+{
+  "method": "GET",
+  "path": "/api/v1/artifacts/{artifact_id}",
+  "operationId": "get_artifact_api_v1_artifacts__artifact_id__get",
+  "test_url": "/api/v1/artifacts/art_01",
+  "status_code": 404,
+  "latency_ms": 2061.0,
+  "sample_response": {
+    "detail": "Artifact not found"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "method": "POST",
+  "path": "/api/v1/runs/{run_id}/review",
+  "operationId": "submit_review_api_v1_runs__run_id__review_post",
+  "test_url": "/api/v1/runs/20261023-115801-89d6/review",
+  "status_code": 422,
+  "latency_ms": 3.9,
+  "sample_response": {
+    "detail": [
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "test_ids"
+        ],
+        "msg": "Field required",
+        "input": {
+          "decisions": [
+            {
+              "testId": "test_01",
+              "decision": "approve",
+              "reason": "Verified"
+            }
+          ]
+        }
+      },
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "decision"
+        ],
+        "msg": "Field required",
+        "input": {
+          "decisions": [
+            {
+              "testId": "test_01",
+              "decision": "approve",
+              "reason": "Verified"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

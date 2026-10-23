@@ -1,0 +1,618 @@
+{
+  "method": "GET",
+  "path": "/api/v1/runs",
+  "operationId": "list_runs_api_v1_runs_get",
+  "test_url": "/api/v1/runs",
+  "status_code": 200,
+  "latency_ms": 249.6,
+  "sample_response": [
+    {
+      "id": "20261023-115801-89d6",
+      "target_url": "http://localhost:4000",
+      "prompt": "",
+      "review_mode": "manual",
+      "status": "planning",
+      "progress": 30,
+      "created_at": "2026-10-23T11:58:01Z",
+      "finished_at": null,
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 1.8,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261018-034136-aba5",
+      "target_url": "http://localhost:4000",
+      "prompt": "Verify user signup constraints, case-insensitive login, dashboard item addition/deletion, and settings persistence against the specification.",
+      "review_mode": "manual",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-10-18T03:41:36Z",
+      "finished_at": "2026-10-18T03:45:54Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 4,
+        "steps_executed": 11,
+        "elapsed_minutes": 4.3,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 11,
+        "passed_tests": 4,
+        "failed_tests": 7,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 5,
+        "flaky_bugs": 1,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261018-030946-bdab",
+      "target_url": "http://localhost:4000",
+      "prompt": "Verify user signup constraints, case-insensitive login, dashboard item addition/deletion, and settings persistence against the specification.",
+      "review_mode": "manual",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-10-18T03:09:46Z",
+      "finished_at": "2026-10-18T03:17:10Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 4,
+        "steps_executed": 11,
+        "elapsed_minutes": 7.4,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 11,
+        "passed_tests": 4,
+        "failed_tests": 7,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 5,
+        "flaky_bugs": 1,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261018-025507-953c",
+      "target_url": "http://localhost:4000",
+      "prompt": "Test all user authentication and dashboard item workflows.",
+      "review_mode": "manual",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-10-18T02:55:07Z",
+      "finished_at": "2026-10-18T03:03:05Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 4,
+        "steps_executed": 11,
+        "elapsed_minutes": 8.0,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 11,
+        "passed_tests": 6,
+        "failed_tests": 5,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 4,
+        "flaky_bugs": 1,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261018-020000-a1b2",
+      "target_url": "http://localhost:4000",
+      "prompt": "TaskBoard is a collaboration to-do app with auth, items list, and profile settings.",
+      "review_mode": "autonomous",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-10-18T02:00:00Z",
+      "finished_at": "2026-10-18T02:06:00Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 4,
+        "steps_executed": 13,
+        "elapsed_minutes": 6.0,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 11,
+        "passed_tests": 3,
+        "failed_tests": 10,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 8,
+        "flaky_bugs": 1,
+        "not_reproduced_bugs": 1,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-224755-de5a",
+      "target_url": "http://localhost:4000",
+      "prompt": "Verify user signup constraints, case-insensitive login, dashboard item addition/deletion, and settings persistence against the specification.",
+      "review_mode": "manual",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-10-17T22:47:55Z",
+      "finished_at": "2026-10-17T22:57:26Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 3,
+        "steps_executed": 11,
+        "elapsed_minutes": 9.5,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 11,
+        "passed_tests": 2,
+        "failed_tests": 9,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 9,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 11
+      }
+    },
+    {
+      "id": "20261017-222234-21e4",
+      "target_url": "http://localhost:4000",
+      "prompt": "Verify user signup constraints, case-insensitive login, dashboard item addition/deletion, and settings persistence against the specification.",
+      "review_mode": "manual",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-10-17T22:22:34Z",
+      "finished_at": "2026-10-17T22:35:13Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 3,
+        "steps_executed": 11,
+        "elapsed_minutes": 12.7,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 11,
+        "passed_tests": 2,
+        "failed_tests": 9,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 8,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-221707-db1c",
+      "target_url": "http://localhost:4000",
+      "prompt": "E2E Testing",
+      "review_mode": "manual",
+      "status": "failed",
+      "progress": 100,
+      "created_at": "2026-10-17T22:17:07Z",
+      "finished_at": "2026-10-17T22:46:02Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 1,
+        "steps_executed": 0,
+        "elapsed_minutes": 28.9,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 11,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-221618-7be4",
+      "target_url": "http://localhost:4000",
+      "prompt": "Testing full pipeline",
+      "review_mode": "manual",
+      "status": "failed",
+      "progress": 100,
+      "created_at": "2026-10-17T22:16:18Z",
+      "finished_at": "2026-10-17T22:16:18Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 0.1,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-221534-d05a",
+      "target_url": "http://localhost:4000",
+      "prompt": "Testing auth and store",
+      "review_mode": "manual",
+      "status": "created",
+      "progress": 0,
+      "created_at": "2026-10-17T22:15:34Z",
+      "finished_at": null,
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 8024.2,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-221325-7763",
+      "target_url": "http://localhost:4000",
+      "prompt": "Verify user signup constraints, case-insensitive login, dashboard item addition/deletion, and settings persistence against the specification.\n",
+      "review_mode": "manual",
+      "status": "failed",
+      "progress": 100,
+      "created_at": "2026-10-17T22:13:25Z",
+      "finished_at": "2026-10-17T22:13:25Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 0.1,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-221234-2e14",
+      "target_url": "http://localhost:4000",
+      "prompt": "Verify user signup constraints, case-insensitive login, dashboard item addition/deletion, and settings persistence against the specification.\n",
+      "review_mode": "manual",
+      "status": "failed",
+      "progress": 100,
+      "created_at": "2026-10-17T22:12:34Z",
+      "finished_at": "2026-10-17T22:12:35Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 0.1,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-214756-d7c9",
+      "target_url": "http://localhost:4000",
+      "prompt": "Verify user signup constraints, case-insensitive login, dashboard item addition/deletion, and settings persistence against the specification.",
+      "review_mode": "manual",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-10-17T21:47:56Z",
+      "finished_at": "2026-10-17T21:54:51Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 3,
+        "steps_executed": 11,
+        "elapsed_minutes": 6.9,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 11,
+        "passed_tests": 0,
+        "failed_tests": 11,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 6,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-214701-65a2",
+      "target_url": "http://localhost:4000",
+      "prompt": "test",
+      "review_mode": "manual",
+      "status": "created",
+      "progress": 0,
+      "created_at": "2026-10-17T21:47:01Z",
+      "finished_at": null,
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 8052.8,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-213948-db88",
+      "target_url": "http://localhost:4000",
+      "prompt": "Verify user signup constraints, case-insensitive login, dashboard item addition/deletion, and settings persistence against the specification.",
+      "review_mode": "manual",
+      "status": "cancelled",
+      "progress": 100,
+      "created_at": "2026-10-17T21:39:48Z",
+      "finished_at": "2026-10-17T21:45:46Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 3,
+        "steps_executed": 0,
+        "elapsed_minutes": 6.0,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-213322-5985",
+      "target_url": "http://localhost:4000",
+      "prompt": "End-to-end integration test",
+      "review_mode": "manual",
+      "status": "cancelled",
+      "progress": 100,
+      "created_at": "2026-10-17T21:33:22Z",
+      "finished_at": "2026-10-17T21:33:23Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 0.1,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-213253-5e22",
+      "target_url": "http://localhost:4000",
+      "prompt": "End-to-end integration test",
+      "review_mode": "manual",
+      "status": "cancelled",
+      "progress": 100,
+      "created_at": "2026-10-17T21:32:53Z",
+      "finished_at": "2026-10-17T21:32:53Z",
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 0.1,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-213158-46e1",
+      "target_url": "http://localhost:4000",
+      "prompt": "Comprehensive test run verification",
+      "review_mode": "manual",
+      "status": "created",
+      "progress": 0,
+      "created_at": "2026-10-17T21:31:58Z",
+      "finished_at": null,
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 8067.8,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    },
+    {
+      "id": "20261017-212814-ab14",
+      "target_url": "http://localhost:4000",
+      "prompt": "Test item creation",
+      "review_mode": "manual",
+      "status": "created",
+      "progress": 0,
+      "created_at": "2026-10-17T21:28:14Z",
+      "finished_at": null,
+      "budgets": {
+        "max_pages": 10,
+        "max_steps_per_test": 30,
+        "max_run_minutes": 15,
+        "parallel_workers": 2
+      },
+      "budget_usage": {
+        "pages_crawled": 0,
+        "steps_executed": 0,
+        "elapsed_minutes": 8071.5,
+        "active_workers": 0
+      },
+      "counts": {
+        "total_tests": 1,
+        "passed_tests": 0,
+        "failed_tests": 0,
+        "suspected_bugs": 0,
+        "confirmed_bugs": 0,
+        "flaky_bugs": 0,
+        "not_reproduced_bugs": 0,
+        "pending_reviews": 0
+      }
+    }
+  ]
+}

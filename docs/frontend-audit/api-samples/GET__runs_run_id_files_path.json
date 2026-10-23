@@ -1,0 +1,11 @@
+{
+  "method": "GET",
+  "path": "/runs/{run_id}/files/{path}",
+  "operationId": "get_run_file_runs__run_id__files__path__get",
+  "test_url": "/runs/20261023-115801-89d6/files/report.md",
+  "status_code": 404,
+  "latency_ms": 6.4,
+  "sample_response": {
+    "detail": "File not found"
+  }
+}

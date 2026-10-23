@@ -1,0 +1,1307 @@
+{
+  "summary": {
+    "total_endpoints": 73,
+    "total_agentic_capabilities": 11,
+    "frontend_classification_counts": {
+      "COMPLETE": 19,
+      "MISSING": 15,
+      "PARTIAL": 37,
+      "STUB-ONLY": 2
+    },
+    "priority_counts": {
+      "P0": 36,
+      "P1": 15,
+      "P2": 22
+    }
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "operationId": "register_api_v1_auth_register_post",
+      "tags": [
+        "auth"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/auth/components/RegisterForm.tsx",
+        "apps/web/src/features/auth/api.ts"
+      ],
+      "missing_details": "None. Registration form handles validation, loading, error, and redirect.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "operationId": "login_api_v1_auth_login_post",
+      "tags": [
+        "auth"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/auth/components/LoginForm.tsx",
+        "apps/web/src/features/auth/api.ts"
+      ],
+      "missing_details": "None. Login form handles loading, error, success, and sets session cookies.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "operationId": "refresh_session_api_v1_auth_refresh_post",
+      "tags": [
+        "auth"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "Client has no silent token refresh interceptor. 401 triggers hard redirect to /login.",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "operationId": "auth_me_api_v1_auth_me_get",
+      "tags": [
+        "auth"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/hooks.ts:43",
+        "apps/web/src/shared/lib/api/config.ts:13"
+      ],
+      "missing_details": "None. Hook useAuthMe queries endpoint and populates user session store.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "operationId": "logout_api_v1_auth_logout_post",
+      "tags": [
+        "auth"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts",
+        "apps/web/src/shared/layout/Navbar.tsx"
+      ],
+      "missing_details": "Navbar clears local state and cookies, but does not explicitly trigger POST /api/v1/auth/logout.",
+      "priority": "P1"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/tokens",
+      "operationId": "create_token_api_v1_auth_tokens_post",
+      "tags": [
+        "auth-tokens"
+      ],
+      "backend_status": "real",
+      "status_code": 201,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No UI exists to create, list, view prefix, or revoke API tokens (kw_...).",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/tokens",
+      "operationId": "list_tokens_api_v1_auth_tokens_get",
+      "tags": [
+        "auth-tokens"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No UI exists to create, list, view prefix, or revoke API tokens (kw_...).",
+      "priority": "P1"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/auth/tokens/{token_id}",
+      "operationId": "revoke_token_api_v1_auth_tokens__token_id__delete",
+      "tags": [
+        "auth-tokens"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No UI exists to create, list, view prefix, or revoke API tokens (kw_...).",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/health",
+      "operationId": "get_health_api_v1_health_get",
+      "tags": [
+        "health"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/hooks.ts:17",
+        "apps/web/src/features/runs/components/StartTestForm.tsx"
+      ],
+      "missing_details": "Queried during preflight in StartTestForm, but no dedicated system health indicator or cockpit telemetry status badge.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/stats",
+      "operationId": "get_stats_api_v1_stats_get",
+      "tags": [
+        "health"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts:18"
+      ],
+      "missing_details": "Endpoint configured in API_ENDPOINTS, but no component queries or displays global system stats.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/config/defaults",
+      "operationId": "get_config_defaults_api_v1_config_defaults_get",
+      "tags": [
+        "config"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/hooks.ts:13",
+        "apps/web/src/features/runs/components/StartTestForm.tsx"
+      ],
+      "missing_details": "None. StartTestForm loads default budgets and mode.",
+      "priority": "P1"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/targets/check",
+      "operationId": "check_target_api_v1_targets_check_post",
+      "tags": [
+        "config"
+      ],
+      "backend_status": "real",
+      "status_code": 422,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/hooks.ts:15",
+        "apps/web/src/features/runs/components/StartTestForm.tsx"
+      ],
+      "missing_details": "None. Interactive preflight validation check against targetUrl.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/specs/upload",
+      "operationId": "upload_spec_api_v1_specs_upload_post",
+      "tags": [
+        "config"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "MISSING",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects",
+      "operationId": "list_projects_api_v1_projects_get",
+      "tags": [
+        "projects"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/projects/components/ProjectList.tsx",
+        "apps/web/src/features/projects/api.ts:35"
+      ],
+      "missing_details": "None. ProjectList renders projects cards with loading and empty states.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects",
+      "operationId": "create_project_api_v1_projects_post",
+      "tags": [
+        "projects"
+      ],
+      "backend_status": "real",
+      "status_code": 201,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/projects/components/NewProjectForm.tsx",
+        "apps/web/src/features/projects/api.ts:43"
+      ],
+      "missing_details": "None. NewProjectForm creates project with name, targetUrl, and budgets.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}",
+      "operationId": "get_project_api_v1_projects__project_id__get",
+      "tags": [
+        "projects"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/app/(app)/projects/[projectId]/page.tsx",
+        "apps/web/src/features/projects/api.ts:39"
+      ],
+      "missing_details": "Loads project overview, but falls back to hardcoded demo data when endpoint fails. Links to non-existent /projects/:id/runs/:runId routes.",
+      "priority": "P0"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/projects/{project_id}",
+      "operationId": "update_project_api_v1_projects__project_id__put",
+      "tags": [
+        "projects"
+      ],
+      "backend_status": "HTTP_500",
+      "status_code": 500,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/projects/components/ProjectSettings.tsx",
+        "apps/web/src/features/projects/api.ts:51"
+      ],
+      "missing_details": "Form exists in ProjectSettings, but backend returns 500 (AttributeError on ProjectRepository).",
+      "priority": "P0"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/projects/{project_id}",
+      "operationId": "delete_project_api_v1_projects__project_id__delete",
+      "tags": [
+        "projects"
+      ],
+      "backend_status": "HTTP_500",
+      "status_code": 500,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/projects/components/ProjectSettings.tsx",
+        "apps/web/src/features/projects/api.ts:47"
+      ],
+      "missing_details": "Archive project action wired in settings UI, but backend returns 500.",
+      "priority": "P1"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/projects/{project_id}/credentials",
+      "operationId": "set_credentials_api_v1_projects__project_id__credentials_put",
+      "tags": [
+        "projects"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/projects/components/ProjectSettings.tsx"
+      ],
+      "missing_details": "UI form fields for credentials exist in ProjectSettings, but are combined into a single submit and password cannot be read.",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}/credentials",
+      "operationId": "get_credentials_info_api_v1_projects__project_id__credentials_get",
+      "tags": [
+        "projects"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/projects/components/ProjectSettings.tsx"
+      ],
+      "missing_details": "UI form fields for credentials exist in ProjectSettings, but are combined into a single submit and password cannot be read.",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs",
+      "operationId": "list_runs_api_v1_runs_get",
+      "tags": [
+        "runs"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/hooks.ts:11",
+        "apps/web/src/app/(app)/projects/[projectId]/page.tsx"
+      ],
+      "missing_details": "Queried by useRuns, displays recent run cards with mode, stage, and bug counts.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs",
+      "operationId": "create_run_api_v1_runs_post",
+      "tags": [
+        "runs"
+      ],
+      "backend_status": "real",
+      "status_code": 422,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}",
+      "operationId": "get_single_run_api_v1_runs__run_id__get",
+      "tags": [
+        "runs"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/runs/components/ExecutionCockpit.tsx"
+      ],
+      "missing_details": "Displays workers, budget meter, and log stream, but lacks per-step assertions, checkpoint failure tags, and depth progression.",
+      "priority": "P0"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/runs/{run_id}",
+      "operationId": "delete_run_endpoint_api_v1_runs__run_id__delete",
+      "tags": [
+        "runs"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/start",
+      "operationId": "start_run_pipeline_api_v1_runs__run_id__start_post",
+      "tags": [
+        "runs"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/resume",
+      "operationId": "resume_run_endpoint_api_v1_runs__run_id__resume_post",
+      "tags": [
+        "runs"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/cancel",
+      "operationId": "cancel_run_endpoint_api_v1_runs__run_id__cancel_post",
+      "tags": [
+        "runs"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/retry",
+      "operationId": "retry_run_api_v1_runs__run_id__retry_post",
+      "tags": [
+        "runs"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/catalog",
+      "operationId": "get_catalog_api_v1_runs__run_id__catalog_get",
+      "tags": [
+        "catalog"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/catalog/components/CatalogView.tsx"
+      ],
+      "missing_details": "Displays table, but expects legacy fields (expected_result, priority, spec_item_ids). Completely ignores depth, edgeTags, riskScore, and coverageRef.",
+      "priority": "P0"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/runs/{run_id}/catalog/{test_id}",
+      "operationId": "patch_test_api_v1_runs__run_id__catalog__test_id__patch",
+      "tags": [
+        "catalog"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/catalog/components/CatalogView.tsx:618"
+      ],
+      "missing_details": "Supports approve selected / approve all, but edit drawer saves to legacy structure.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/catalog/test",
+      "operationId": "add_custom_test_api_v1_runs__run_id__catalog_test_post",
+      "tags": [
+        "catalog"
+      ],
+      "backend_status": "real",
+      "status_code": 422,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/catalog/components/CatalogView.tsx:618"
+      ],
+      "missing_details": "Supports approve selected / approve all, but edit drawer saves to legacy structure.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/review",
+      "operationId": "submit_review_api_v1_runs__run_id__review_post",
+      "tags": [
+        "catalog"
+      ],
+      "backend_status": "real",
+      "status_code": 422,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/catalog/components/CatalogView.tsx:238",
+        "apps/web/src/shared/lib/api/hooks.ts:46"
+      ],
+      "missing_details": "None. Submits ReviewDecision list to advance run from awaiting_review to executing.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/review-log",
+      "operationId": "get_review_log_api_v1_runs__run_id__review_log_get",
+      "tags": [
+        "catalog"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/catalog/components/CatalogView.tsx:238",
+        "apps/web/src/shared/lib/api/hooks.ts:46"
+      ],
+      "missing_details": "None. Submits ReviewDecision list to advance run from awaiting_review to executing.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/bugs",
+      "operationId": "get_run_bugs_api_v1_runs__run_id__bugs_get",
+      "tags": [
+        "bugs"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/results/components/ResultsView.tsx"
+      ],
+      "missing_details": "Displays bug list filtered by confirmed, flaky, not reproduced, and suspected.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/bugs/{bug_id}",
+      "operationId": "get_single_bug_api_v1_bugs__bug_id__get",
+      "tags": [
+        "bugs"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/results/components/BugDetailView.tsx"
+      ],
+      "missing_details": "Renders 3x replay pips and details, but uses fallback synthetic script instead of backend reproductionScript, and lacks failingPath depth.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/bugs/{bug_id}/retest",
+      "operationId": "retest_bug_endpoint_api_v1_runs__run_id__bugs__bug_id__retest_post",
+      "tags": [
+        "bugs"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/results/components/BugDetailView.tsx"
+      ],
+      "missing_details": "Renders 3x replay pips and details, but uses fallback synthetic script instead of backend reproductionScript, and lacks failingPath depth.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/report",
+      "operationId": "get_report_api_v1_runs__run_id__report_get",
+      "tags": [
+        "reports"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/reports/components/ReportView.tsx"
+      ],
+      "missing_details": "Renders executive KPI summary, verified defects, not reproduced reference list, and export buttons.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/results",
+      "operationId": "get_results_api_v1_runs__run_id__results_get",
+      "tags": [
+        "reports"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/metrics",
+      "operationId": "get_metrics_api_v1_runs__run_id__metrics_get",
+      "tags": [
+        "reports"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/report/export",
+      "operationId": "export_passing_tests_api_v1_runs__run_id__report_export_get",
+      "tags": [
+        "exports"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/reports/components/ReportView.tsx"
+      ],
+      "missing_details": "Renders executive KPI summary, verified defects, not reproduced reference list, and export buttons.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/tests/export",
+      "operationId": "export_passing_tests_api_v1_runs__run_id__tests_export_get",
+      "tags": [
+        "exports"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/reports/components/ReportView.tsx:23",
+        "apps/web/src/shared/lib/api/config.ts:60"
+      ],
+      "missing_details": "Triggers file download for standalone Playwright zip and report formats (json/html/csv).",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/export",
+      "operationId": "export_passing_tests_api_v1_runs__run_id__export_get",
+      "tags": [
+        "exports"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/reports/components/ReportView.tsx:23",
+        "apps/web/src/shared/lib/api/config.ts:60"
+      ],
+      "missing_details": "Triggers file download for standalone Playwright zip and report formats (json/html/csv).",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/export/scripts",
+      "operationId": "export_scripts_only_api_v1_runs__run_id__export_scripts_get",
+      "tags": [
+        "exports"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/reports/components/ReportView.tsx:23",
+        "apps/web/src/shared/lib/api/config.ts:60"
+      ],
+      "missing_details": "Triggers file download for standalone Playwright zip and report formats (json/html/csv).",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/execution",
+      "operationId": "get_execution_state_api_v1_runs__run_id__execution_get",
+      "tags": [
+        "streams"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/runs/components/ExecutionCockpit.tsx"
+      ],
+      "missing_details": "Displays workers, budget meter, and log stream, but lacks per-step assertions, checkpoint failure tags, and depth progression.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/tests",
+      "operationId": "get_tests_api_v1_runs__run_id__tests_get",
+      "tags": [
+        "streams"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/logs",
+      "operationId": "get_logs_api_v1_runs__run_id__logs_get",
+      "tags": [
+        "streams"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/events",
+      "operationId": "poll_run_events_api_v1_runs__run_id__events_get",
+      "tags": [
+        "streams"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/stream",
+      "operationId": "stream_run_sse_api_v1_runs__run_id__stream_get",
+      "tags": [
+        "streams"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts:35",
+        "apps/web/hooks/useRunStream.ts"
+      ],
+      "missing_details": "BROKEN SSE URL: config.ts requests /api/runs/:id/stream which returns 404. Falls back to polling /events.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/artifacts/{artifact_id}",
+      "operationId": "get_artifact_api_v1_artifacts__artifact_id__get",
+      "tags": [
+        "artifacts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "MISSING",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/files/{path}",
+      "operationId": "get_run_file_api_v1_runs__run_id__files__path__get",
+      "tags": [
+        "artifacts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/app-map",
+      "operationId": "get_app_map_api_v1_runs__run_id__app_map_get",
+      "tags": [
+        "artifacts"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/catalog/components/CatalogView.tsx:603"
+      ],
+      "missing_details": "BROKEN: CatalogView expects appMap.root_node (legacy tree). Backend returns states, edges, journeys, frontier. Renders empty state permanently.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}/saved-tests",
+      "operationId": "list_saved_tests_api_v1_projects__project_id__saved_tests_get",
+      "tags": [
+        "saved-tests"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "STUB-ONLY",
+      "frontend_files": [
+        "apps/web/src/app/(app)/projects/[projectId]/tests/page.tsx",
+        "apps/web/src/features/library/components/SavedTestEmptyState.tsx"
+      ],
+      "missing_details": "Renders SavedTestEmptyState placeholder. No real list, filtering, or inspection of saved test library.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{project_id}/saved-tests",
+      "operationId": "save_test_api_v1_projects__project_id__saved_tests_post",
+      "tags": [
+        "saved-tests"
+      ],
+      "backend_status": "real",
+      "status_code": 201,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No 'Save to Library' button or modal in ResultsView or ReportView to save verified test scripts.",
+      "priority": "P0"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/projects/{project_id}/saved-tests/{test_id}",
+      "operationId": "delete_saved_test_api_v1_projects__project_id__saved_tests__test_id__delete",
+      "tags": [
+        "saved-tests"
+      ],
+      "backend_status": "real",
+      "status_code": 204,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No delete action in frontend for saved tests.",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}/commits",
+      "operationId": "list_commits_api_v1_projects__project_id__commits_get",
+      "tags": [
+        "commits"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "STUB-ONLY",
+      "frontend_files": [
+        "apps/web/src/app/(app)/projects/[projectId]/commits/page.tsx",
+        "apps/web/src/features/commits/components/CommitEmptyState.tsx"
+      ],
+      "missing_details": "Renders CommitEmptyState placeholder. No commit list, diff view, or regression run history.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{project_id}/commits",
+      "operationId": "trigger_commit_regression_api_v1_projects__project_id__commits_post",
+      "tags": [
+        "commits"
+      ],
+      "backend_status": "real",
+      "status_code": 422,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No manual 'Simulate Commit' or 'Trigger Regression' button or form in frontend.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}/commits/{commit_id}/analysis",
+      "operationId": "get_failure_analysis_api_v1_projects__project_id__commits__commit_id__analysis_get",
+      "tags": [
+        "commits"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No failure localization panel showing suspect files, line ranges, confidence scores, or AST correlation.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{project_id}/commits/{commit_id}/suggest-fix",
+      "operationId": "request_fix_suggestion_api_v1_projects__project_id__commits__commit_id__suggest_fix_post",
+      "tags": [
+        "commits"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No unified diff patch viewer showing proposed code fix.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{project_id}/commits/{commit_id}/auto-fix",
+      "operationId": "trigger_auto_fix_pr_api_v1_projects__project_id__commits__commit_id__auto_fix_post",
+      "tags": [
+        "commits"
+      ],
+      "backend_status": "real",
+      "status_code": 422,
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No 'Create Pull Request' or 'Auto-Fix PR' action button or status tracker in UI.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/webhooks/github",
+      "operationId": "receive_github_webhook_api_v1_webhooks_github_post",
+      "tags": [
+        "webhooks"
+      ],
+      "backend_status": "real",
+      "status_code": 401,
+      "frontend_status": "MISSING",
+      "frontend_files": [
+        "apps/web/src/features/projects/components/ProjectSettings.tsx"
+      ],
+      "missing_details": "ProjectSettings displays static webhook URL and secret copy box, but has no webhook delivery log or event monitor.",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "operationId": "health_health_get",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "MISSING",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/config",
+      "operationId": "get_config_config_get",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "MISSING",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/runs",
+      "operationId": "list_runs_runs_get",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 200,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "POST",
+      "path": "/runs",
+      "operationId": "start_run_runs_post",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 422,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/runs/components/StartTestForm.tsx",
+        "apps/web/src/shared/lib/api/hooks.ts:27"
+      ],
+      "missing_details": "Start form triggers run with spec, URL, budgets, and mode.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}",
+      "operationId": "get_run_runs__run_id__get",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/runs/components/ExecutionCockpit.tsx"
+      ],
+      "missing_details": "Displays workers, budget meter, and log stream, but lacks per-step assertions, checkpoint failure tags, and depth progression.",
+      "priority": "P0"
+    },
+    {
+      "method": "PUT",
+      "path": "/runs/{run_id}/catalog",
+      "operationId": "update_catalog_runs__run_id__catalog_put",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/catalog/components/CatalogView.tsx:618"
+      ],
+      "missing_details": "Supports approve selected / approve all, but edit drawer saves to legacy structure.",
+      "priority": "P0"
+    },
+    {
+      "method": "POST",
+      "path": "/runs/{run_id}/tests",
+      "operationId": "add_test_runs__run_id__tests_post",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 422,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "POST",
+      "path": "/runs/{run_id}/execute",
+      "operationId": "execute_run_runs__run_id__execute_post",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}/report",
+      "operationId": "get_report_runs__run_id__report_get",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/reports/components/ReportView.tsx"
+      ],
+      "missing_details": "Renders executive KPI summary, verified defects, not reproduced reference list, and export buttons.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}/files/{path}",
+      "operationId": "get_run_file_runs__run_id__files__path__get",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts"
+      ],
+      "missing_details": "Auxiliary or legacy duplicate route.",
+      "priority": "P2"
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}/export",
+      "operationId": "export_passing_tests_runs__run_id__export_get",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "COMPLETE",
+      "frontend_files": [
+        "apps/web/src/features/reports/components/ReportView.tsx:23",
+        "apps/web/src/shared/lib/api/config.ts:60"
+      ],
+      "missing_details": "Triggers file download for standalone Playwright zip and report formats (json/html/csv).",
+      "priority": "P1"
+    },
+    {
+      "method": "GET",
+      "path": "/api/runs/{run_id}/stream",
+      "operationId": "stream_run_progress_api_runs__run_id__stream_get",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts:35",
+        "apps/web/hooks/useRunStream.ts"
+      ],
+      "missing_details": "BROKEN SSE URL: config.ts requests /api/runs/:id/stream which returns 404. Falls back to polling /events.",
+      "priority": "P0"
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}/stream",
+      "operationId": "stream_run_progress_runs__run_id__stream_get",
+      "tags": [
+        "legacy-contracts"
+      ],
+      "backend_status": "real",
+      "status_code": 404,
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/shared/lib/api/config.ts:35",
+        "apps/web/hooks/useRunStream.ts"
+      ],
+      "missing_details": "BROKEN SSE URL: config.ts requests /api/runs/:id/stream which returns 404. Falls back to polling /events.",
+      "priority": "P0"
+    }
+  ],
+  "agentic_capabilities": [
+    {
+      "capability": "AppMap State Graph Visualizer",
+      "description": "Visual rendering of StateNode topology, ActionEdge transitions, depth levels (L0-L3+), and FrontierState priority queue.",
+      "backend_status": "real",
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/catalog/components/CatalogView.tsx:603"
+      ],
+      "missing_details": "Broken contract: UI checks appMap.root_node (legacy). Backend returns states[], edges[], journeys[], unexploredFrontier[]. Renders empty state permanently.",
+      "priority": "P0"
+    },
+    {
+      "capability": "Multi-Level Catalog with Edge Tags & Risk Scoring",
+      "description": "Test catalog displaying depth, 14-category edge tags, risk score (0.0-1.0), spec requirement linkage, and per-step assertions.",
+      "backend_status": "real",
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/catalog/components/CatalogView.tsx:258"
+      ],
+      "missing_details": "Catalog table displays legacy columns (priority, expected_result). Depth, edgeTags, riskScore, and per-step assertions are omitted.",
+      "priority": "P0"
+    },
+    {
+      "capability": "Requirements Coverage Matrix",
+      "description": "Interactive matrix displaying spec items (S1..Sn) x depth levels (L0-L3) x edge categories with 100% coverage indicators.",
+      "backend_status": "real",
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No UI component renders the CoverageMatrix data generated by Planner agent.",
+      "priority": "P0"
+    },
+    {
+      "capability": "Live Exploration & Execution Cockpit with Checkpoint Evidence",
+      "description": "Real-time execution dashboard showing active Playwright workers, live logs, budget consumption, and checkpoint failure indicators.",
+      "backend_status": "real",
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/runs/components/ExecutionCockpit.tsx"
+      ],
+      "missing_details": "Displays worker cards and logs, but SSE live stream URL is broken (404), falling back to polling. Checkpoint failure context (failed at step k of n) is omitted.",
+      "priority": "P0"
+    },
+    {
+      "capability": "Deterministic 3x Replay Bug Prover & Replay Script Viewer",
+      "description": "Detailed defect proof showing 3/3 confirmed status, minimal failing path, depth, and real standalone Playwright reproduction script.",
+      "backend_status": "real",
+      "frontend_status": "PARTIAL",
+      "frontend_files": [
+        "apps/web/src/features/results/components/BugDetailView.tsx"
+      ],
+      "missing_details": "Renders 3x pips, but generates a fallback synthetic reproduction script instead of rendering backend reproductionScript. Omits failingPath and checkpoint.",
+      "priority": "P0"
+    },
+    {
+      "capability": "Saved Test Library Manager",
+      "description": "Management interface for project regression test library, displaying SHA-256 hashes, indexed touchpoints, and filter by tags/spec.",
+      "backend_status": "real",
+      "frontend_status": "STUB-ONLY",
+      "frontend_files": [
+        "apps/web/src/app/(app)/projects/[projectId]/tests/page.tsx",
+        "apps/web/src/features/library/components/SavedTestEmptyState.tsx"
+      ],
+      "missing_details": "Displays SavedTestEmptyState placeholder only. No list, delete, or run trigger.",
+      "priority": "P0"
+    },
+    {
+      "capability": "Commit Regression History & Trigger",
+      "description": "Tracked commit events, commit diff inspect, diff-aware test selection breakdown, and manual 'Run Regression' trigger.",
+      "backend_status": "real",
+      "frontend_status": "STUB-ONLY",
+      "frontend_files": [
+        "apps/web/src/app/(app)/projects/[projectId]/commits/page.tsx",
+        "apps/web/src/features/commits/components/CommitEmptyState.tsx"
+      ],
+      "missing_details": "Displays CommitEmptyState placeholder only. No commit list, diff view, or regression run history.",
+      "priority": "P0"
+    },
+    {
+      "capability": "Failure Localization Panel",
+      "description": "Ranked suspect culprit files with line ranges, confidence percentage, failure evidence correlation, and explanation.",
+      "backend_status": "real",
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No UI component renders FailureAnalysisRead data.",
+      "priority": "P0"
+    },
+    {
+      "capability": "Fix Suggestion Diff Viewer & Auto-Fix PR Action",
+      "description": "Unified git diff patch viewer with 'validated' badge, small-fix safety boundary label, and one-click 'Open PR' button.",
+      "backend_status": "real",
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No UI component renders FixSuggestionRead or triggers auto-fix PR creation.",
+      "priority": "P0"
+    },
+    {
+      "capability": "Personal Scoped API Token Manager",
+      "description": "Interface to create, list, view token prefix, copy plaintext secret once, and revoke CLI/MCP API tokens.",
+      "backend_status": "real",
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No API token settings page exists under project or user profile settings.",
+      "priority": "P1"
+    },
+    {
+      "capability": "Audit Log Telemetry Viewer",
+      "description": "Searchable audit trail tracking all actions, user identities, and client front doors (web, github, mcp).",
+      "backend_status": "real",
+      "frontend_status": "MISSING",
+      "frontend_files": [],
+      "missing_details": "No audit log view exists in the frontend.",
+      "priority": "P2"
+    }
+  ]
+}

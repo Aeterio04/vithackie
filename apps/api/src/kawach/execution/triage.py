@@ -5,7 +5,8 @@ import re
 from typing import Dict, List, Optional
 
 from kawach.core.logging import ANSI_REGEX
-from kawach.schemas import Bug, BugsFile, Catalog, Evidence, Results
+from kawach.execution.exploratory import emit_minimal_repro_script, shrink_failing_path
+from kawach.schemas import Bug, BugsFile, Catalog, Evidence, Results, RunInput
 from kawach.storage import artifacts as storage
 
 
@@ -44,9 +45,12 @@ def signature(error_message: str) -> str:
 
 
 def triage(run_id: str) -> List[Bug]:
-    """Triage test results into assertion failures (candidates) and de-duplicate."""
+    """Triage test results into assertion failures and de-duplicate by (failing state, symptom signature)."""
     results_obj = storage.load_model(run_id, "results.json", Results)
     catalog = storage.load_model(run_id, "catalog.json", Catalog)
+    run_input = storage.load_model(run_id, "input.json", RunInput)
+    base_url = run_input.targetUrl if run_input else "http://localhost:4000"
+
     catalog_map = {t.id: t for t in catalog.tests} if catalog else {}
 
     r_dir = storage.run_dir(run_id)
@@ -62,6 +66,7 @@ def triage(run_id: str) -> List[Bug]:
         title = test_case.title if test_case else t.title
         spec_ref = test_case.specRef if test_case else []
         steps = [s.action for s in test_case.steps] if test_case else []
+        depth = test_case.depth if test_case else (t.depth or 1)
 
         expected = ""
         if test_case and test_case.steps:
@@ -74,6 +79,23 @@ def triage(run_id: str) -> List[Bug]:
         first_line = cleaned_err.split("\n")[0] if cleaned_err else ""
         err_sig = signature(cleaned_err)
 
+        # Checkpoint information
+        checkpoint = t.checkpoint
+        if not checkpoint and test_case and test_case.steps:
+            chk_idx = (t.failedStep - 1) if (t.failedStep and 1 <= t.failedStep <= len(test_case.steps)) else -1
+            checkpoint = test_case.steps[chk_idx].checkpoint
+
+        # Failing state determination for deduplication:
+        failing_state = "root"
+        if test_case and test_case.coverageRef:
+            failing_state = test_case.coverageRef[0]
+        elif checkpoint:
+            failing_state = checkpoint
+        else:
+            url_match = re.search(r"(/[a-zA-Z0-9_\-\./]*)", t.title + " " + cleaned_err)
+            if url_match:
+                failing_state = url_match.group(1)
+
         # Check evidence files
         ev_dir = r_dir / "evidence" / t.testId
         ev_obj = Evidence(
@@ -84,9 +106,12 @@ def triage(run_id: str) -> List[Bug]:
             network=f"evidence/{t.testId}/network.json" if (ev_dir / "network.json").exists() else None,
         )
 
+        # Minimal path shrinking
+        shrunk_path = shrink_failing_path(steps, t.failedStep)
+
         candidate_bugs.append(
             Bug(
-                id="",  # assigned after deduplication
+                id="",
                 testId=t.testId,
                 source=t.source,
                 title=title,
@@ -99,15 +124,18 @@ def triage(run_id: str) -> List[Bug]:
                 expected=expected,
                 actual=first_line,
                 errorMessage=cleaned_err[:3000],
-                signature=err_sig,
+                signature=f"{failing_state}::{err_sig}",
                 duplicates=[],
                 evidence=ev_obj,
                 status="candidate",
                 replay=None,
+                depth=depth,
+                failingPath=shrunk_path,
+                checkpoint=checkpoint,
             )
         )
 
-    # De-duplicate by signature
+    # De-duplicate by compound key: (failing state, symptom signature)
     seen_sigs: Dict[str, Bug] = {}
     unique_bugs: List[Bug] = []
 
@@ -118,9 +146,21 @@ def triage(run_id: str) -> List[Bug]:
             seen_sigs[b.signature] = b
             unique_bugs.append(b)
 
-    # Assign IDs B01, B02, ...
+    # Assign IDs B01, B02, ... and emit minimal reproduction scripts
+    repro_dir = r_dir / "repro"
     for idx, b in enumerate(unique_bugs, start=1):
         b.id = f"B{idx:02d}"
+        try:
+            repro_file = emit_minimal_repro_script(
+                bug_id=b.id,
+                title=b.title,
+                base_url=base_url,
+                steps=b.failingPath,
+                out_dir=repro_dir,
+            )
+            b.reproductionScript = f"repro/{repro_file.name}"
+        except Exception:
+            pass
 
     bugs_file = BugsFile(runId=run_id, bugs=unique_bugs)
     storage.save_model(run_id, "bugs.json", bugs_file)

@@ -1,0 +1,11 @@
+{
+  "method": "GET",
+  "path": "/api/v1/bugs/{bug_id}",
+  "operationId": "get_single_bug_api_v1_bugs__bug_id__get",
+  "test_url": "/api/v1/bugs/bug_01",
+  "status_code": 404,
+  "latency_ms": 136.1,
+  "sample_response": {
+    "detail": "Bug bug_01 not found"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "method": "GET",
+  "path": "/api/v1/auth/tokens",
+  "operationId": "list_tokens_api_v1_auth_tokens_get",
+  "test_url": "/api/v1/auth/tokens",
+  "status_code": 200,
+  "latency_ms": 6.6,
+  "sample_response": [
+    {
+      "id": "866f7c8a-f7a3-41df-84a4-df5be9d5d865",
+      "name": "Token_1792756781",
+      "token_prefix": "kw_live_20b...",
+      "scopes": [
+        "read"
+      ],
+      "expires_at": "2026-11-22T11:59:41.619417",
+      "revoked_at": null,
+      "last_used_at": null,
+      "created_at": "2026-10-23T11:59:41.619922"
+    },
+    {
+      "id": "4bae3342-e378-4f67-9856-ced172b6f967",
+      "name": "Audit CLI Token",
+      "token_prefix": "kw_live_912...",
+      "scopes": [
+        "read",
+        "write",
+        "execute"
+      ],
+      "expires_at": "2026-11-22T11:59:41.002428",
+      "revoked_at": null,
+      "last_used_at": null,
+      "created_at": "2026-10-23T11:59:41.003032"
+    }
+  ]
+}

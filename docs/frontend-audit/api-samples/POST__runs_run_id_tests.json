@@ -1,0 +1,30 @@
+{
+  "method": "POST",
+  "path": "/runs/{run_id}/tests",
+  "operationId": "add_test_runs__run_id__tests_post",
+  "test_url": "/runs/20261023-115801-89d6/tests",
+  "status_code": 422,
+  "latency_ms": 3.1,
+  "sample_response": {
+    "detail": [
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "prompt"
+        ],
+        "msg": "Field required",
+        "input": {
+          "testId": "adhoc_01",
+          "title": "Ad-hoc login test",
+          "steps": [
+            {
+              "action": "click",
+              "locator": "#btn"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

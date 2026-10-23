@@ -41,6 +41,10 @@ class Bug(BaseModel):
     evidence: Evidence = Field(default_factory=Evidence)
     status: Literal["candidate", "confirmed", "flaky", "not_reproduced"]
     replay: Optional[BugReplay] = None
+    depth: Optional[int] = None
+    failingPath: List[str] = Field(default_factory=list)
+    checkpoint: Optional[str] = None
+    reproductionScript: Optional[str] = None
 
 
 class BugsFile(BaseModel):

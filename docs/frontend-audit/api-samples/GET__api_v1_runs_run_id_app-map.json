@@ -1,0 +1,16 @@
+{
+  "method": "GET",
+  "path": "/api/v1/runs/{run_id}/app-map",
+  "operationId": "get_app_map_api_v1_runs__run_id__app_map_get",
+  "test_url": "/api/v1/runs/20261023-115801-89d6/app-map",
+  "status_code": 200,
+  "latency_ms": 9.0,
+  "sample_response": {
+    "run_id": "20261023-115801-89d6",
+    "root_url": "http://localhost:4000",
+    "crawled_at": "2026-10-23T11:59:48Z",
+    "total_pages": 0,
+    "pages": [],
+    "nodes": []
+  }
+}

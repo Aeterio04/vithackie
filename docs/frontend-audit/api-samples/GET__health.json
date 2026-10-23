@@ -1,0 +1,11 @@
+{
+  "method": "GET",
+  "path": "/health",
+  "operationId": "health_health_get",
+  "test_url": "/health",
+  "status_code": 200,
+  "latency_ms": 3.4,
+  "sample_response": {
+    "ok": true
+  }
+}
