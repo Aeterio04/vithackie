@@ -30,5 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "contracts", "runner", "target-app"]
+  "exclude": ["node_modules", "contracts", "runner", "target-app", "runs", "data", "apps"]
 }
