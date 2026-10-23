@@ -156,7 +156,7 @@
           "auth"
         ],
         "summary": "Auth Me",
-        "description": "Retrieve current authenticated user profile.",
+        "description": "Retrieve current authenticated user profile and token scope introspection.",
         "operationId": "auth_me_api_v1_auth_me_get",
         "security": [
           {
@@ -186,7 +186,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/AuthMeResponse"
+                }
               }
             }
           },
@@ -601,7 +603,7 @@
           "projects"
         ],
         "summary": "List Projects",
-        "description": "List all projects owned by the authenticated user.",
+        "description": "List all projects owned by the authenticated user with pagination.",
         "operationId": "list_projects_api_v1_projects_get",
         "security": [
           {
@@ -609,6 +611,33 @@
           }
         ],
         "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page limit",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page limit"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Page offset",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Page offset"
+          },
           {
             "name": "token",
             "in": "query",
@@ -1046,7 +1075,7 @@
           "runs"
         ],
         "summary": "List Runs",
-        "description": "List test runs scoped to the authenticated user.",
+        "description": "List test runs scoped to the authenticated user with filtering and pagination.",
         "operationId": "list_runs_api_v1_runs_get",
         "security": [
           {
@@ -1054,6 +1083,69 @@
           }
         ],
         "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page limit",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page limit"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Page offset",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Page offset"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by run status/stage",
+              "title": "Status"
+            },
+            "description": "Filter by run status/stage"
+          },
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by project ID",
+              "title": "Project Id"
+            },
+            "description": "Filter by project ID"
+          },
           {
             "name": "token",
             "in": "query",
@@ -1279,6 +1371,68 @@
         "summary": "Start Run Pipeline",
         "description": "Start or restart a run.",
         "operationId": "start_run_pipeline_api_v1_runs__run_id__start_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{run_id}/execute": {
+      "post": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Resume Run Endpoint",
+        "description": "Resume execution of an approved test catalog.",
+        "operationId": "resume_run_endpoint_api_v1_runs__run_id__execute_post",
         "security": [
           {
             "HTTPBearer": []
@@ -1785,6 +1939,51 @@
               "type": "string",
               "title": "Run Id"
             }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by status (confirmed, flaky, not_reproduced)",
+              "title": "Status"
+            },
+            "description": "Filter by status (confirmed, flaky, not_reproduced)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page limit",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page limit"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Page offset",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Page offset"
           },
           {
             "name": "token",
@@ -2881,7 +3080,7 @@
           "saved-tests"
         ],
         "summary": "List Saved Tests",
-        "description": "List all saved tests in the project's regression library.",
+        "description": "List all saved tests in the project's regression library with pagination.",
         "operationId": "list_saved_tests_api_v1_projects__project_id__saved_tests_get",
         "security": [
           {
@@ -2915,6 +3114,33 @@
               "title": "Tag"
             },
             "description": "Filter tests by tag"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page limit",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page limit"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Page offset",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Page offset"
           },
           {
             "name": "token",
@@ -3105,7 +3331,7 @@
           "commits"
         ],
         "summary": "List Commits",
-        "description": "List commit events recorded for this project.",
+        "description": "List commit events recorded for this project with pagination.",
         "operationId": "list_commits_api_v1_projects__project_id__commits_get",
         "security": [
           {
@@ -3121,6 +3347,33 @@
               "type": "string",
               "title": "Project Id"
             }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page limit",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page limit"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Page offset",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Page offset"
           },
           {
             "name": "token",
@@ -3313,6 +3566,77 @@
       }
     },
     "/api/v1/projects/{project_id}/commits/{commit_id}/suggest-fix": {
+      "get": {
+        "tags": [
+          "commits"
+        ],
+        "summary": "Get Fix Suggestion",
+        "description": "Retrieve existing unified diff fix suggestion for a regression failure (read-only).",
+        "operationId": "get_fix_suggestion_api_v1_projects__project_id__commits__commit_id__suggest_fix_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "commit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Commit Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FixSuggestionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "commits"
@@ -3451,6 +3775,103 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/FixSuggestionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/regression-runs": {
+      "post": {
+        "tags": [
+          "regression-runs"
+        ],
+        "summary": "Trigger Regression Run",
+        "description": "Trigger a regression run for saved tests, diff-selected tests, or a specific test subset.",
+        "operationId": "trigger_regression_run_api_v1_projects__project_id__regression_runs_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Token"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RegressionRunTriggerRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegressionRunTriggerResponse"
                 }
               }
             }
@@ -4489,6 +4910,90 @@
         },
         "type": "object",
         "title": "AppMapStats"
+      },
+      "AuthMeResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "default": "qa_engineer"
+          },
+          "isActive": {
+            "type": "boolean",
+            "title": "Isactive",
+            "default": true
+          },
+          "client_type": {
+            "type": "string",
+            "title": "Client Type",
+            "default": "web"
+          },
+          "is_session": {
+            "type": "boolean",
+            "title": "Is Session",
+            "default": true
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Scopes",
+            "default": []
+          },
+          "token_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Token Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "username"
+        ],
+        "title": "AuthMeResponse"
       },
       "Body_upload_spec_api_v1_specs_upload_post": {
         "properties": {
@@ -6176,6 +6681,123 @@
           "password"
         ],
         "title": "RegisterRequest"
+      },
+      "RegressionRunTriggerRequest": {
+        "properties": {
+          "test_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Test Ids"
+          },
+          "commit_sha": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commit Sha",
+            "default": "manual"
+          },
+          "files_changed": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Files Changed"
+          },
+          "force_full": {
+            "type": "boolean",
+            "title": "Force Full",
+            "default": false
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Branch",
+            "default": "main"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message",
+            "default": "Manual regression suite trigger"
+          }
+        },
+        "type": "object",
+        "title": "RegressionRunTriggerRequest"
+      },
+      "RegressionRunTriggerResponse": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id"
+          },
+          "commit_sha": {
+            "type": "string",
+            "title": "Commit Sha"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "selected_test_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Selected Test Ids"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id",
+          "project_id",
+          "commit_sha",
+          "status",
+          "selected_test_ids",
+          "created_at"
+        ],
+        "title": "RegressionRunTriggerResponse"
       },
       "Results": {
         "properties": {

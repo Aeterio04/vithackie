@@ -1,4 +1,4 @@
-.PHONY: setup target backend frontend validate-contracts schemas test demo
+.PHONY: setup target backend frontend validate-contracts schemas test demo mcp-dev mcp-test mcp-inspect
 
 ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
@@ -46,4 +46,13 @@ test:
 
 demo:
 	@echo not built yet
+
+mcp-dev:
+	cd $(ROOT_DIR) && $(VENV_PY) -m kawach_mcp.server
+
+mcp-test:
+	cd $(ROOT_DIR) && $(VENV_PY) -m pytest apps/mcp/tests/ -v
+
+mcp-inspect:
+	$(NPX) -y @modelcontextprotocol/inspector $(VENV_PY) -m kawach_mcp.server
 

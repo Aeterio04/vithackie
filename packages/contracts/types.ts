@@ -73,7 +73,7 @@ export interface paths {
         };
         /**
          * Auth Me
-         * @description Retrieve current authenticated user profile.
+         * @description Retrieve current authenticated user profile and token scope introspection.
          */
         get: operations["auth_me_api_v1_auth_me_get"];
         put?: never;
@@ -260,7 +260,7 @@ export interface paths {
         };
         /**
          * List Projects
-         * @description List all projects owned by the authenticated user.
+         * @description List all projects owned by the authenticated user with pagination.
          */
         get: operations["list_projects_api_v1_projects_get"];
         put?: never;
@@ -336,7 +336,7 @@ export interface paths {
         };
         /**
          * List Runs
-         * @description List test runs scoped to the authenticated user.
+         * @description List test runs scoped to the authenticated user with filtering and pagination.
          */
         get: operations["list_runs_api_v1_runs_get"];
         put?: never;
@@ -389,6 +389,26 @@ export interface paths {
          * @description Start or restart a run.
          */
         post: operations["start_run_pipeline_api_v1_runs__run_id__start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/runs/{run_id}/execute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resume Run Endpoint
+         * @description Resume execution of an approved test catalog.
+         */
+        post: operations["resume_run_endpoint_api_v1_runs__run_id__execute_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -926,7 +946,7 @@ export interface paths {
         };
         /**
          * List Saved Tests
-         * @description List all saved tests in the project's regression library.
+         * @description List all saved tests in the project's regression library with pagination.
          */
         get: operations["list_saved_tests_api_v1_projects__project_id__saved_tests_get"];
         put?: never;
@@ -970,7 +990,7 @@ export interface paths {
         };
         /**
          * List Commits
-         * @description List commit events recorded for this project.
+         * @description List commit events recorded for this project with pagination.
          */
         get: operations["list_commits_api_v1_projects__project_id__commits_get"];
         put?: never;
@@ -1012,7 +1032,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Get Fix Suggestion
+         * @description Retrieve existing unified diff fix suggestion for a regression failure (read-only).
+         */
+        get: operations["get_fix_suggestion_api_v1_projects__project_id__commits__commit_id__suggest_fix_get"];
         put?: never;
         /**
          * Request Fix Suggestion
@@ -1039,6 +1063,26 @@ export interface paths {
          * @description Open a GitHub pull request with the validated fix.
          */
         post: operations["trigger_auto_fix_pr_api_v1_projects__project_id__commits__commit_id__auto_fix_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/regression-runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Trigger Regression Run
+         * @description Trigger a regression run for saved tests, diff-selected tests, or a specific test subset.
+         */
+        post: operations["trigger_regression_run_api_v1_projects__project_id__regression_runs_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1474,6 +1518,46 @@ export interface components {
              * @default 0
              */
             transitionsExecuted: number;
+        };
+        /** AuthMeResponse */
+        AuthMeResponse: {
+            /** Id */
+            id: string;
+            /** Email */
+            email: string;
+            /** Displayname */
+            displayName?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Username */
+            username: string;
+            /**
+             * Role
+             * @default qa_engineer
+             */
+            role: string;
+            /**
+             * Isactive
+             * @default true
+             */
+            isActive: boolean;
+            /**
+             * Client Type
+             * @default web
+             */
+            client_type: string;
+            /**
+             * Is Session
+             * @default true
+             */
+            is_session: boolean;
+            /**
+             * Scopes
+             * @default []
+             */
+            scopes: string[];
+            /** Token Id */
+            token_id?: string | null;
         };
         /** Body_upload_spec_api_v1_specs_upload_post */
         Body_upload_spec_api_v1_specs_upload_post: {
@@ -2233,6 +2317,51 @@ export interface components {
             /** Displayname */
             displayName?: string | null;
         };
+        /** RegressionRunTriggerRequest */
+        RegressionRunTriggerRequest: {
+            /** Test Ids */
+            test_ids?: string[] | null;
+            /**
+             * Commit Sha
+             * @default manual
+             */
+            commit_sha: string | null;
+            /** Files Changed */
+            files_changed?: string[] | null;
+            /**
+             * Force Full
+             * @default false
+             */
+            force_full: boolean;
+            /**
+             * Branch
+             * @default main
+             */
+            branch: string | null;
+            /**
+             * Message
+             * @default Manual regression suite trigger
+             */
+            message: string | null;
+        };
+        /** RegressionRunTriggerResponse */
+        RegressionRunTriggerResponse: {
+            /** Run Id */
+            run_id: string;
+            /** Project Id */
+            project_id: string;
+            /** Commit Sha */
+            commit_sha: string;
+            /** Status */
+            status: string;
+            /** Selected Test Ids */
+            selected_test_ids: string[];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** Results */
         Results: {
             /** Runid */
@@ -2851,7 +2980,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["AuthMeResponse"];
                 };
             };
             /** @description Validation Error */
@@ -3130,6 +3259,10 @@ export interface operations {
     list_projects_api_v1_projects_get: {
         parameters: {
             query?: {
+                /** @description Page limit */
+                limit?: number;
+                /** @description Page offset */
+                offset?: number;
                 token?: string | null;
             };
             header?: never;
@@ -3371,6 +3504,14 @@ export interface operations {
     list_runs_api_v1_runs_get: {
         parameters: {
             query?: {
+                /** @description Page limit */
+                limit?: number;
+                /** @description Page offset */
+                offset?: number;
+                /** @description Filter by run status/stage */
+                status?: string | null;
+                /** @description Filter by project ID */
+                project_id?: string | null;
                 token?: string | null;
             };
             header?: never;
@@ -3501,6 +3642,39 @@ export interface operations {
         };
     };
     start_run_pipeline_api_v1_runs__run_id__start_post: {
+        parameters: {
+            query?: {
+                token?: string | null;
+            };
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resume_run_endpoint_api_v1_runs__run_id__execute_post: {
         parameters: {
             query?: {
                 token?: string | null;
@@ -3803,6 +3977,12 @@ export interface operations {
     get_run_bugs_api_v1_runs__run_id__bugs_get: {
         parameters: {
             query?: {
+                /** @description Filter by status (confirmed, flaky, not_reproduced) */
+                status?: string | null;
+                /** @description Page limit */
+                limit?: number;
+                /** @description Page offset */
+                offset?: number;
                 token?: string | null;
             };
             header?: never;
@@ -4400,6 +4580,10 @@ export interface operations {
             query?: {
                 /** @description Filter tests by tag */
                 tag?: string | null;
+                /** @description Page limit */
+                limit?: number;
+                /** @description Page offset */
+                offset?: number;
                 token?: string | null;
             };
             header?: never;
@@ -4502,6 +4686,10 @@ export interface operations {
     list_commits_api_v1_projects__project_id__commits_get: {
         parameters: {
             query?: {
+                /** @description Page limit */
+                limit?: number;
+                /** @description Page offset */
+                offset?: number;
                 token?: string | null;
             };
             header?: never;
@@ -4603,6 +4791,40 @@ export interface operations {
             };
         };
     };
+    get_fix_suggestion_api_v1_projects__project_id__commits__commit_id__suggest_fix_get: {
+        parameters: {
+            query?: {
+                token?: string | null;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                commit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FixSuggestionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     request_fix_suggestion_api_v1_projects__project_id__commits__commit_id__suggest_fix_post: {
         parameters: {
             query?: {
@@ -4662,6 +4884,45 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FixSuggestionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trigger_regression_run_api_v1_projects__project_id__regression_runs_post: {
+        parameters: {
+            query?: {
+                token?: string | null;
+            };
+            header?: {
+                "Idempotency-Key"?: string | null;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RegressionRunTriggerRequest"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegressionRunTriggerResponse"];
                 };
             };
             /** @description Validation Error */

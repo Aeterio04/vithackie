@@ -162,13 +162,14 @@ class RegressionService:
     def run_regression(
         self,
         project_id: str,
-        commit_sha: str,
-        files_changed: List[str],
+        commit_sha: str = "manual",
+        files_changed: Optional[List[str]] = None,
         branch: str = "main",
         message: str = "",
         author: str = "",
         delivery_id: Optional[str] = None,
         force_full: bool = False,
+        explicit_test_ids: Optional[List[str]] = None,
     ) -> Tuple[str, str]:
         """Trigger and execute the commit regression loop.
         
@@ -177,6 +178,7 @@ class RegressionService:
         # 1. Record CommitEvent
         delivery_id = delivery_id or f"commit_{uuid.uuid4().hex[:12]}"
         now = datetime.now(timezone.utc)
+        resolved_files = files_changed or []
         commit_payload = CommitEventCreate(
             sha=commit_sha,
             branch=branch,
@@ -184,17 +186,20 @@ class RegressionService:
             message=message,
             pushed_at=now,
             webhook_delivery_id=delivery_id,
-            files_changed=files_changed,
+            files_changed=resolved_files,
             diff_stats={},
         )
         commit_event = self.record_commit_event(project_id, commit_payload)
 
-        # 2. Select tests
-        selected_test_ids = self.select_tests_for_diff(
-            project_id=project_id,
-            files_changed=files_changed,
-            force_full=force_full,
-        )
+        # 2. Select tests: explicit list, diff-aware, or full suite
+        if explicit_test_ids is not None:
+            selected_test_ids = list(explicit_test_ids)
+        else:
+            selected_test_ids = self.select_tests_for_diff(
+                project_id=project_id,
+                files_changed=resolved_files,
+                force_full=force_full,
+            )
 
         # 3. Create Run record
         run_id = f"reg_{commit_sha[:8]}_{uuid.uuid4().hex[:6]}"

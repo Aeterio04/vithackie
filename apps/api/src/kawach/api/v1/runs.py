@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
@@ -39,11 +39,15 @@ class CreateRunPayload(BaseModel):
 
 @router.get("/runs")
 def list_runs(
+    limit: int = Query(50, ge=1, le=100, description="Page limit"),
+    offset: int = Query(0, ge=0, description="Page offset"),
+    status: Optional[str] = Query(None, description="Filter by run status/stage"),
+    project_id: Optional[str] = Query(None, description="Filter by project ID"),
     _user: User = Depends(require_scope("runs:read")),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
 ):
-    """List test runs scoped to the authenticated user."""
+    """List test runs scoped to the authenticated user with filtering and pagination."""
     all_runs = storage.list_runs()
     result = []
     run_repo = RunRepository(db)
@@ -54,11 +58,19 @@ def list_runs(
         if db_run and not scope.is_system:
             if not run_repo.get_run(scope, r.runId):
                 continue  # Skip runs owned by other tenants
+        if project_id:
+            if db_run and db_run.project_id != project_id:
+                continue
+        if status:
+            stage_match = (db_run and db_run.stage == status) or (getattr(r, "stage", None) == status)
+            if not stage_match:
+                continue
         try:
             result.append(transform_run_to_frontend(r.runId))
         except Exception:
             continue
-    return result
+    return result[offset : offset + limit]
+
 
 
 @router.post("/runs", status_code=status.HTTP_201_CREATED)
@@ -158,6 +170,7 @@ def start_run_pipeline(
 
 
 @router.post("/runs/{run_id}/resume")
+@router.post("/runs/{run_id}/execute")
 def resume_run_endpoint(
     run_id: str,
     _user: User = Depends(require_scope("runs:write")),

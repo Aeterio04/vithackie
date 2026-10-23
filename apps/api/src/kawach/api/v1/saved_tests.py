@@ -20,13 +20,17 @@ router = APIRouter(prefix="/projects/{project_id}/saved-tests", tags=["saved-tes
 def list_saved_tests(
     project_id: str,
     tag: Optional[str] = Query(None, description="Filter tests by tag"),
+    limit: int = Query(50, ge=1, le=100, description="Page limit"),
+    offset: int = Query(0, ge=0, description="Page offset"),
     _user: User = Depends(require_scope("tests:read")),
     project: Project = Depends(get_owned_project),
     db: Session = Depends(get_db),
 ):
-    """List all saved tests in the project's regression library."""
+    """List all saved tests in the project's regression library with pagination."""
     svc = SavedTestService(db)
-    return svc.list_saved_tests(project_id=project_id, tag=tag)
+    tests = svc.list_saved_tests(project_id=project_id, tag=tag)
+    return tests[offset : offset + limit]
+
 
 
 @router.post("", response_model=SavedTestRead, status_code=status.HTTP_201_CREATED)

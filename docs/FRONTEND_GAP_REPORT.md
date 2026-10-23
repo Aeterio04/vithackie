@@ -460,6 +460,9 @@ To support modern agentic UI needs, the backend API should augment the following
 3. **`Bug` Model Schema:**
    - *Current:* Has `reproductionScript` string.
    - *Recommendation:* Add `replayTrials: Array<{ runIndex: number; passed: boolean; durationMs: number; traceUrl?: string }>`.
+4. **Developer API Tokens Management UI (`/settings/tokens`):**
+   - *Backend Capability Added in A7-MCP:* Fully functional endpoints for token lifecycle: `POST /api/v1/auth/tokens` (issue token with custom name & scopes), `GET /api/v1/auth/tokens` (list active tokens with preview, scopes, and `last_used_at`), `DELETE /api/v1/auth/tokens/{token_id}` (revoke token), and `GET /api/v1/auth/me` (current identity & scopes).
+   - *Frontend Gap:* Currently `apps/web` has no UI for managing API tokens. A dedicated developer settings view is needed to allow developers to generate scoped tokens for the MCP server (`apps/mcp`) and CI/CD pipelines, complete with scope toggles, copyable one-time raw tokens, and last-used timestamps.
 
 ---
 

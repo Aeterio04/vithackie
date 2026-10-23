@@ -1,6 +1,7 @@
 """Defect reporting and verification endpoints."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from kawach.api.deps import get_owned_run, get_user_scope
@@ -20,10 +21,17 @@ router = APIRouter(tags=["bugs"])
 @router.get("/runs/{run_id}/bugs")
 def get_run_bugs(
     run_id: str,
+    status: Optional[str] = Query(None, description="Filter by status (confirmed, flaky, not_reproduced)"),
+    limit: int = Query(50, ge=1, le=100, description="Page limit"),
+    offset: int = Query(0, ge=0, description="Page offset"),
     _run: DbRun = Depends(get_owned_run),
 ):
     """Retrieve defect reports with reproduction outcomes and evidence links. Returns 404 if run not owned."""
-    return build_bugs_frontend(run_id)
+    bugs = build_bugs_frontend(run_id)
+    if status:
+        bugs = [b for b in bugs if b.get("status") == status or b.get("reproductionStatus") == status]
+    return bugs[offset : offset + limit]
+
 
 
 @router.get("/bugs/{bug_id}")

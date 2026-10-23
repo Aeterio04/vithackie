@@ -145,18 +145,44 @@ def refresh_session(
     }
 
 
-@router.get("/auth/me")
-def auth_me(current_user: User = Depends(get_current_user)):
-    """Retrieve current authenticated user profile."""
-    return {
-        "id": current_user.id,
-        "email": current_user.email,
-        "displayName": current_user.display_name,
-        "name": current_user.display_name or current_user.email.split("@")[0],
-        "username": current_user.email.split("@")[0],
-        "role": "qa_engineer",
-        "isActive": current_user.is_active,
-    }
+class AuthMeResponse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    email: str
+    displayName: Optional[str] = None
+    name: Optional[str] = None
+    username: str
+    role: str = "qa_engineer"
+    isActive: bool = True
+    client_type: str = "web"
+    is_session: bool = True
+    scopes: list[str] = []
+    token_id: Optional[str] = None
+
+
+@router.get("/auth/me", response_model=AuthMeResponse)
+def auth_me(request: Request, current_user: User = Depends(get_current_user)) -> AuthMeResponse:
+    """Retrieve current authenticated user profile and token scope introspection."""
+    auth_ctx = getattr(request.state, "auth_context", None)
+    client_type = auth_ctx.client_type if auth_ctx else "web"
+    is_session = auth_ctx.is_session if auth_ctx else True
+    token_id = auth_ctx.token_id if auth_ctx else None
+    scopes_list = sorted(list(auth_ctx.scopes)) if auth_ctx else ["*"]
+
+    return AuthMeResponse(
+        id=current_user.id,
+        email=current_user.email,
+        displayName=current_user.display_name,
+        name=current_user.display_name or current_user.email.split("@")[0],
+        username=current_user.email.split("@")[0],
+        role="qa_engineer",
+        isActive=current_user.is_active,
+        client_type=client_type,
+        is_session=is_session,
+        scopes=scopes_list,
+        token_id=token_id,
+    )
+
 
 
 @router.post("/auth/logout")

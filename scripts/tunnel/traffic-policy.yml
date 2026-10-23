@@ -1,0 +1,16 @@
+# Ngrok Cloud Edge Traffic Policy
+# Rejects unauthenticated requests at the ngrok cloud edge before hitting localhost.
+# Note: Advanced policy actions (such as IP allowlisting) require an ngrok paid plan.
+# If on the free plan, the Kawach MCP server's built-in 401/403/Origin validation protects the endpoint.
+
+inbound:
+  - name: "require-auth-header"
+    expressions:
+      - "!('authorization' in req.headers) && req.url.path != '/healthz'"
+    actions:
+      - type: "custom-response"
+        config:
+          status_code: 401
+          content: '{"error": "Unauthorized: Ngrok edge rejected request missing Authorization header"}'
+          headers:
+            content-type: "application/json"

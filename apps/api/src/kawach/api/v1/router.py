@@ -11,6 +11,7 @@ from kawach.api.v1.config import router as config_router
 from kawach.api.v1.exports import router as exports_router
 from kawach.api.v1.health import router as health_router
 from kawach.api.v1.projects import router as projects_router
+from kawach.api.v1.regression_runs import router as regression_runs_router
 from kawach.api.v1.reports import router as reports_router
 from kawach.api.v1.runs import router as runs_router
 from kawach.api.v1.saved_tests import router as saved_tests_router
@@ -34,5 +35,7 @@ router.include_router(streams_router)
 router.include_router(artifacts_router)
 router.include_router(saved_tests_router)
 router.include_router(commits_router)
+router.include_router(regression_runs_router)
 router.include_router(webhooks_router)
+
 

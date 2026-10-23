@@ -16,6 +16,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.egg-info/
 .pytest_cache/
 apps/api/.llm_cache/
 backend/.llm_cache/
@@ -64,5 +65,7 @@ yarn-error.log*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
-.import_linter_cache/
-
+# Tunnel ephemeral state
+scripts/tunnel/.current_url
+scripts/tunnel/.ngrok.pid
+scripts/tunnel/.ngrok.log

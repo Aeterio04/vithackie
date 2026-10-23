@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
@@ -14,6 +14,7 @@ from kawach.repositories.base import Scope
 from kawach.services.project_service import ProjectService
 
 router = APIRouter(prefix="/projects", tags=["projects"])
+
 
 
 class CreateProjectRequest(BaseModel):
@@ -63,14 +64,17 @@ def format_project_response(project: Project) -> Dict[str, Any]:
 
 @router.get("", response_model=List[Dict[str, Any]])
 def list_projects(
+    limit: int = Query(50, ge=1, le=100, description="Page limit"),
+    offset: int = Query(0, ge=0, description="Page offset"),
     _user: User = Depends(require_scope("runs:read")),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
 ):
-    """List all projects owned by the authenticated user."""
+    """List all projects owned by the authenticated user with pagination."""
     service = ProjectService(db)
     projects = service.list_projects(scope)
-    return [format_project_response(p) for p in projects]
+    return [format_project_response(p) for p in projects[offset : offset + limit]]
+
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

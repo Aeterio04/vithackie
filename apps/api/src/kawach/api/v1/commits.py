@@ -4,7 +4,7 @@ Per Section 8 / Appendix A specifications.
 """
 
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -29,13 +29,17 @@ router = APIRouter(prefix="/projects/{project_id}/commits", tags=["commits"])
 @router.get("", response_model=List[CommitEventRead])
 def list_commits(
     project_id: str,
+    limit: int = Query(50, ge=1, le=100, description="Page limit"),
+    offset: int = Query(0, ge=0, description="Page offset"),
     _user: User = Depends(require_scope("tests:read")),
     project: Project = Depends(get_owned_project),
     db: Session = Depends(get_db),
 ):
-    """List commit events recorded for this project."""
+    """List commit events recorded for this project with pagination."""
     svc = RegressionService(db)
-    return svc.list_commit_events(project_id=project_id)
+    events = svc.list_commit_events(project_id=project_id)
+    return events[offset : offset + limit]
+
 
 
 @router.post("", response_model=CommitEventRead, status_code=status.HTTP_201_CREATED)
@@ -138,7 +142,50 @@ def get_failure_analysis(
     )
 
 
+@router.get("/{commit_id}/suggest-fix", response_model=FixSuggestionRead)
+def get_fix_suggestion(
+    project_id: str,
+    commit_id: str,
+    _user: User = Depends(require_scope("runs:read", "tests:read")),
+    project: Project = Depends(get_owned_project),
+    db: Session = Depends(get_db),
+):
+    """Retrieve existing unified diff fix suggestion for a regression failure (read-only)."""
+    stmt = (
+        select(FixSuggestion)
+        .join(FailureAnalysis, FixSuggestion.analysis_id == FailureAnalysis.id)
+        .outerjoin(CommitEvent, FailureAnalysis.commit_event_id == CommitEvent.id)
+        .where(
+            (FailureAnalysis.commit_event_id == commit_id)
+            | (FailureAnalysis.id == commit_id)
+            | (CommitEvent.sha == commit_id)
+        )
+    )
+    suggestion = db.scalars(stmt).first()
+    if not suggestion:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No fix suggestion found for commit {commit_id}",
+        )
+
+    return FixSuggestionRead(
+        id=suggestion.id,
+        analysis_id=suggestion.analysis_id,
+        diff_artifact_id=suggestion.diff_artifact_id,
+        risk_class=suggestion.risk_class,
+        files_changed=suggestion.files_changed,
+        lines_changed=suggestion.lines_changed,
+        status=suggestion.status,
+        validation_verification_id=suggestion.validation_verification_id,
+        pr_url=suggestion.pr_url,
+        pr_number=suggestion.pr_number,
+        created_at=suggestion.created_at,
+        updated_at=suggestion.updated_at,
+    )
+
+
 @router.post("/{commit_id}/suggest-fix", response_model=FixSuggestionRead)
+
 def request_fix_suggestion(
     project_id: str,
     commit_id: str,

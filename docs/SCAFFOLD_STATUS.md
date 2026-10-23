@@ -29,7 +29,8 @@ as specified in Section 8 and Appendix A of the architecture contracts.
 | **Regression Service**| `kawach.services.regression_service` | Active / Tested | Diff-aware test selection, commit triggers, regression run initiation |
 | **Workflow Graph** | `kawach.workflows.regression` | Active / Tested | LangGraph state machine with 6 real nodes (select, run, verify, localize, fix, validate) |
 | **API Endpoints** | `kawach.api.v1.saved_tests` | Active / Tested | `GET/POST /projects/{id}/saved-tests`, `DELETE .../{test_id}` |
-| **API Endpoints** | `kawach.api.v1.commits` | Active / Tested | `GET/POST /projects/{id}/commits`, `/analysis`, `/suggest-fix`, `/auto-fix` |
+| **API Endpoints** | `kawach.api.v1.commits` | Active / Tested | `GET/POST /projects/{id}/commits`, `/analysis`, `/suggest-fix` (GET read-only & POST generate), `/auto-fix` |
+| **API Endpoints** | `kawach.api.v1.regression_runs` | Active / Tested | `POST /api/v1/projects/{id}/regression-runs` (scope `runs:write`, idempotent) |
 | **API Endpoints** | `kawach.api.v1.webhooks` | Active / Tested | `POST /api/v1/webhooks/github` (HMAC verified, triggers regression) |
 | **Service Interface** | `kawach.services.localization_service` | Scaffold (501/NIE) | `LocalizationServiceProtocol`, `LocalizationService` |
 | **Service Interface** | `kawach.services.fix_service` | Scaffold (501/NIE) | `FixServiceProtocol`, `FixService` |
@@ -45,7 +46,7 @@ as specified in Section 8 and Appendix A of the architecture contracts.
 | **Planner Agent** | `kawach.agents.planner` | Active / Tested | Multi-level test generation (4 archetypes: single-step, journey, deep-path, edge-case), 14-category edge library, risk scoring, coverage matrix |
 | **Reviewer Agent** | `kawach.agents.reviewer` | Active / Tested | Autonomous catalog review with approve/reject powers and logged audit reasons |
 | **Token Service** | `kawach.services.token_service` | Active / Tested | Token lifecycle, scoping, verification, audit logging |
-| **API Endpoints** | `kawach.api.v1.tokens` | Active / Tested | `POST /tokens`, `GET /tokens`, `DELETE /tokens/{id}` |
+| **API Endpoints** | `kawach.api.v1.tokens` | Active / Tested | `POST /api/v1/auth/tokens`, `GET`, `DELETE .../{id}` (session-only) |
 | **Test Runner** | `kawach.execution.runner` | Active / Tested | Multi-step execution, checkpoint failure reporting (`failed at step k of n, depth d`), worker state reset, infra flake retry gating |
 | **Exploratory Engine**| `kawach.execution.exploratory` | Active / Tested | Deepest frontier mutation planner (reorder, interrupt, repeat, perturb), loop watchdog, path shrinker |
 | **Triage Deduplication**| `kawach.execution.triage` | Active / Tested | Defect deduplication by `(failing state, symptom signature)`, minimal Playwright repro script writer |
@@ -53,7 +54,9 @@ as specified in Section 8 and Appendix A of the architecture contracts.
 | **Pydantic Schemas** | `kawach.schemas.results` | Active / Tested | Added `failedStep`, `totalSteps`, `depth`, `checkpoint` to `TestResult` |
 | **Pydantic Schemas** | `kawach.schemas.bug` | Active / Tested | Added `depth`, `failingPath`, `checkpoint`, `reproductionScript` to `Bug` |
 | **Use-Case Catalogue**| `docs/USE_CASES.md` | Active | 11 core use-cases mapped across Web, GitHub, MCP doors |
-| **Contracts & Types** | `packages/contracts/openapi.json` | Active (63 paths)| Exported OpenAPI 3.1.0 schema & generated TypeScript types |
+| **MCP Adapter** | `apps/mcp` (`kawach_mcp`) | Complete & Integrated (M5) | 23 tools, 5 resources, 4 prompts; 52 unit/integration tests passing; 100% OpenAPI parity; stdio client subprocess verified; 6th import-linter contract enforced |
+| **Contracts & Types** | `packages/contracts/openapi.json` | Active (65 paths)| Exported OpenAPI 3.1.0 schema & generated TypeScript types |
+
 
 ## 2. Scaffolded API Routes (HTTP 501 Not Implemented)
 

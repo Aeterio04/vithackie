@@ -1,5 +1,7 @@
 [importlinter]
-root_package = kawach
+root_packages =
+    kawach
+    kawach_mcp
 
 [importlinter:contract:1]
 name = Layered Architecture Contract
@@ -73,4 +75,20 @@ forbidden_modules =
     kawach.llm
     kawach.storage
     kawach.db
+
+[importlinter:contract:6]
+name = MCP Independence Contract
+type = forbidden
+source_modules =
+    kawach_mcp
+forbidden_modules =
+    kawach.services
+    kawach.repositories
+    kawach.db
+    kawach.agents
+    kawach.workflows
+    kawach.execution
+    kawach.api
+    kawach.storage
+
 
