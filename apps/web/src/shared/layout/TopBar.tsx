@@ -5,7 +5,6 @@ import { useRouter, usePathname } from "next/navigation";
 import { useUiStore } from "@/lib/store/uiStore";
 import { useRun, useRuns } from "@/lib/api/hooks";
 import { RunSwitcher } from "@/components/ui/RunSwitcher";
-import { Button } from "@/components/ui/Button";
 import { extractHostname } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -14,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
-import { Bell, ShieldCheck, Plus, AlertCircle, Clock } from "lucide-react";
+import { Bell, AlertCircle, Clock } from "lucide-react";
 
 interface TopBarProps {
   title?: string;
@@ -28,51 +27,29 @@ export function TopBar({ title, subtitle }: TopBarProps) {
   const { data: currentRun } = useRun(selectedRunId);
   const { data: runs } = useRuns();
 
-  // Compute page title and subtitle if not provided
-  const pageMeta = useMemo(() => {
-    if (title) return { title, subtitle };
+  // Derive clean breadcrumb ("Test Operations / New test run")
+  const breadcrumb = useMemo(() => {
+    let section = "New test run";
 
-    if (pathname === "/") {
-      return {
-        title: "Test Operations",
-        subtitle: "Deterministic QA pipelines backed by replay proof",
-      };
+    if (pathname === "/" || pathname.startsWith("/start")) {
+      section = "New test run";
+    } else if (pathname.startsWith("/catalog")) {
+      section = "Test Catalog";
+    } else if (pathname.startsWith("/execution")) {
+      section = "Live Execution";
+    } else if (pathname.startsWith("/results")) {
+      section = "Verified Findings";
+    } else if (pathname.startsWith("/reports")) {
+      section = "QA Report";
+    } else if (pathname.startsWith("/projects")) {
+      section = "Projects";
     }
-    if (pathname === "/start") {
-      return {
-        title: "Upload & Start Test Run",
-        subtitle: "Specify application target, scope, and test credentials",
-      };
-    }
-    if (pathname.startsWith("/catalog")) {
-      return {
-        title: "Test Catalog & Review Gate",
-        subtitle: "Human and autonomous test plan validation",
-      };
-    }
-    if (pathname.startsWith("/execution")) {
-      return {
-        title: "Live Execution & Evidence",
-        subtitle: "Parallel Playwright workers & deterministic verifier",
-      };
-    }
-    if (pathname.startsWith("/results")) {
-      return {
-        title: "Verified Findings & Bugs",
-        subtitle: "Bugs proved with 3x replay trials and artifacts",
-      };
-    }
-    if (pathname.startsWith("/reports")) {
-      return {
-        title: "Evidence-Backed QA Report",
-        subtitle: "Deterministic funnel, spec coverage, and reusable tests",
-      };
-    }
+
     return {
-      title: "KAWACH",
-      subtitle: "Autonomous QA Testing Agent",
+      category: "Test Operations",
+      section: title || section,
     };
-  }, [pathname, title, subtitle]);
+  }, [pathname, title]);
 
   // Derive notifications from runs
   const notifications = useMemo(() => {
@@ -121,36 +98,16 @@ export function TopBar({ title, subtitle }: TopBarProps) {
     : null;
 
   return (
-    <header className="h-16 px-8 border-b border-[#E3DACC] bg-[#FAF9F5] flex items-center justify-between select-none shrink-0">
-      {/* Title & Subtitle */}
-      <div className="flex items-center gap-6">
-        <div>
-          <h2 className="font-heading text-lg font-normal text-[#141413]">
-            {pageMeta.title}
-          </h2>
-          {pageMeta.subtitle && (
-            <p className="text-xs text-[#6B6A64] -mt-0.5">
-              {pageMeta.subtitle}
-            </p>
-          )}
-        </div>
-
-        {/* Authorized Host Badge */}
-        {targetHost ? (
-          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EBF2EB] border border-[#D2E3D3] text-[#47704A] text-[11px] font-medium font-mono">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#5E8C61]" />
-            <span>Authorized: {targetHost}</span>
-          </div>
-        ) : (
-          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F0EEE6] border border-[#E3DACC] text-[#8A887F] text-[11px] font-medium">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#8A887F]" />
-            <span>Authorized staging/local</span>
-          </div>
-        )}
+    <header className="h-16 px-8 border-b border-stone-200 bg-[#FAF9F5]/90 backdrop-blur-sm sticky top-0 z-30 flex items-center justify-between select-none shrink-0">
+      {/* Left: Active Section Title */}
+      <div className="flex items-center text-sm min-w-0">
+        <span className="text-[#3D3929] font-medium truncate text-[15px]">
+          {breadcrumb.section}
+        </span>
       </div>
 
-      {/* Right Controls */}
-      <div className="flex items-center gap-3">
+      {/* Right Controls: dropdown, bell */}
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         {/* Run Switcher Dropdown */}
         <RunSwitcher />
 
@@ -158,26 +115,24 @@ export function TopBar({ title, subtitle }: TopBarProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
-              className="relative p-2 rounded-xl text-[#6B6A64] hover:text-[#141413] hover:bg-[#F0EEE6] transition-colors border border-[#E3DACC] bg-white shadow-xs cursor-pointer"
+              className="relative h-9 w-9 rounded-lg border border-stone-200 bg-[#FAF9F5] hover:bg-[#EDEAE0] flex items-center justify-center text-[#6B6A5E] hover:text-[#3D3929] transition-colors duration-150 cursor-pointer shadow-none"
               title="Notifications"
             >
-              <Bell className="w-4 h-4 stroke-[1.5]" />
+              <Bell className="w-[18px] h-[18px] stroke-[1.5]" />
               {notifications.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#D97757] text-white text-[10px] font-bold flex items-center justify-center">
-                  {notifications.length}
-                </span>
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#C6613F]" />
               )}
             </button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="w-80 p-2">
-            <div className="px-2 py-1.5 text-xs font-semibold text-[#141413]">
+          <DropdownMenuContent className="w-80 p-2 bg-[#FAF9F5] border border-stone-200 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="px-2 py-1.5 text-[12px] font-medium text-[#3D3929]">
               Notifications ({notifications.length})
             </div>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-stone-200" />
 
             {notifications.length === 0 ? (
-              <div className="py-6 text-center text-xs text-[#8A887F] italic">
+              <div className="py-6 text-center text-[12px] text-[#6B6A5E] italic">
                 All runs operating smoothly. No pending alerts.
               </div>
             ) : (
@@ -185,20 +140,20 @@ export function TopBar({ title, subtitle }: TopBarProps) {
                 <DropdownMenuItem
                   key={n.id}
                   onClick={() => router.push(`/execution/${n.runId}`)}
-                  className="flex items-start gap-2.5 py-2.5"
+                  className="flex items-start gap-2.5 py-2 px-2 rounded-lg hover:bg-[#EDEAE0] text-[#3D3929] transition-colors duration-150"
                 >
-                  <div className="mt-0.5">
+                  <div className="mt-0.5 shrink-0">
                     {n.type === "review" ? (
-                      <Clock className="w-4 h-4 text-[#D97757]" />
+                      <Clock className="w-4 h-4 text-[#C6613F]" />
                     ) : (
-                      <AlertCircle className="w-4 h-4 text-[#C4473A]" />
+                      <AlertCircle className="w-4 h-4 text-[#B5552F]" />
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium text-[#141413]">
+                    <p className="text-[13px] font-medium text-[#3D3929] leading-tight">
                       {n.title}
                     </p>
-                    <p className="text-[11px] text-[#6B6A64] mt-0.5 leading-snug">
+                    <p className="text-[11px] text-[#6B6A5E] mt-0.5 leading-snug">
                       {n.message}
                     </p>
                   </div>
@@ -207,22 +162,6 @@ export function TopBar({ title, subtitle }: TopBarProps) {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-
-        {/* Primary CTA: New test run */}
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => {
-            router.push("/");
-            // Focus URL input if already on dashboard
-            const input = document.getElementById("target-url-input");
-            if (input) input.focus();
-          }}
-          className="gap-1.5"
-        >
-          <Plus className="w-4 h-4 stroke-[2]" />
-          <span>New test run</span>
-        </Button>
       </div>
     </header>
   );

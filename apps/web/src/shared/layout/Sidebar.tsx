@@ -35,18 +35,26 @@ export function Sidebar() {
   // If selectedRunId is not set, use most recent run id if available
   const activeRunId = selectedRunId || (runs && runs.length > 0 ? runs[0].id : null);
 
+  // Derive active states from current pathname
+  const isStartPage =
+    pathname === "/start" ||
+    pathname.startsWith("/start/") ||
+    pathname === "/projects/new";
+
+  const isDashboardPage = pathname === "/" && !isStartPage;
+
   const navItems = [
     {
       label: "Dashboard",
       href: "/",
       icon: LayoutDashboard,
-      isActive: pathname === "/",
+      isActive: isDashboardPage,
     },
     {
       label: "Upload and start",
       href: "/start",
       icon: PlusCircle,
-      isActive: pathname === "/start",
+      isActive: isStartPage,
     },
     {
       label: "Test catalog",
@@ -81,26 +89,29 @@ export function Sidebar() {
   if (healthStatus === "offline") healthDotColor = "bg-[#C4473A]";
 
   return (
-    <aside className="w-[240px] shrink-0 min-h-screen bg-[#F0EEE6] border-r border-[#E3DACC] flex flex-col justify-between p-4 select-none">
-      {/* Top Section */}
-      <div className="space-y-6">
-        {/* Logo & Wordmark */}
-        <Link href="/" className="flex items-center gap-2.5 px-2 py-1 group">
-          <div className="w-8 h-8 rounded-xl bg-[#FAF9F5] border border-[#E3DACC] flex items-center justify-center text-[#D97757] shadow-xs group-hover:border-[#D97757] transition-colors">
-            <Shield className="w-5 h-5 fill-[#D97757]/15 stroke-[1.75]" />
-          </div>
-          <div>
-            <h1 className="font-heading text-xl font-normal tracking-tight text-[#141413]">
-              KAWACH
-            </h1>
-            <p className="text-[10px] uppercase font-mono text-[#8A887F] tracking-wider -mt-1">
-              AI QA Prover
-            </p>
-          </div>
+    <aside className="w-[260px] shrink-0 h-screen sticky top-0 bg-[#F5F4ED] border-r border-stone-200 flex flex-col justify-between select-none">
+      {/* Top Fixed Section: exactly h-16 with border-b to align with the header level */}
+      <div className="h-16 border-b border-stone-200 flex items-center justify-center text-center shrink-0 px-4">
+        <Link
+          href="/"
+          className="inline-block hover:opacity-80 transition-opacity duration-150"
+        >
+          <span
+            className="text-[42px] text-[#3D3929] leading-none select-none tracking-normal font-normal block text-center"
+            style={{ fontFamily: "'Billabong', 'Cookie', 'Grand Hotel', 'Brush Script MT', cursive" }}
+          >
+            Kawach
+          </span>
         </Link>
+      </div>
 
-        {/* Navigation */}
-        <nav className="space-y-1">
+      {/* Middle Scrollable Navigation Section */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-0.5" style={{ scrollbarWidth: "thin" }}>
+        <div className="px-3 text-[12px] font-medium text-[#6B6A5E] mt-1 mb-1.5">
+          Navigation
+        </div>
+
+        <nav className="space-y-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -108,66 +119,69 @@ export function Sidebar() {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer",
+                  "flex items-center gap-[10px] px-3 py-2 rounded-lg text-[14px] leading-5 transition-colors duration-150 cursor-pointer w-full text-left",
                   item.isActive
-                    ? "bg-white text-[#141413] shadow-xs border border-[#E3DACC]/60 font-semibold"
-                    : "text-[#6B6A64] hover:text-[#141413] hover:bg-[#E9E6DC]/60"
+                    ? "bg-[#E8E4D8] text-[#3D3929] font-medium"
+                    : "text-[#3D3929] hover:bg-[#EDEAE0]"
                 )}
               >
                 <Icon
                   className={cn(
-                    "w-4 h-4 stroke-[1.5]",
-                    item.isActive ? "text-[#D97757]" : "text-[#8A887F]"
+                    "w-[18px] h-[18px] stroke-[1.5] shrink-0",
+                    item.isActive ? "text-[#C6613F]" : "text-[#6B6A5E]"
                   )}
                 />
-                <span>{item.label}</span>
+                <span className="truncate">{item.label}</span>
               </Link>
             );
           })}
         </nav>
       </div>
 
-      {/* Bottom Section */}
-      <div className="pt-4 border-t border-[#E3DACC]/80 space-y-3">
+      {/* Bottom Pinned Footer Section */}
+      <div className="p-3 mt-auto border-t border-stone-200 space-y-2.5 shrink-0">
         {/* Sandbox Health Status */}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#FAF9F5]/70 border border-[#E3DACC]/70 text-[11px] cursor-help">
-                <span className="text-[#6B6A64] font-medium">Sandbox Workers</span>
-                <div className="flex items-center gap-1.5 font-mono">
+              <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#FAF9F5] border border-[#E5E2D6] text-[12px] cursor-help">
+                <span className="text-[#6B6A5E] font-normal">Sandbox workers</span>
+                <div className="flex items-center gap-1.5 font-mono text-[11px]">
                   <span className={cn("w-2 h-2 rounded-full", healthDotColor)} />
-                  <span className="capitalize text-[#141413]">
+                  <span className="capitalize text-[#3D3929]">
                     {healthStatus}
                   </span>
                 </div>
               </div>
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p className="font-semibold mb-1">Sandbox Environment</p>
-              <p>Status: {healthStatus}</p>
-              <p>Workers up: {health?.workers_up ?? "-"}</p>
-              <p>Queue depth: {health?.queue_depth ?? "-"}</p>
-              <p className="text-[10px] text-[#A8A59B] mt-1">Polled every 30s</p>
+            <TooltipContent
+              side="right"
+              className="bg-[#FAF9F5] border border-[#E5E2D6] text-[#3D3929] rounded-lg p-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] text-xs"
+            >
+              <p className="font-medium text-[#3D3929] mb-1">Sandbox Environment</p>
+              <p className="text-[#6B6A5E]">Status: {healthStatus}</p>
+              <p className="text-[#6B6A5E]">Workers up: {health?.workers_up ?? "-"}</p>
+              <p className="text-[#6B6A5E]">Queue depth: {health?.queue_depth ?? "-"}</p>
+              <p className="text-[10px] text-[#8A887F] mt-1">Polled every 30s</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
 
         {/* User Info & Logout */}
-        <div className="flex items-center justify-between px-2 pt-1">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="w-7 h-7 rounded-full bg-[#FAF9F5] border border-[#E3DACC] flex items-center justify-center text-[#D97757] text-xs font-semibold shrink-0">
+        <div className="flex items-center justify-between px-2 pt-0.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-full bg-[#E8E4D8] border border-[#E5E2D6] flex items-center justify-center text-[#3D3929] text-[12px] font-medium shrink-0">
               {user?.username ? (
                 user.username.slice(0, 2).toUpperCase()
               ) : (
-                <User className="w-3.5 h-3.5 text-[#8A887F]" />
+                <User className="w-3.5 h-3.5 text-[#6B6A5E]" />
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-[#141413] truncate">
+              <p className="text-[14px] font-medium text-[#3D3929] truncate leading-tight">
                 {user?.name || user?.username || "Authenticated"}
               </p>
-              <p className="text-[10px] text-[#8A887F] truncate">
+              <p className="text-[12px] text-[#6B6A5E] truncate leading-tight mt-0.5">
                 {user?.role || "QA Engineer"}
               </p>
             </div>
@@ -177,9 +191,9 @@ export function Sidebar() {
             onClick={() => logout()}
             disabled={isLoggingOut}
             title="Log out"
-            className="text-[#8A887F] hover:text-[#C4473A] p-1.5 rounded-lg hover:bg-[#FAEBE9] transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B6A5E] hover:text-[#C6613F] hover:bg-[#EDEAE0] transition-colors duration-150 cursor-pointer"
           >
-            <LogOut className="w-4 h-4 stroke-[1.5]" />
+            <LogOut className="w-[18px] h-[18px] stroke-[1.5]" />
           </button>
         </div>
       </div>

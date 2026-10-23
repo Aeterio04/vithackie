@@ -48,12 +48,12 @@ export function RunSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[#141413] bg-white border border-[#E3DACC] rounded-xl hover:bg-[#FAF9F5] transition-colors focus-visible:ring-2 focus-visible:ring-[#D97757] shadow-xs cursor-pointer max-w-[280px]"
+          className="h-9 flex items-center gap-2 px-3 text-xs font-medium text-[#3D3929] bg-[#FAF9F5] border border-stone-200 rounded-lg hover:bg-[#EDEAE0] transition-colors focus-visible:ring-1 focus-visible:ring-[#C6613F] shadow-none cursor-pointer max-w-[280px]"
           title="Switch active test run"
         >
-          <Layers className="w-3.5 h-3.5 text-[#D97757] shrink-0" />
+          <Layers className="w-3.5 h-3.5 text-[#C6613F] shrink-0" />
           <span className="truncate">{selectedDisplay}</span>
-          <ChevronDown className="w-3.5 h-3.5 text-[#8A887F] shrink-0 ml-auto" />
+          <ChevronDown className="w-3.5 h-3.5 text-[#6B6A5E] shrink-0 ml-auto" />
         </button>
       </DropdownMenuTrigger>
 
