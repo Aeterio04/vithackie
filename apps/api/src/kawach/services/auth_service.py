@@ -13,16 +13,32 @@ import secrets
 from typing import Any, Dict, Optional, Tuple
 
 import jwt
+import re
+
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from kawach.core.config import settings
-from kawach.core.security import hash_password, verify_password
+from kawach.core.security import MIN_PASSWORD_LENGTH, hash_password, password_needs_rehash, verify_password
 from kawach.db.base import utc_now
 from kawach.db.models.identity import RefreshToken, User
 from kawach.repositories.audit_repo import AuditRepository
 
 logger = logging.getLogger("kawach.services.auth")
+
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+RESERVED_EMAIL_SUFFIX = "@kawach.local"  # internal/system identities; never registrable, never loggable
+INVALID_CREDENTIALS = "Invalid email or password"
+_dummy_hash: Optional[str] = None
+
+
+class DuplicateEmailError(ValueError):
+    """An account with this email already exists (maps to HTTP 409)."""
+
+
+def normalize_email(email: str) -> str:
+    return (email or "").strip().lower()
 
 
 class AuthService:
@@ -128,59 +144,59 @@ class AuthService:
         """Register a new user account.
 
         Raises:
-            ValueError: If signups are disabled, email is taken, or password too short.
+            DuplicateEmailError: the (case-insensitive) email is already registered.
+            ValueError: signups are disabled, or the email/password/name is invalid.
         """
         if not settings.ALLOW_SIGNUP:
             raise ValueError("Registration is currently disabled")
 
-        clean_email = email.strip().lower()
-        if not clean_email or "@" not in clean_email:
-            raise ValueError("Valid email address is required")
+        clean_email = normalize_email(email)
+        if not clean_email or len(clean_email) > 255 or not EMAIL_RE.match(clean_email):
+            raise ValueError("Enter a valid email address")
+        if clean_email.endswith(RESERVED_EMAIL_SUFFIX):
+            raise ValueError("This email domain is reserved")
+        if len(password or "") < MIN_PASSWORD_LENGTH:
+            raise ValueError(f"Password must be at least {MIN_PASSWORD_LENGTH} characters")
+        if len(password) > 128:
+            raise ValueError("Password must be at most 128 characters")
+        name = (display_name or "").strip()[:100] or clean_email.split("@")[0]
 
-        if len(password) < 8:
-            raise ValueError("Password must be at least 8 characters")
+        if self.db.scalar(select(User).where(User.email == clean_email)):
+            raise DuplicateEmailError("An account with this email already exists")
 
-        existing = self.db.scalar(select(User).where(User.email == clean_email))
-        if existing:
-            raise ValueError("An account with this email already exists")
-
-        user = User(
-            email=clean_email,
-            password_hash=hash_password(password),
-            display_name=display_name or clean_email.split("@")[0],
-            is_active=True,
-        )
+        user = User(email=clean_email, password_hash=hash_password(password), display_name=name, is_active=True)
         self.db.add(user)
-        self.db.commit()
+        try:
+            self.db.commit()
+        except IntegrityError as e:  # lost a race with a concurrent registration
+            self.db.rollback()
+            raise DuplicateEmailError("An account with this email already exists") from e
         self.db.refresh(user)
 
-        self.audit_repo.record(
-            action="user_register",
-            user_id=user.id,
-            details={"email": clean_email},
-        )
+        self.audit_repo.record(action="user_register", user_id=user.id, details={"email": clean_email})
         return user
 
     def authenticate(self, email: str, password: str) -> User:
-        """Authenticate user by email and password.
+        """Authenticate by email + password.
 
-        Raises:
-            ValueError: If credentials are invalid or account is disabled.
+        Every failure (unknown email, wrong password, disabled or reserved account) raises the SAME message
+        so callers cannot tell which emails exist.
         """
-        clean_email = email.strip().lower()
-        user = self.db.scalar(select(User).where(User.email == clean_email))
-        if not user or not verify_password(password, user.password_hash):
-            raise ValueError("Invalid email or password")
+        global _dummy_hash
+        clean_email = normalize_email(email)
+        user = None if clean_email.endswith(RESERVED_EMAIL_SUFFIX) else self.db.scalar(
+            select(User).where(User.email == clean_email))
+        if user is None:  # spend comparable time so response timing does not reveal unknown emails
+            _dummy_hash = _dummy_hash or hash_password("kawach-timing-pad")
+            verify_password(password or "", _dummy_hash)
+            raise ValueError(INVALID_CREDENTIALS)
+        if not verify_password(password or "", user.password_hash) or not user.is_active:
+            raise ValueError(INVALID_CREDENTIALS)
 
-        if not user.is_active:
-            raise ValueError("Account is disabled")
-
+        if password_needs_rehash(user.password_hash):  # upgrade legacy PBKDF2 hashes transparently
+            user.password_hash = hash_password(password)
         user.last_login_at = utc_now()
         self.db.commit()
 
-        self.audit_repo.record(
-            action="login",
-            user_id=user.id,
-            details={"email": clean_email},
-        )
+        self.audit_repo.record(action="login", user_id=user.id, details={"email": clean_email})
         return user

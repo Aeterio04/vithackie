@@ -5,7 +5,10 @@ from typing import Any, Dict, Optional
 import urllib.parse
 import uuid
 
-from fastapi import APIRouter, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, UploadFile
+
+from kawach.api.deps import get_current_user
+from kawach.db.models.identity import User
 from pydantic import BaseModel, ConfigDict
 
 from kawach.core.config import settings
@@ -47,7 +50,7 @@ def get_config_defaults():
 
 
 @router.post("/targets/check")
-def check_target(payload: TargetCheckPayload):
+def check_target(payload: TargetCheckPayload, _user: User = Depends(get_current_user)):
     """Check target reachability and domain authorization against ALLOWED_HOSTS."""
     url = payload.target_url.strip()
     parsed = urllib.parse.urlparse(url)
@@ -85,6 +88,7 @@ def check_target(payload: TargetCheckPayload):
 async def upload_spec(
     file: Optional[UploadFile] = File(None),
     spec_text: Optional[str] = Form(None),
+    current_user: User = Depends(get_current_user),
 ):
     """Upload or paste a specification document."""
     raw_content = ""
@@ -111,6 +115,7 @@ async def upload_spec(
     spec_id = f"spec_{uuid.uuid4().hex[:8]}"
     UPLOADED_SPECS[spec_id] = {
         "spec_id": spec_id,
+        "owner_id": current_user.id,
         "filename": filename,
         "content": raw_content,
         "item_count": item_count,

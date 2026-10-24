@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,19 +12,26 @@ import { Button } from "@/shared/ui/Button";
 import { Shield, Eye, EyeOff, Lock, User, AlertCircle } from "lucide-react";
 
 const LoginSchema = z.object({
-  username_or_email: z.string().min(1, "Username or email is required"),
+  username_or_email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
   password: z.string().min(1, "Password is required"),
 });
+
+/** Only follow same-site relative redirects (avoid open-redirect via ?returnUrl=https://evil). */
+function safeReturnUrl(raw: string | null): string {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/\\")) return "/projects";
+  return raw;
+}
 type LoginFormValues = z.infer<typeof LoginSchema>;
 
 export function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get("returnUrl") || "/projects";
+  const returnUrl = safeReturnUrl(searchParams.get("returnUrl"));
+  const sessionExpired = searchParams.get("reason") === "expired";
   const { toast } = useToast();
 
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const {
     register,
@@ -40,21 +47,19 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsPending(true);
+    setFormError(null);
     try {
-      await authApi.login(data);
+      await authApi.login({ email: data.username_or_email, password: data.password });
       toast({
         type: "success",
         title: "Authenticated successfully",
         message: "Welcome to KAWACH QA Pipeline.",
       });
-      router.push(returnUrl);
-      router.refresh();
+      // Full navigation (not router.push): Next may have prefetched this route while signed out and cached the
+      // redirect to /login; a real page load makes the server see the new session cookie.
+      window.location.assign(returnUrl);
     } catch (err: any) {
-      toast({
-        type: "error",
-        title: "Authentication failed",
-        message: err.message || "Invalid credentials. Please verify and retry.",
-      });
+      setFormError(err?.message || "Could not sign in. Please try again.");
     } finally {
       setIsPending(false);
     }
@@ -82,12 +87,25 @@ export function LoginForm() {
       <div className="bg-white border border-[#E3DACC] rounded-[16px] p-8 shadow-[0_1px_2px_rgba(20,20,19,0.05)]">
         <div className="mb-6">
           <h2 className="text-base font-semibold text-[#141413]">
-            Sign in to your instance
+            Sign in to your account
           </h2>
           <p className="text-xs text-[#6B6A64] mt-0.5">
-            Enter your test engineer or team credentials
+            Use the email and password you registered with
           </p>
         </div>
+
+        {sessionExpired && !formError && (
+          <div role="status" className="mb-4 flex items-start gap-2 rounded-xl border border-[#E3DACC] bg-[#FAF9F5] px-3 py-2 text-xs text-[#6B6A64]">
+            <AlertCircle className="w-4 h-4 shrink-0 text-[#D97757]" />
+            <span>Your session has expired. Please sign in again.</span>
+          </div>
+        )}
+        {formError && (
+          <div role="alert" className="mb-4 flex items-start gap-2 rounded-xl border border-[#E8C4BE] bg-[#FBEFED] px-3 py-2 text-xs text-[#C4473A]">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{formError}</span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Username or Email */}
@@ -96,7 +114,7 @@ export function LoginForm() {
               htmlFor="username_or_email"
               className="text-xs font-medium text-[#141413]"
             >
-              Username or Email
+              Email
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#8A887F]">
@@ -104,9 +122,9 @@ export function LoginForm() {
               </div>
               <input
                 id="username_or_email"
-                type="text"
+                type="email"
                 placeholder="engineer@company.com"
-                autoComplete="username"
+                autoComplete="email"
                 {...register("username_or_email")}
                 className="w-full pl-9 pr-3 py-2 text-sm bg-[#FAF9F5] border border-[#E3DACC] rounded-xl text-[#141413] placeholder-[#8A887F] focus:outline-none focus:ring-2 focus:ring-[#D97757] focus:bg-white transition-all font-mono"
               />

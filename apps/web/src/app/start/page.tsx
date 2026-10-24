@@ -21,7 +21,9 @@ export default function StartPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Main Form Column (8 cols) */}
         <div className="lg:col-span-8">
+          <React.Suspense fallback={null}>
           <StartTestForm />
+        </React.Suspense>
         </div>
 
         {/* Sidebar Cards (4 cols) */}

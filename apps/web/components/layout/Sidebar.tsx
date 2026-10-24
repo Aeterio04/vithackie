@@ -184,7 +184,7 @@ export function Sidebar() {
                 {user?.name || user?.username || "Authenticated"}
               </p>
               <p className="text-[12px] text-[#6B6A5E] truncate leading-tight mt-0.5">
-                {user?.role || "QA Engineer"}
+                {user?.email || user?.role || "QA Engineer"}
               </p>
             </div>
           </div>
@@ -192,7 +192,8 @@ export function Sidebar() {
           <button
             onClick={() => logout()}
             disabled={isLoggingOut}
-            title="Log out"
+            title={user?.email ? `Log out (${user.email})` : "Log out"}
+            aria-label="Log out"
             className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B6A5E] hover:text-[#C6613F] hover:bg-[#EDEAE0] transition-colors duration-150 cursor-pointer"
           >
             <LogOut className="w-[18px] h-[18px] stroke-[1.5]" />

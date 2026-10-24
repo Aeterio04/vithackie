@@ -50,6 +50,10 @@ async def lifespan(app: FastAPI):
                 for col, ctype in [("script_path", "VARCHAR(512)"), ("name", "VARCHAR(255)"), ("description", "TEXT"), ("last_result", "VARCHAR(32)"), ("last_run_at", "DATETIME")]:
                     if col not in s_cols:
                         conn.execute(text(f"ALTER TABLE saved_tests ADD COLUMN {col} {ctype}"))
+                try:  # emails are unique case-insensitively (non-destructive; skipped if old data has case-duplicates)
+                    conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS ix_users_email_lower ON users (lower(email))"))
+                except Exception as idx_err:
+                    logger.warning(f"Could not enforce case-insensitive unique emails: {idx_err}")
                 conn.commit()
     except Exception as e:
         logger.warning(f"DB schema initialization warning: {e}")

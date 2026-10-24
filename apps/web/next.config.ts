@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // The /api rewrite proxies Server-Sent Events (live run stream). Next's gzip compression buffers those streams,
+  // so browsers behind this proxy would never receive live events.
+  compress: false,
   turbopack: {
     rules: {
       "*.css": {

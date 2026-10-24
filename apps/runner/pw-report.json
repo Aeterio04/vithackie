@@ -1,16 +1,16 @@
 {
   "config": {
     "argv": [
-      "/usr/local/bin/node",
-      "/Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/.bin/playwright",
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\node_modules\\@playwright\\test\\cli.js",
       "test",
       "--config",
       "playwright.config.ts",
-      "T12.spec.ts",
+      "T11.spec.ts",
       "--list"
     ],
-    "configFile": "/Users/parasgajam/Desktop/Vit_it/apps/runner/playwright.config.ts",
-    "rootDir": "/Users/parasgajam/Desktop/Vit_it/runs/20261024-000510-37ab/scripts",
+    "configFile": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\playwright.config.ts",
+    "rootDir": "D:/Soham/Vit Hackathon/vithackie/runs/20261024-164748-ec1b/scripts",
     "failOnFlakyTests": false,
     "forbidOnly": true,
     "fullyParallel": true,
@@ -24,13 +24,13 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "/Users/parasgajam/Desktop/Vit_it/apps/runner/test-results",
+        "outputDir": "D:/Soham/Vit Hackathon/vithackie/apps/runner/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {},
         "id": "chromium",
         "name": "chromium",
-        "testDir": "/Users/parasgajam/Desktop/Vit_it/runs/20261024-000510-37ab/scripts",
+        "testDir": "D:/Soham/Vit Hackathon/vithackie/runs/20261024-164748-ec1b/scripts",
         "testIgnore": [],
         "testMatch": [
           "**/*.spec.ts"
@@ -42,13 +42,13 @@
       {
         "grep": {},
         "grepInvert": null,
-        "outputDir": "/Users/parasgajam/Desktop/Vit_it/apps/runner/test-results",
+        "outputDir": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {},
         "name": "chromium",
-        "testDir": "/Users/parasgajam/Desktop/Vit_it/runs/20261024-000510-37ab/scripts",
-        "snapshotDir": "/Users/parasgajam/Desktop/Vit_it/runs/20261024-000510-37ab/scripts",
+        "testDir": "D:\\Soham\\Vit Hackathon\\vithackie\\runs\\20261024-164748-ec1b\\scripts",
+        "snapshotDir": "D:\\Soham\\Vit Hackathon\\vithackie\\runs\\20261024-164748-ec1b\\scripts",
         "testIgnore": [],
         "testMatch": "**/*.spec.ts",
         "timeout": 30000,
@@ -106,13 +106,13 @@
   },
   "suites": [
     {
-      "title": "T12.spec.ts",
-      "file": "T12.spec.ts",
+      "title": "T11.spec.ts",
+      "file": "T11.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "T12: Verify: With several items in the list, clicking Delete on an item r",
+          "title": "T11: Verify: With several items in the list, clicking Delete on an item r",
           "ok": true,
           "tags": [],
           "tests": [
@@ -126,8 +126,8 @@
               "status": "skipped"
             }
           ],
-          "id": "2f42c067be04a0757ccc-847b14c652e9c7285c8a",
-          "file": "T12.spec.ts",
+          "id": "54b2856eadfd9d6ef3de-e55ccebfa05e6e5d720a",
+          "file": "T11.spec.ts",
           "line": 3,
           "column": 5
         }
@@ -136,8 +136,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-24T00:14:12.353Z",
-    "duration": 47.25,
+    "startTime": "2026-10-24T16:51:26.563Z",
+    "duration": 224.20600000000002,
     "expected": 0,
     "skipped": 1,
     "unexpected": 0,

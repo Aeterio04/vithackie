@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, model_validator
 from sqlalchemy.orm import Session
 
-from kawach.api.deps import get_current_user, get_owned_run, get_user_scope, require_scope
+from kawach.api.deps import get_current_user, get_owned_project, get_owned_run, get_user_scope, require_scope
 from kawach.api.v1.config import UPLOADED_SPECS
 from kawach.api.v1.mappers.run_mapper import transform_run_to_frontend
 from kawach.core.config import settings
@@ -91,6 +91,7 @@ def list_runs(
 @router.get("/projects/{project_id}/runs")
 def list_project_runs(
     project_id: str,
+    _project=Depends(get_owned_project),  # 404 for another user's project
     _user: User = Depends(require_scope("runs:read")),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
@@ -118,8 +119,10 @@ def create_run(
         return JSONResponse(status_code=status_code, content=response_data)
 
     spec_raw = ""
-    if payload.spec_id and payload.spec_id in UPLOADED_SPECS:
+    if payload.spec_id and UPLOADED_SPECS.get(payload.spec_id, {}).get("owner_id") == current_user.id:
         spec_raw = UPLOADED_SPECS[payload.spec_id]["content"]
+    elif payload.spec_id and not payload.spec_text:
+        raise HTTPException(status_code=404, detail="Spec not found")
     elif payload.spec_text and payload.spec_text.strip():
         spec_raw = payload.spec_text.strip()
     else:
@@ -145,6 +148,8 @@ def create_run(
     proj_repo = ProjectRepository(db)
     user_scope = Scope.user(current_user.id)
     proj_id = payload.project_id
+    if proj_id and not proj_repo.get_project(user_scope, proj_id):
+        raise HTTPException(status_code=404, detail="Project not found")
     if not proj_id:
         user_projects = proj_repo.list_projects(user_scope)
         matching = next((p for p in user_projects if p.target_url == payload.target_url), None)

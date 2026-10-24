@@ -17,7 +17,14 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict
 
-from kawach.api.deps import get_optional_user
+from sqlalchemy.orm import Session
+
+from kawach.api.deps import get_current_user_required, get_owned_run
+from kawach.db.models.runs import Run as DbRun
+from kawach.db.session import get_db
+from kawach.repositories.base import Scope
+from kawach.repositories.project_repo import ProjectRepository
+from kawach.repositories.run_repo import RunRepository
 from kawach.db.models.identity import User
 from kawach.services.idempotency import IdempotencyService
 
@@ -55,7 +62,25 @@ from kawach.storage import artifacts as storage
 from kawach.storage.secrets import write_secret_password
 
 logger = logging.getLogger("kawach.api.legacy")
+# Every legacy route except the health/config probes requires an authenticated user and, for anything addressed
+# by run id, ownership of that run (404 for foreign runs). These routes are flat-file based, so ownership is
+# recorded in the database when a run is started here.
 router = APIRouter(tags=["legacy-contracts"])
+
+
+def _owned_run_ids(db: Session, user: User) -> set:
+    return {r.id for r in RunRepository(db).list_runs(Scope.user(user.id))}
+
+
+def _attach_run_to_user(db: Session, user: User, run_id: str, target_url: str, mode: str) -> None:
+    scope = Scope.user(user.id)
+    projects = ProjectRepository(db)
+    project = next((p for p in projects.list_projects(scope) if p.target_url == target_url), None)
+    if project is None:
+        host = urllib.parse.urlparse(target_url).hostname or "Target"
+        project = projects.create_project(scope=scope, name=f"{host} App", target_url=target_url, default_mode=mode)
+    RunRepository(db).create_run(scope=scope, run_id=run_id, project_id=project.id, mode=mode)
+    db.commit()
 
 
 # --- Schemas ---
@@ -145,19 +170,24 @@ def get_config() -> dict:
 
 
 @router.get("/runs")
-def list_runs() -> List[RunListItem]:
-    """List summary records for all runs."""
-    return storage.list_runs()
+def list_runs(
+    user: User = Depends(get_current_user_required),
+    db: Session = Depends(get_db),
+) -> List[RunListItem]:
+    """List summary records for the caller's runs only."""
+    owned = _owned_run_ids(db, user)
+    return [r for r in storage.list_runs() if r.runId in owned]
 
 
 @router.post("/runs", status_code=status.HTTP_201_CREATED)
 def start_run(
     payload: CreateRunRequest,
     idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key"),
-    current_user: Optional[User] = Depends(get_optional_user),
+    current_user: User = Depends(get_current_user_required),
+    db: Session = Depends(get_db),
 ):
     """Start a new QA test run conforming strictly to Section 8 contract."""
-    user_id = current_user.id if current_user else "anonymous"
+    user_id = current_user.id
 
     # 0. Idempotency Check
     cached = IdempotencyService.check_or_record(
@@ -204,8 +234,9 @@ def start_run(
 
     # 4. Check for active run conflict (409)
     active_stages = {"exploring", "planning", "scripting", "running", "verifying", "reporting"}
+    owned_ids = _owned_run_ids(db, current_user)
     for r in storage.list_runs():
-        if r.stage in active_stages:
+        if r.runId in owned_ids and r.stage in active_stages:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Another run is in progress",
@@ -249,6 +280,7 @@ def start_run(
     if payload.password:
         write_secret_password(run_id, payload.password)
 
+    _attach_run_to_user(db, current_user, run_id, raw_url, mode)
     _start_pipeline_background(run_id)
 
     res = {"runId": run_id}
@@ -263,7 +295,7 @@ def start_run(
 
 
 @router.get("/runs/{run_id}")
-def get_run(run_id: str) -> RunView:
+def get_run(run_id: str, _run: DbRun = Depends(get_owned_run)) -> RunView:
     """Retrieve complete state of a run."""
     run = storage.load_model(run_id, "run.json", Run)
     if not run:
@@ -319,7 +351,7 @@ def get_run(run_id: str) -> RunView:
 
 
 @router.put("/runs/{run_id}/catalog")
-def update_catalog(run_id: str, payload: UpdateCatalogRequest) -> Catalog:
+def update_catalog(run_id: str, payload: UpdateCatalogRequest, _run: DbRun = Depends(get_owned_run)) -> Catalog:
     """Update test cases in catalog while awaiting review."""
     run = storage.load_model(run_id, "run.json", Run)
     if not run:
@@ -350,7 +382,7 @@ def update_catalog(run_id: str, payload: UpdateCatalogRequest) -> Catalog:
 
 
 @router.post("/runs/{run_id}/tests")
-def add_test(run_id: str, payload: AddTestRequest) -> TestCase:
+def add_test(run_id: str, payload: AddTestRequest, _run: DbRun = Depends(get_owned_run)) -> TestCase:
     """Generate and append a new test case to the catalog from prompt."""
     run = storage.load_model(run_id, "run.json", Run)
     if not run:
@@ -393,7 +425,7 @@ def add_test(run_id: str, payload: AddTestRequest) -> TestCase:
 
 
 @router.post("/runs/{run_id}/execute", status_code=status.HTTP_202_ACCEPTED)
-def execute_run(run_id: str) -> dict:
+def execute_run(run_id: str, _run: DbRun = Depends(get_owned_run)) -> dict:
     """Approve non-rejected catalog tests and launch test execution."""
     run = storage.load_model(run_id, "run.json", Run)
     if not run:
@@ -425,7 +457,7 @@ def execute_run(run_id: str) -> dict:
 
 
 @router.get("/runs/{run_id}/report", response_class=PlainTextResponse)
-def get_report(run_id: str) -> str:
+def get_report(run_id: str, _run: DbRun = Depends(get_owned_run)) -> str:
     """Retrieve markdown report file."""
     report_file = storage.run_dir(run_id) / "report.md"
     if not report_file.exists():
@@ -434,7 +466,7 @@ def get_report(run_id: str) -> str:
 
 
 @router.get("/runs/{run_id}/files/{path:path}")
-def get_run_file(run_id: str, path: str):
+def get_run_file(run_id: str, path: str, _run: DbRun = Depends(get_owned_run)):
     """Retrieve an artifact file from the run directory."""
     rdir = storage.run_dir(run_id).resolve()
     target_file = (rdir / path).resolve()
@@ -464,7 +496,7 @@ def get_run_file(run_id: str, path: str):
 
 
 @router.get("/runs/{run_id}/export")
-def export_passing_tests(run_id: str):
+def export_passing_tests(run_id: str, _run: DbRun = Depends(get_owned_run)):
     """Export passing Playwright tests as a standalone ZIP package."""
     try:
         zip_buffer = export_scripts_zip(run_id)
@@ -483,7 +515,7 @@ def export_passing_tests(run_id: str):
 
 @router.get("/runs/{run_id}/stream")
 @router.get("/api/runs/{run_id}/stream")
-async def stream_run_progress(run_id: str):
+async def stream_run_progress(run_id: str, _run: DbRun = Depends(get_owned_run)):
     """Server-Sent Events endpoint streaming stage changes."""
     run = storage.load_model(run_id, "run.json", Run)
     if not run:

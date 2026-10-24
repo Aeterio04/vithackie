@@ -254,7 +254,7 @@ const mockWorkers: Worker[] = [
 
 export function setupDevMockService() {
   if (typeof window === "undefined") return;
-  if (process.env.NEXT_PUBLIC_USE_MOCKS !== "true") return;
+  if (process.env.NODE_ENV === "production" || process.env.NEXT_PUBLIC_USE_MOCKS !== "true") return;
 
   console.info("⚡ KAWACH Dev Mock Mode Active (NEXT_PUBLIC_USE_MOCKS=true)");
 

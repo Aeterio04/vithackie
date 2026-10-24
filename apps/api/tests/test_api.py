@@ -25,6 +25,16 @@ from app import graphs
 from app.agents import planner
 from app import storage
 from app.main import app
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
+
+from kawach.api.deps import get_db
+from kawach.api.v1.auth import reset_login_limits
+from kawach.db.base import Base
+from kawach.repositories.base import Scope
+from kawach.repositories.project_repo import ProjectRepository
+from kawach.repositories.run_repo import RunRepository
 
 TestCase.__test__ = False
 TestResult.__test__ = False
@@ -45,12 +55,42 @@ def api_env(tmp_path, monkeypatch):
     import app.main as app_main
     monkeypatch.setattr(app_main.time, "sleep", lambda s: real_sleep(min(s, 0.01)))
 
+    # Isolated in-memory DB (never the real data/kawach.db) and one signed-in user: every legacy route now
+    # requires authentication and ownership of the run it touches.
+    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+    def override_get_db():
+        db = Session()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+    reset_login_limits()
     with TestClient(app) as client:
+        reg = client.post("/api/v1/auth/register", json={"email": "legacy-api@example.com", "password": "LegacyPass123!"})
+        assert reg.status_code == 200
+        client.headers["Authorization"] = f"Bearer {reg.json()['token']}"
+        user_id = reg.json()["id"]
+
+        def claim(run_id: str) -> None:
+            """Give the signed-in user ownership of a run that a test seeded straight onto disk."""
+            with Session() as db:
+                scope = Scope.user(user_id)
+                proj = ProjectRepository(db).create_project(scope=scope, name="seeded", target_url="http://localhost:4000")
+                RunRepository(db).create_run(scope=scope, run_id=run_id, project_id=proj.id, mode="manual")
+                db.commit()
+
         yield {
             "client": client,
             "runs_dir": test_runs_dir,
             "tmp_path": tmp_path,
+            "claim": claim,
         }
+    app.dependency_overrides.pop(get_db, None)
 
 
 def test_health_and_config(api_env):
@@ -292,6 +332,7 @@ def test_concurrency_conflict(api_env):
         golden=False,
     )
     storage.save_model(active_run_id, "run.json", active_run)
+    api_env["claim"](active_run_id)
 
     # Attempt to start a second run
     payload = {
@@ -322,6 +363,7 @@ def test_stage_transition_guards(api_env):
         golden=False,
     )
     storage.save_model(run_id, "run.json", run)
+    api_env["claim"](run_id)
 
     # PUT /catalog when stage is not awaiting_review -> 409
     put_res = client.put(f"/runs/{run_id}/catalog", json={"tests": []})
@@ -354,6 +396,7 @@ def test_add_test_error_mappings(api_env, monkeypatch):
         golden=False,
     )
     storage.save_model(run_id, "run.json", run)
+    api_env["claim"](run_id)
 
     # 1. ValueError -> 422
     def mock_val_error(r_id, prompt):
@@ -381,6 +424,7 @@ def test_path_traversal_and_secrets_security(api_env):
     run_id = storage.new_run_id()
     run_dir = api_env["runs_dir"] / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
+    api_env["claim"](run_id)
 
     # Create dummy files
     (run_dir / "secrets.json").write_text('{"password": "secret"}', encoding="utf-8")
@@ -441,7 +485,8 @@ def test_background_failure_records_error(api_env, monkeypatch):
         view_res = client.get(f"/runs/{run_id}")
         assert view_res.status_code == 200
         view = view_res.json()
-        if view["run"]["stage"] == "failed":
+        # fail_run() saves the stage first and the error text a moment later, so wait for both
+        if view["run"]["stage"] == "failed" and view["run"].get("error"):
             break
         time.sleep(0.05)
 
@@ -474,10 +519,31 @@ def test_startup_recovery(tmp_path, monkeypatch):
     with open(sdir / "run.json", "w", encoding="utf-8") as f:
         json.dump(stale_run.model_dump(by_alias=True, mode="json"), f, indent=2)
 
+    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+    def override_get_db():
+        db = Session()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+    reset_login_limits()
     # Start TestClient to trigger app lifespan
     with TestClient(app) as client:
+        reg = client.post("/api/v1/auth/register", json={"email": "recovery@example.com", "password": "RecoveryPass1!"})
+        client.headers["Authorization"] = f"Bearer {reg.json()['token']}"
+        with Session() as db:
+            scope = Scope.user(reg.json()["id"])
+            proj = ProjectRepository(db).create_project(scope=scope, name="seeded", target_url="http://localhost:4000")
+            RunRepository(db).create_run(scope=scope, run_id=stale_id, project_id=proj.id, mode="manual")
+            db.commit()
         res = client.get(f"/runs/{stale_id}")
         assert res.status_code == 200
         data = res.json()
         assert data["run"]["stage"] == "failed"
         assert "Server restarted while the run was in progress" in data["run"]["error"]
+    app.dependency_overrides.pop(get_db, None)

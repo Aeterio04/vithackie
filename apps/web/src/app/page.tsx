@@ -182,7 +182,9 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <StartTestForm />
+        <React.Suspense fallback={null}>
+          <StartTestForm />
+        </React.Suspense>
       </section>
 
       {/* 2. KPI ROW (4 Cards) */}
