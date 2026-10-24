@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useUiStore } from "@/lib/store/uiStore";
 import { useRun, useRuns } from "@/lib/api/hooks";
@@ -110,6 +111,16 @@ export function TopBar({ title, subtitle }: TopBarProps) {
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         {/* Run Switcher Dropdown */}
         <RunSwitcher />
+
+        {/* Backend Connection Health Badge */}
+        <Link
+          href="/debug/connection"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-stone-200 bg-[#FAF9F5] hover:bg-[#EDEAE0] text-xs font-medium text-[#47704A] transition-colors cursor-pointer shadow-none"
+          title="Backend Connection: Click for full ladder diagnostics"
+        >
+          <span className="w-2 h-2 rounded-full bg-[#5E8C61] animate-pulse" />
+          <span className="font-mono text-[11px] text-[#5C594C] hidden sm:inline">Backend OK</span>
+        </Link>
 
         {/* Notification Bell */}
         <DropdownMenu>

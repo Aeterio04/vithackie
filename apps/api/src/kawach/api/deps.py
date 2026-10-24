@@ -298,12 +298,31 @@ def get_owned_run(
     if foreign_run:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Run not found")
 
-    # If run is a legacy flat-file run not yet in DB, allow access for system scope
-    if scope.is_system:
-        from kawach.storage import artifacts as storage
-        rdir = storage.run_dir(run_id)
-        if (rdir / "run.json").exists():
+    # If run is a legacy flat-file run not yet in DB, allow access
+    from kawach.storage import artifacts as storage
+    rdir = storage.run_dir(run_id)
+    if (rdir / "run.json").exists():
+        if scope.is_system:
             return Run(id=run_id, project_id="legacy-demo", created_by="system")
+        if scope.user_id:
+            from kawach.repositories.project_repo import ProjectRepository
+            proj_repo = ProjectRepository(db)
+            user_projects = proj_repo.list_projects(scope)
+            if user_projects:
+                proj = user_projects[0]
+            else:
+                proj = proj_repo.create_project(
+                    scope=scope,
+                    name="Default Project",
+                    target_url="http://localhost:3000",
+                )
+            new_db_run = repo.create_run(
+                scope=scope,
+                run_id=run_id,
+                project_id=proj.id,
+            )
+            db.commit()
+            return new_db_run
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Run not found")
 

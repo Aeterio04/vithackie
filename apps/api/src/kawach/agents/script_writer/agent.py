@@ -180,7 +180,7 @@ def write_scripts(run_id: str) -> Catalog:
                 prompt=prompt_text,
                 schema_name="script_writer",
                 run_id=run_id,
-                max_tokens=750,
+                max_tokens=500,
                 temperature=0.1,
             )
             sanitized_script = clean_and_sanitize_script(raw_script, test_id, test_title)
@@ -212,7 +212,7 @@ def write_scripts(run_id: str) -> Catalog:
                     prompt=repair_prompt,
                     schema_name="script_writer",
                     run_id=run_id,
-                    max_tokens=750,
+                    max_tokens=500,
                     temperature=0.1,
                 )
                 repaired_sanitized = clean_and_sanitize_script(repair_reply, test_id, test_title)

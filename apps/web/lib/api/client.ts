@@ -118,18 +118,41 @@ export async function apiClient<TResponse = unknown>(
           ? (responseData as Record<string, unknown>)
           : {};
 
+      const envelope =
+        typeof errObj.error === "object" && errObj.error !== null
+          ? (errObj.error as Record<string, unknown>)
+          : errObj;
+
       const message =
-        (typeof errObj.message === "string" && errObj.message) ||
+        (typeof envelope.message === "string" && envelope.message) ||
         (typeof errObj.detail === "string" && errObj.detail) ||
         res.statusText ||
         "Request failed";
 
       const code =
-        (typeof errObj.code === "string" && errObj.code) || `HTTP_${res.status}`;
+        (typeof envelope.code === "string" && envelope.code) ||
+        (typeof errObj.code === "string" && errObj.code) ||
+        `HTTP_${res.status}`;
+
       const requestId =
+        (typeof envelope.requestId === "string" && envelope.requestId) ||
         (typeof errObj.request_id === "string" && errObj.request_id) ||
         res.headers.get("x-request-id") ||
         undefined;
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("kawach:api-error", {
+            detail: {
+              status: res.status,
+              url: endpoint,
+              code,
+              requestId,
+              message,
+            },
+          })
+        );
+      }
 
       throw new ApiError({
         message,

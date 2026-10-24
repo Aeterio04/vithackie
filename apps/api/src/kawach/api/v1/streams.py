@@ -19,7 +19,7 @@ from kawach.api.v1.mappers.run_mapper import (
 )
 from kawach.core.clock import now_iso
 from kawach.db.models.runs import Run as DbRun
-from kawach.schemas import Catalog, Results, Run
+from kawach.schemas import AppMap, Catalog, Results, Run
 from kawach.services.run_service import (
     get_run_events,
     get_run_logs,
@@ -274,7 +274,7 @@ async def stream_run_sse(
                         elapsed = max(0.1, round((now_dt - c_dt).total_seconds() / 60.0, 1))
                     except Exception:
                         pass
-                app_map = storage.load_model(run_id, "app_map.json", storage.AppMap)
+                app_map = storage.load_model(run_id, "app_map.json", AppMap)
                 completed_count = sum(1 for st in seen_test_status.values() if st in ("passed", "failed"))
                 budget_event = {
                     "type": "budget.update",

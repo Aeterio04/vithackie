@@ -53,13 +53,17 @@ class Settings(BaseSettings):
 
     # 6. LLM Engine & Provider
     LLM_PROVIDER: str = "groq"
-    LLM_MODEL: str = "llama-3.3-70b-versatile"
+    LLM_MODEL: str = "qwen/qwen3.8-27b"
+    GROQ_DEFAULT_MODEL: str = "qwen/qwen3.8-27b"
+    GROQ_FALLBACK_MODEL: str = "qwen/qwen3.8-27b"
     GROQ_API_KEY: str = ""
     GROQ_RPM_LIMIT: int = 30
     GROQ_TPM_LIMIT: int = 6000
     GROQ_MIN_INTERVAL: float = 2.0
     GROQ_DEFAULT_MODEL: str = "llama-3.3-70b-versatile"
     GROQ_FALLBACK_MODEL: str = "llama-3.1-8b-instant"
+    GEMINI_API_KEY: str = ""
+    GEMINI_DEFAULT_MODEL: str = "gemini-3.8-flash"
     ANTHROPIC_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
     LLM_PRICE_IN_PER_MTOK: float = 0.0

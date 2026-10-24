@@ -468,6 +468,159 @@
 - **Unblocked:**
   - Complete engineering roadmap and specifications unblocking frontend implementation for Hackathon demo tracks.
 
+### START Phase 1 — Connection Audit & Endpoint Verification
+- **Goal:**
+  1. Record backend declared OpenAPI (`packages/contracts/openapi.json`), live OpenAPI (`/openapi.json`), and mounted routes (`app.routes`).
+  2. Audit database migration state (`alembic current` vs `heads`) and table/column schema integrity (`api_tokens`, `audit_logs.client_type`).
+  3. Hit every live endpoint with throwaway user credentials (JWT bearer, cookie session, and `kw_` API token); record status, schema conformance, trailing-slash, and SSE behavior.
+  4. Perform exhaustive frontend API call inventory across `apps/web` (base URL, prefixes, headers, credentials, schemas).
+  5. Cross-reference frontend calls to backend endpoints in a comprehensive matrix and generate `docs/connection-audit/endpoints.json` and `docs/CONNECTION_AUDIT.md`.
+- **Environment:**
+  - `FRONTEND_URL`: http://localhost:3000 (local machine)
+  - `BACKEND_URL`: http://localhost:8000 (local machine)
+
+### DONE Phase 1 — Connection Audit & Endpoint Verification
+- **Changed:**
+  1. Audited live backend (`http://localhost:8000/openapi.json`) against declared schema (`packages/contracts/openapi.json`) and Starlette router table: verified 63 paths, 73 operations, and 77 mounted route objects with 0 missing and 0 extra routes.
+  2. Verified database schema and migration state: `alembic current` matches `alembic heads` at `b2c3d4e5f6a7 (head)`. Confirmed `api_tokens` table and `audit_logs.client_type` column exist. Confirmed `apps/web/src/generated/api-types.ts` is in 100% sync with backend OpenAPI (0 diff lines).
+  3. Ran live HTTP test suite covering all 73 operations using web session (JWT cookie + Bearer) and API token (`kw_live_...`), testing trailing slash (307 redirect), CORS preflight OPTIONS, HEAD method, and SSE streaming.
+  4. Performed complete static and runtime inventory of frontend call sites (73 calls across 118 files in `apps/web`).
+  5. Established cross-reference matrix (17 SERVED-OK, 14 SERVED-BUT-ERROR, 4 CONTRACT-MISMATCH, 1 URL-MISMATCH, 1 AUTH-MISMATCH, 12 UNUSED).
+  6. Documented top root causes:
+     - Root Cause 1 (Critical): `create_run_service` persists to filesystem but does not write to the SQLite `runs` table, causing `get_owned_run` dependency in v1 endpoints to return 404 for all authenticated users.
+     - Root Cause 2 (High): `ProjectRepository` is missing `update_project` and `archive_project`, causing 500 crashes on `PUT/DELETE /api/v1/projects/:id`.
+     - Root Cause 3 (Medium): SSE endpoint URL mismatch (`/api/runs/:id/stream` legacy vs `/api/v1/runs/:id/stream`) and EventSource `onmessage` incompatible with `event: stage_change`.
+     - Root Cause 4 (Medium): Snake_case vs camelCase payload mismatches (`target_url` vs `targetUrl`).
+     - Root Cause 5 (Medium): Cross-origin cookie boundary between ports 3000 and 8000 redirecting `middleware.ts` to `/login`.
+  7. Published `docs/connection-audit/endpoints.json` and `docs/CONNECTION_AUDIT.md`. Cleaned all scratch scripts.
+- **Files:**
+  - `docs/connection-audit/endpoints.json`
+  - `docs/CONNECTION_AUDIT.md`
+  - `LOG.md`
+- **How Verified:**
+  - Full execution of live endpoint test suite against running FastAPI backend.
+  - Tracebacks inspected from running Uvicorn server logs.
+  - `alembic current` & `alembic heads` CLI verification.
+  - `openapi-typescript` comparison (0 diffs).
+
+### START Phase 2 — Connection Diagnosis and Layer Proving
+- **Goal:**
+  1. Build reusable connection verification script `scripts/check_connection.py` evaluating layers 2.1–2.6.
+  2. Diagnose failures across network, base URL routing, CORS preflights, cross-origin cookies, contract payloads, and SSE.
+  3. Validate real browser path behaviors via Playwright end-to-end trace.
+  4. Author `docs/CONNECTION_ROOT_CAUSE.md` with detailed evidence, root cause classifications, minimal proposed fixes, and verification procedures.
+- **Environment:**
+  - `FRONTEND_URL`: http://localhost:3000
+  - `BACKEND_URL`: http://localhost:8000
+
+### DECISION Phase 2 — Diagnosis Complete & Root Causes Identified
+- **Status:** Diagnosis across Layers 2.0–2.7 complete; reusable checker `scripts/check_connection.py` created and operational.
+- **Connection Ladder State:**
+  - Layer 2.1 (Network): PASS
+  - Layer 2.2 (Base URL & Routing): PASS
+  - Layer 2.3 (CORS Preflights & Headers): PASS
+  - Layer 2.4 (Cookies & Cross-Origin Auth): PASS
+  - Layer 2.5 (Contract & Runtime): FAIL (Defect 1: Missing `DbRun` record causing 404; Defect 2: Missing `ProjectRepository.update_project` & `archive_project` causing 500; Defect 4: camelCase payload rejection 422)
+  - Layer 2.6 (SSE Streaming): PASS (Route mounted) / FAIL (Event Protocol & config URL)
+- **Delivered Documentation:**
+  - `docs/CONNECTION_ROOT_CAUSE.md` authored with exact HTTP requests, status codes, tracebacks, root causes, and minimal proposed fixes.
+- **Governance Gate:** Pausing for user approval before applying any application code fixes.
+
+### DONE Phase 2 Fix 1 — Implement update_project and archive_project on ProjectRepository
+- **Changed:**
+  - In `apps/api/src/kawach/repositories/project_repo.py`, implemented `update_project` and `archive_project` on `ProjectRepository` with soft-deletion (`archived_at = datetime.now(timezone.utc)`).
+- **Files:**
+  - `apps/api/src/kawach/repositories/project_repo.py`
+- **How Verified:**
+  - Re-ran `python3 scripts/check_connection.py`.
+  - `ProjectRepository.update_project`: `[PASS]` HTTP 200
+  - `ProjectRepository.archive_project`: `[PASS]` HTTP 200
+
+### DONE Phase 2 Fix 2 — Run Persistence in SQLite Database & CamelCase Ingestion
+- **Changed:**
+  - In `apps/api/src/kawach/api/v1/runs.py`, added database persistence (`RunRepository.create_run`) linked to user's project, preventing 404s on run inspection.
+  - In `apps/api/src/kawach/api/v1/runs.py`, enhanced `CreateRunPayload` with `model_validator` supporting camelCase (`targetUrl`, `reviewMode`, `projectId`).
+  - In `apps/api/src/kawach/repositories/run_repo.py`, updated `get_run` to check ownership by either project owner or run creator.
+  - In `apps/api/src/kawach/api/deps.py`, updated `get_owned_run` to automatically backfill/link existing flat-file runs on disk to the active user's project session.
+- **Files:**
+  - `apps/api/src/kawach/api/v1/runs.py`
+  - `apps/api/src/kawach/repositories/run_repo.py`
+  - `apps/api/src/kawach/api/deps.py`
+- **How Verified:**
+  - Re-ran `python3 scripts/check_connection.py`: All 6 layers (2.1 to 2.6) returned `[PASS]` with exit code 0.
+  - Tested legacy flat-file run `20261023-191126-d6b7`: `/logs` and `/bugs` returned HTTP 200 (was 404).
+  - Tested camelCase payload `{ "targetUrl": "http://localhost:3000" }`: returned HTTP 201 Created.
+
+### DONE Phase 2 — Connection Diagnosis, Remediation, and Visibility
+- **Changed:**
+  1. Diagnosed connection ladder Layers 2.1–2.6; authored `docs/CONNECTION_ROOT_CAUSE.md` with full request/response evidence and ranked root causes.
+  2. Applied Fix 1: Implemented `update_project` and `archive_project` on `ProjectRepository` in `apps/api/src/kawach/repositories/project_repo.py`, resolving HTTP 500 crashes on project settings and deletion.
+  3. Applied Fix 2: Added SQLite database persistence (`DbRun`) in `apps/api/src/kawach/api/v1/runs.py` linked to active user's project, and enhanced `CreateRunPayload` with `model_validator` supporting camelCase (`targetUrl`, `reviewMode`, `projectId`). Updated `get_owned_run` in `apps/api/src/kawach/api/deps.py` to auto-link and resolve legacy flat-file runs on disk for authenticated sessions.
+  4. Applied Fix 3: Updated `RUN_STREAM` in `apps/web/src/shared/lib/api/config.ts` and `apps/web/lib/api/config.ts` to `/api/v1/runs/:id/stream`, matching typed events emitted by the versioned stream route.
+  5. Applied Section 2.0 Visibility & Diagnostics:
+     - Implemented unhandled exception handler and `X-Request-Id` generation in `apps/api/src/kawach/main.py` and `apps/api/src/kawach/api/middleware/logging.py`, returning `{ "error": { "code": "INTERNAL_SERVER_ERROR", "message": "...", "requestId": "..." } }`.
+     - Built live diagnostics page `apps/web/src/app/debug/connection/page.tsx` evaluating Layers 2.1–2.6 in-browser with latency and raw curl reproduction commands.
+     - Added Backend Health Badge in `apps/web/src/shared/layout/TopBar.tsx` linking to `/debug/connection`.
+     - Updated `apiClient` in `apps/web/src/shared/lib/api/client.ts` and `apps/web/lib/api/client.ts` to parse standard error envelopes and dispatch `kawach:api-error` events.
+     - Updated `ToastProvider` in `apps/web/src/shared/ui/Toast.tsx` to surface structured error toasts with HTTP status, URL, backend code, and requestId.
+  6. Authored multi-server runbook and reverse proxy documentation in `docs/DEPLOYMENT_CHECKLIST.md`.
+  7. Deleted all temporary scripts in `scratch/`.
+- **Files:**
+  - `apps/api/src/kawach/repositories/project_repo.py`
+  - `apps/api/src/kawach/repositories/run_repo.py`
+  - `apps/api/src/kawach/api/v1/runs.py`
+  - `apps/api/src/kawach/api/deps.py`
+  - `apps/api/src/kawach/api/middleware/logging.py`
+  - `apps/api/src/kawach/main.py`
+  - `apps/web/src/shared/lib/api/config.ts`
+  - `apps/web/lib/api/config.ts`
+  - `apps/web/src/shared/lib/api/client.ts`
+  - `apps/web/lib/api/client.ts`
+  - `apps/web/src/shared/layout/TopBar.tsx`
+  - `apps/web/src/shared/ui/Toast.tsx`
+  - `apps/web/src/app/debug/connection/page.tsx`
+  - `docs/CONNECTION_ROOT_CAUSE.md`
+  - `docs/DEPLOYMENT_CHECKLIST.md`
+  - `scripts/check_connection.py`
+  - `LOG.md`
+- **How Verified:**
+  - `python3 scripts/check_connection.py`: All 6 layers (2.1 to 2.6) returned `[PASS]` with exit code 0.
+  - Next.js production build (`npm run build` in `apps/web`): compiled cleanly with 14 static pages generated and 0 TypeScript/ESLint errors.
+  - Backend test suite (`pytest apps/api/tests/`): 111 passed, 1 skipped, 0 failed in 47s.
+  - Direct HTTP and proxied verification:
+    - `/api/v1/health` returned HTTP 200 with `X-Request-Id`.
+    - `/api/v1/runs/20261023-191126-d6b7/logs` and `/bugs` returned HTTP 200 (was 404).
+    - `POST /api/v1/runs` with camelCase `{ "targetUrl": "..." }` returned HTTP 201 Created.
+    - `GET /debug/connection` returned HTTP 200.
+    - SSE stream through proxy returned `Content-Type: text/event-stream`.
+
+### DONE Fix — Resolve AppMap AttributeError in SSE Event Stream
+- **Changed:**
+  - In `apps/api/src/kawach/storage/artifacts.py`, re-exported `AppMap` from `kawach.schemas`.
+  - In `apps/api/src/kawach/api/v1/streams.py`, imported `AppMap` from `kawach.schemas` and updated `load_model` in `event_generator` from `storage.AppMap` to `AppMap`.
+- **Files:**
+  - `apps/api/src/kawach/storage/artifacts.py`
+  - `apps/api/src/kawach/api/v1/streams.py`
+- **How Verified:**
+  - Ran `PYTHONPATH=src python3 -c "from kawach.storage import artifacts as storage; print(storage.AppMap); from kawach.api.v1.streams import stream_run_sse; print('Streams OK')"`, confirming `<class 'kawach.schemas.app_map.AppMap'>` and `Streams OK`.
+
+### DONE Fix — Resolve PageInfo interactiveElements AttributeError on /app-map
+- **Changed:**
+  - In `apps/api/src/kawach/schemas/app_map.py`, added `interactiveElements: List[Any] = Field(default_factory=list)` to `PageInfo` schema.
+  - In `apps/api/src/kawach/api/v1/artifacts.py`, made `interactive_elements` and `actions_found` extraction in `get_app_map` resilient with safe attribute fallbacks to `buttons` and `links`.
+- **Files:**
+  - `apps/api/src/kawach/schemas/app_map.py`
+  - `apps/api/src/kawach/api/v1/artifacts.py`
+- **How Verified:**
+  - Tested `GET /api/v1/runs/20261023-194107-a68f/app-map`: returned `HTTP 200 OK` with 3 crawled pages (`/login`, `/dashboard`, `/settings`) and interactive element action nodes.
+  - Tested proxied `GET http://localhost:3000/api/v1/runs/20261023-194107-a68f/app-map`: returned `HTTP 200 OK`.
+
+
+
+
+
+
+
 
 
 

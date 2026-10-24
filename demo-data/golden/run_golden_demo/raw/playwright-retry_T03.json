@@ -1,0 +1,225 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "playwright.config.ts",
+      "-g",
+      "T03:",
+      "--workers=1",
+      "--retries=0"
+    ],
+    "configFile": "/Users/parasgajam/Desktop/Vit_it/apps/runner/playwright.config.ts",
+    "rootDir": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/raw/test-results/retry_T03",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/raw/test-results/retry_T03",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "name": "chromium",
+        "testDir": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts",
+        "snapshotDir": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts",
+        "testIgnore": [],
+        "testMatch": "**/*.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://localhost:4000",
+          "headless": true,
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "actionTimeout": 8000,
+          "navigationTimeout": 15000,
+          "trace": "retain-on-failure",
+          "video": "retain-on-failure",
+          "screenshot": "on",
+          "ignoreHTTPSErrors": false,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json",
+        {
+          "outputFile": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/raw/playwright-retry_T03.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [],
+  "errors": [
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T01.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T01.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T01.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T01.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT01.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T01: Signing up with valid credentials lands on dashboard', async ({ page }) => {\n  4 |   await page.goto('/signup');"
+    },
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T02.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T02.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T02.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T02.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT02.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T02: Signing up with invalid email is rejected', async ({ page }) => {\n  4 |   await page.goto('/signup');"
+    },
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T03.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T03.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T03.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T03.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT03.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T03: Signing up with short password is rejected', async ({ page }) => {\n  4 |   await page.goto('/signup');"
+    },
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T04.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T04.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T04.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T04.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT04.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T04: Logging in with valid credentials lands on dashboard', async ({ page }) => {\n  4 |   await page.goto('/login');"
+    },
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T05.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T05.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T05.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T05.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT05.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T05: Logging in with wrong password shows error', async ({ page }) => {\n  4 |   await page.goto('/login');"
+    },
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T06.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T06.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T06.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T06.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT06.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T06: Logging in email is case-insensitive', async ({ page }) => {\n  4 |   await page.goto('/login');"
+    },
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T08.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T08.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T08.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T08.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT08.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T08: Adding item with empty title is rejected', async ({ page }) => {\n  4 |   // Step 1: Log in as qa.tester@example.com and open /dashboard"
+    },
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T09.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T09.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T09.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T09.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT09.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T09: Deleting an item removes only that item', async ({ page }) => {\n  4 |   await page.goto('/login');"
+    },
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T10.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T10.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T10.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T10.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT10.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T10: Saving display name shows success and page has no errors', async ({ page }) => {\n  4 |   const errors: string[] = [];"
+    },
+    {
+      "message": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T11.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js",
+      "stack": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T11.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n    at Object.<anonymous> (/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T11.spec.ts:1:1)",
+      "location": {
+        "file": "/Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T11.spec.ts",
+        "column": 1,
+        "line": 1
+      },
+      "snippet": "\u001b[90m   at \u001b[39mT11.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';\n    | ^\n  2 |\n  3 | test('T11: Logging out returns to login and Back does not show dashboard', async ({ page }) => {\n  4 |   // Step 1: Log in and navigate to /dashboard"
+    },
+    {
+      "message": "Error: No tests found",
+      "stack": "Error: No tests found"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-23T22:22:24.689Z",
+    "duration": 15.373999999999995,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

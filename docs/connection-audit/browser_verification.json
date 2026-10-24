@@ -1,0 +1,327 @@
+{
+  "cookies": [],
+  "networkFailures": [
+    {
+      "url": "http://localhost:3000/api/v1/auth/login",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/login"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/auth/me",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/projects"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/projects"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/projects",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/projects"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/projects",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/projects"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/auth/me",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/start"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/start"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/auth/me",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/catalog/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/catalog/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/catalog/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/catalog",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/catalog/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/logs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/catalog/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/logs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/catalog/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/runs/20261023-183514-4052/stream",
+      "status": 404,
+      "statusText": "Not Found",
+      "page": "http://localhost:3000/catalog/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/auth/me",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/execution/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/execution/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/execution/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/logs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/execution/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/execution",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/execution/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/tests",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/execution/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/bugs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/execution/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/logs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/execution/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/runs/20261023-183514-4052/stream",
+      "status": 404,
+      "statusText": "Not Found",
+      "page": "http://localhost:3000/execution/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/auth/me",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/results/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/results/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/results/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/bugs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/results/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/tests",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/results/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/auth/me",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/reports/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/reports/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052/report",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/reports/20261023-183514-4052"
+    },
+    {
+      "url": "http://localhost:3000/api/v1/runs/20261023-183514-4052",
+      "status": 401,
+      "statusText": "Unauthorized",
+      "page": "http://localhost:3000/reports/20261023-183514-4052"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "url": "http://localhost:3000/login",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/projects",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/projects",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/projects",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/projects",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/start",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/start",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/catalog/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/catalog/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/catalog/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/catalog/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/catalog/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/catalog/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/catalog/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:3000/execution/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/execution/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/execution/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/execution/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/execution/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/execution/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/execution/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/execution/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/execution/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:3000/results/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/results/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/results/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/results/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/results/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/reports/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/reports/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/reports/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3000/reports/20261023-183514-4052",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    }
+  ]
+}

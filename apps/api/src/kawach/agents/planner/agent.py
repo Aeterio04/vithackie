@@ -171,7 +171,7 @@ def plan_catalog(run_id: str) -> Catalog:
         prompt=prompt_text,
         schema_name="planner_catalog",
         run_id=run_id,
-        max_tokens=1400,
+        max_tokens=4000,
     )
 
     raw_tests = resp.get("tests", []) if isinstance(resp, dict) else (resp if isinstance(resp, list) else [])

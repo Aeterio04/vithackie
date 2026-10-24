@@ -13,6 +13,7 @@ from kawach.core.clock import now_iso
 from kawach.core.config import settings
 from kawach.core.ids import new_run_id
 from kawach.schemas import (
+    AppMap,
     BugsFile,
     Catalog,
     Progress,

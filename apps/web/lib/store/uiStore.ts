@@ -8,6 +8,7 @@ interface UiState {
   setSelectedRunId: (runId: string | null) => void;
   toggleSidebar: () => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
+  resetUIState: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
@@ -16,4 +17,5 @@ export const useUiStore = create<UiState>((set) => ({
   setSelectedRunId: (runId) => set({ selectedRunId: runId }),
   toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
+  resetUIState: () => set({ selectedRunId: null, sidebarCollapsed: false }),
 }));

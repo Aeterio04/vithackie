@@ -1,6 +1,6 @@
 """LLM client, cache, and cost tracking with multi-provider support.
 
-Supported providers: groq, openai, anthropic, fake.
+Supported providers: groq, openai, anthropic, gemini, fake.
 """
 
 import json
@@ -29,7 +29,7 @@ class LLMError(Exception):
 
 
 class LLM:
-    """LLM client supporting Groq, OpenAI, Anthropic, and offline Fake providers."""
+    """LLM client supporting Groq, OpenAI, Anthropic, Gemini, and offline Fake providers."""
 
     def __init__(self) -> None:
         self.cache_dir: Path = settings.repo_root / "apps" / "api" / ".llm_cache"
@@ -41,6 +41,7 @@ class LLM:
         self._groq_client = None
         self._groq_handler = None
         self._anthropic_client = None
+        self._gemini_client = None
 
     def _get_groq_client(self):
         if self._groq_client is None:
@@ -91,6 +92,20 @@ class LLM:
                 raise LLMError("Missing or invalid API key for provider anthropic")
             self._anthropic_client = anthropic.Anthropic(api_key=api_key)
         return self._anthropic_client
+
+    def _get_gemini_client(self):
+        if self._gemini_client is None:
+            try:
+                import google.generativeai as genai
+            except ImportError:
+                raise LLMError("google-generativeai package is required for gemini provider. Install google-generativeai")
+
+            api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY", "")
+            if not api_key:
+                raise LLMError("Missing or invalid API key for provider gemini (GEMINI_API_KEY not set)")
+            genai.configure(api_key=api_key)
+            self._gemini_client = genai
+        return self._gemini_client
 
     def _resolve_fake_file(self, schema_name: str, ext: str) -> Path:
         """Resolve fake response file from co-located or fallback directory."""
@@ -172,6 +187,26 @@ class LLM:
                     text = "".join([b.text for b in resp.content if hasattr(b, "text")])
                     in_tok = resp.usage.input_tokens if resp.usage else len(prompt) // 4
                     out_tok = resp.usage.output_tokens if resp.usage else len(text) // 4
+                    return (text, in_tok, out_tok)
+
+                elif provider == "gemini":
+                    genai = self._get_gemini_client()
+                    model_name = settings.GEMINI_DEFAULT_MODEL or "gemini-3.8-flash"
+                    client = genai.GenerativeModel(model_name)
+                    
+                    # Combine system and user prompt for Gemini
+                    full_prompt = f"{system}\n\n{prompt}"
+                    
+                    resp = client.generate_content(
+                        full_prompt,
+                        generation_config=genai.types.GenerationConfig(
+                            max_output_tokens=max_tokens,
+                            temperature=temperature,
+                        ),
+                    )
+                    text = resp.text or ""
+                    in_tok = len(prompt) // 4
+                    out_tok = len(text) // 4
                     return (text, in_tok, out_tok)
 
                 else:

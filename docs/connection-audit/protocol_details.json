@@ -1,0 +1,231 @@
+{
+  "trailing_slash": {
+    "/runs": {
+      "status": 200,
+      "location": null,
+      "is_redirect": false
+    },
+    "/runs/": {
+      "status": 307,
+      "location": "http://localhost:8000/runs",
+      "is_redirect": true
+    },
+    "/api/v1/runs": {
+      "status": 200,
+      "location": null,
+      "is_redirect": false
+    },
+    "/api/v1/runs/": {
+      "status": 307,
+      "location": "http://localhost:8000/api/v1/runs",
+      "is_redirect": true
+    },
+    "/api/v1/projects": {
+      "status": 200,
+      "location": null,
+      "is_redirect": false
+    },
+    "/api/v1/projects/": {
+      "status": 307,
+      "location": "http://localhost:8000/api/v1/projects",
+      "is_redirect": true
+    },
+    "/health": {
+      "status": 200,
+      "location": null,
+      "is_redirect": false
+    },
+    "/health/": {
+      "status": 307,
+      "location": "http://localhost:8000/health",
+      "is_redirect": true
+    },
+    "/api/v1/health": {
+      "status": 200,
+      "location": null,
+      "is_redirect": false
+    },
+    "/api/v1/health/": {
+      "status": 307,
+      "location": "http://localhost:8000/api/v1/health",
+      "is_redirect": true
+    }
+  },
+  "cors_options": {
+    "/api/v1/projects": {
+      "status": 200,
+      "allow_origin": "http://localhost:3000",
+      "allow_credentials": "true",
+      "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+      "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+      "expose_headers": null
+    },
+    "/api/v1/runs": {
+      "status": 200,
+      "allow_origin": "http://localhost:3000",
+      "allow_credentials": "true",
+      "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+      "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+      "expose_headers": null
+    },
+    "/api/v1/auth/login": {
+      "status": 200,
+      "allow_origin": "http://localhost:3000",
+      "allow_credentials": "true",
+      "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+      "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+      "expose_headers": null
+    },
+    "/api/runs/20261023-185425-0f67/stream": {
+      "status": 200,
+      "allow_origin": "http://localhost:3000",
+      "allow_credentials": "true",
+      "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+      "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+      "expose_headers": null
+    },
+    "/api/v1/runs/20261023-185425-0f67/stream": {
+      "status": 200,
+      "allow_origin": "http://localhost:3000",
+      "allow_credentials": "true",
+      "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+      "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+      "expose_headers": null
+    }
+  },
+  "head_handling": {
+    "/api/v1/health": {
+      "status": 405,
+      "content_type": "application/json",
+      "content_length": "31"
+    },
+    "/api/v1/projects": {
+      "status": 405,
+      "content_type": "application/json",
+      "content_length": "31"
+    },
+    "/health": {
+      "status": 405,
+      "content_type": "application/json",
+      "content_length": "31"
+    }
+  },
+  "sse": {
+    "/api/runs/20261023-185425-0f67/stream": {
+      "bearer": {
+        "status": 200,
+        "content_type": "text/event-stream; charset=utf-8",
+        "sample_events": [
+          "event: stage_change",
+          "data: {\"runId\": \"20261023-185425-0f67\", \"stage\": \"exploring\", \"progress\": {\"step\": \"Starting browser\", \"done\": 0, \"total\": 10}, \"error\": null, \"updatedAt\": \"2026-10-23T18:54:25Z\"}",
+          "event: stage_change",
+          "data: {\"runId\": \"20261023-185425-0f67\", \"stage\": \"awaiting_review\", \"progress\": {\"step\": \"Waiting for the QA engineer\", \"done\": 0, \"total\": 0}, \"error\": null, \"updatedAt\": \"2026-10-23T18:54:26Z\"}"
+        ]
+      },
+      "cookie": {
+        "error": "timed out"
+      },
+      "query_token": {
+        "error": "timed out"
+      },
+      "no_auth": {
+        "status": 200,
+        "content_type": "text/event-stream; charset=utf-8"
+      }
+    },
+    "/api/v1/runs/20261023-185425-0f67/stream": {
+      "bearer": {
+        "status": 404,
+        "content_type": "application/json",
+        "sample_events": [
+          "{\"detail\":\"Run not found\"}"
+        ]
+      },
+      "cookie": {
+        "status": 404,
+        "content_type": "application/json",
+        "sample_events": [
+          "{\"detail\":\"Run not found\"}"
+        ]
+      },
+      "query_token": {
+        "status": 404,
+        "content_type": "application/json",
+        "sample_events": [
+          "{\"detail\":\"Run not found\"}"
+        ]
+      },
+      "no_auth": {
+        "status": 404,
+        "content_type": "application/json"
+      }
+    }
+  },
+  "run_endpoints": {
+    "GET /api/v1/runs/20261023-185425-0f67": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Run not found\"}"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/app-map": {
+      "status": 200,
+      "is_json": true,
+      "body_preview": "{\"run_id\":\"20261023-185425-0f67\",\"root_url\":\"http://localhost:3000\",\"crawled_at\":\"2026-10-23T18:54:26Z\",\"total_pages\":0,\"pages\":[],\"nodes\":[]}"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/catalog": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Run not found\"}"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/execution": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Run not found\"}"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/tests": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Run not found\"}"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/bugs": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Run not found\"}"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/logs": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Run not found\"}"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/metrics": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Run not found\"}"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/events": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Run not found\"}"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/review-log": {
+      "status": 200,
+      "is_json": true,
+      "body_preview": "[]"
+    },
+    "GET /api/v1/runs/20261023-185425-0f67/report": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Run not found\"}"
+    },
+    "GET /runs/20261023-185425-0f67": {
+      "status": 200,
+      "is_json": true,
+      "body_preview": "{\"run\":{\"runId\":\"20261023-185425-0f67\",\"createdAt\":\"2026-10-23T18:54:25Z\",\"updatedAt\":\"2026-10-23T18:54:26Z\",\"stage\":\"awaiting_review\",\"mode\":\"manual\""
+    },
+    "GET /runs/20261023-185425-0f67/report": {
+      "status": 404,
+      "is_json": true,
+      "body_preview": "{\"detail\":\"Report not generated yet\"}"
+    }
+  }
+}

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -72,6 +73,42 @@ class ProjectRepository(BaseRepository):
             stmt = stmt.where(Project.archived_at.is_(None))
         stmt = stmt.order_by(Project.created_at.desc())
         return list(self.db.scalars(stmt).all())
+
+    def update_project(
+        self,
+        scope: Scope,
+        project_id: str,
+        name: Optional[str] = None,
+        target_url: Optional[str] = None,
+        description: Optional[str] = None,
+        default_mode: Optional[str] = None,
+        budgets: Optional[Dict[str, Any]] = None,
+    ) -> Optional[Project]:
+        """Update owned project attributes."""
+        project = self.get_project(scope, project_id)
+        if not project:
+            return None
+        if name is not None:
+            project.name = name
+        if target_url is not None:
+            project.target_url = target_url
+        if description is not None:
+            project.description = description
+        if default_mode is not None:
+            project.default_mode = default_mode
+        if budgets is not None:
+            project.budgets = budgets
+        self.db.flush()
+        return project
+
+    def archive_project(self, scope: Scope, project_id: str) -> bool:
+        """Soft-delete/archive project owned by scoped user."""
+        project = self.get_project(scope, project_id)
+        if not project:
+            return False
+        project.archived_at = datetime.now(timezone.utc)
+        self.db.flush()
+        return True
 
     def set_credentials(
         self,

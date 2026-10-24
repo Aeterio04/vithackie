@@ -1,0 +1,2645 @@
+{
+  "summary": {
+    "timestamp": "2026-10-23T18:51:00Z",
+    "base_url": "http://localhost:8000",
+    "total_endpoints_tested": 73,
+    "classifications": {
+      "422": 6,
+      "404": 34,
+      "non-JSON": 3,
+      "OK": 27,
+      "401": 1,
+      "500": 2
+    },
+    "verdict_counts": {
+      "SERVED-OK": 17,
+      "CONTRACT-MISMATCH": 4,
+      "SERVED-BUT-ERROR": 14,
+      "URL-MISMATCH": 1,
+      "AUTH-MISMATCH": 1,
+      "UNUSED": 12
+    }
+  },
+  "protocol_checks": {
+    "trailing_slash": {
+      "/runs": {
+        "status": 200,
+        "location": null,
+        "is_redirect": false
+      },
+      "/runs/": {
+        "status": 307,
+        "location": "http://localhost:8000/runs",
+        "is_redirect": true
+      },
+      "/api/v1/runs": {
+        "status": 200,
+        "location": null,
+        "is_redirect": false
+      },
+      "/api/v1/runs/": {
+        "status": 307,
+        "location": "http://localhost:8000/api/v1/runs",
+        "is_redirect": true
+      },
+      "/api/v1/projects": {
+        "status": 200,
+        "location": null,
+        "is_redirect": false
+      },
+      "/api/v1/projects/": {
+        "status": 307,
+        "location": "http://localhost:8000/api/v1/projects",
+        "is_redirect": true
+      },
+      "/health": {
+        "status": 200,
+        "location": null,
+        "is_redirect": false
+      },
+      "/health/": {
+        "status": 307,
+        "location": "http://localhost:8000/health",
+        "is_redirect": true
+      },
+      "/api/v1/health": {
+        "status": 200,
+        "location": null,
+        "is_redirect": false
+      },
+      "/api/v1/health/": {
+        "status": 307,
+        "location": "http://localhost:8000/api/v1/health",
+        "is_redirect": true
+      }
+    },
+    "cors_options": {
+      "/api/v1/projects": {
+        "status": 200,
+        "allow_origin": "http://localhost:3000",
+        "allow_credentials": "true",
+        "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+        "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+        "expose_headers": null
+      },
+      "/api/v1/runs": {
+        "status": 200,
+        "allow_origin": "http://localhost:3000",
+        "allow_credentials": "true",
+        "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+        "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+        "expose_headers": null
+      },
+      "/api/v1/auth/login": {
+        "status": 200,
+        "allow_origin": "http://localhost:3000",
+        "allow_credentials": "true",
+        "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+        "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+        "expose_headers": null
+      },
+      "/api/runs/20261023-185425-0f67/stream": {
+        "status": 200,
+        "allow_origin": "http://localhost:3000",
+        "allow_credentials": "true",
+        "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+        "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+        "expose_headers": null
+      },
+      "/api/v1/runs/20261023-185425-0f67/stream": {
+        "status": 200,
+        "allow_origin": "http://localhost:3000",
+        "allow_credentials": "true",
+        "allow_methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, QUERY",
+        "allow_headers": "Authorization, Content-Type, Idempotency-Key, X-Request-Id",
+        "expose_headers": null
+      }
+    },
+    "head_handling": {
+      "/api/v1/health": {
+        "status": 405,
+        "content_type": "application/json",
+        "content_length": "31"
+      },
+      "/api/v1/projects": {
+        "status": 405,
+        "content_type": "application/json",
+        "content_length": "31"
+      },
+      "/health": {
+        "status": 405,
+        "content_type": "application/json",
+        "content_length": "31"
+      }
+    },
+    "sse": {
+      "/api/runs/20261023-185425-0f67/stream": {
+        "bearer": {
+          "status": 200,
+          "content_type": "text/event-stream; charset=utf-8",
+          "sample_events": [
+            "event: stage_change",
+            "data: {\"runId\": \"20261023-185425-0f67\", \"stage\": \"exploring\", \"progress\": {\"step\": \"Starting browser\", \"done\": 0, \"total\": 10}, \"error\": null, \"updatedAt\": \"2026-10-23T18:54:25Z\"}",
+            "event: stage_change",
+            "data: {\"runId\": \"20261023-185425-0f67\", \"stage\": \"awaiting_review\", \"progress\": {\"step\": \"Waiting for the QA engineer\", \"done\": 0, \"total\": 0}, \"error\": null, \"updatedAt\": \"2026-10-23T18:54:26Z\"}"
+          ]
+        },
+        "cookie": {
+          "error": "timed out"
+        },
+        "query_token": {
+          "error": "timed out"
+        },
+        "no_auth": {
+          "status": 200,
+          "content_type": "text/event-stream; charset=utf-8"
+        }
+      },
+      "/api/v1/runs/20261023-185425-0f67/stream": {
+        "bearer": {
+          "status": 404,
+          "content_type": "application/json",
+          "sample_events": [
+            "{\"detail\":\"Run not found\"}"
+          ]
+        },
+        "cookie": {
+          "status": 404,
+          "content_type": "application/json",
+          "sample_events": [
+            "{\"detail\":\"Run not found\"}"
+          ]
+        },
+        "query_token": {
+          "status": 404,
+          "content_type": "application/json",
+          "sample_events": [
+            "{\"detail\":\"Run not found\"}"
+          ]
+        },
+        "no_auth": {
+          "status": 404,
+          "content_type": "application/json"
+        }
+      }
+    },
+    "run_endpoints": {
+      "GET /api/v1/runs/20261023-185425-0f67": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Run not found\"}"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/app-map": {
+        "status": 200,
+        "is_json": true,
+        "body_preview": "{\"run_id\":\"20261023-185425-0f67\",\"root_url\":\"http://localhost:3000\",\"crawled_at\":\"2026-10-23T18:54:26Z\",\"total_pages\":0,\"pages\":[],\"nodes\":[]}"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/catalog": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Run not found\"}"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/execution": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Run not found\"}"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/tests": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Run not found\"}"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/bugs": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Run not found\"}"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/logs": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Run not found\"}"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/metrics": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Run not found\"}"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/events": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Run not found\"}"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/review-log": {
+        "status": 200,
+        "is_json": true,
+        "body_preview": "[]"
+      },
+      "GET /api/v1/runs/20261023-185425-0f67/report": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Run not found\"}"
+      },
+      "GET /runs/20261023-185425-0f67": {
+        "status": 200,
+        "is_json": true,
+        "body_preview": "{\"run\":{\"runId\":\"20261023-185425-0f67\",\"createdAt\":\"2026-10-23T18:54:25Z\",\"updatedAt\":\"2026-10-23T18:54:26Z\",\"stage\":\"awaiting_review\",\"mode\":\"manual\""
+      },
+      "GET /runs/20261023-185425-0f67/report": {
+        "status": 404,
+        "is_json": true,
+        "body_preview": "{\"detail\":\"Report not generated yet\"}"
+      }
+    }
+  },
+  "cross_reference_matrix": [
+    {
+      "frontend_call": "useAuthMe() -> apiClient(API_ENDPOINTS.AUTH_ME)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:47",
+      "backend_route": "/api/v1/auth/me",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Returns authenticated User entity with ID, email, and display name. Supported by cookie session and bearer."
+    },
+    {
+      "frontend_call": "useLogin() -> apiClient(API_ENDPOINTS.AUTH_LOGIN)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:64",
+      "backend_route": "/api/v1/auth/login",
+      "method": "POST",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Authenticates user, sets 6 httpOnly cookies (auth_token, session, etc.), returns token and refreshToken."
+    },
+    {
+      "frontend_call": "useLogout() -> apiClient(API_ENDPOINTS.AUTH_LOGOUT)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:79",
+      "backend_route": "/api/v1/auth/logout",
+      "method": "POST",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Clears all auth cookies on response."
+    },
+    {
+      "frontend_call": "authApi.register() -> apiClient.post('/api/v1/auth/register')",
+      "file": "apps/web/src/features/auth/api.ts:26",
+      "backend_route": "/api/v1/auth/register",
+      "method": "POST",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Creates new user, generates session token, sets httpOnly cookies."
+    },
+    {
+      "frontend_call": "authApi.login() -> apiClient.post('/api/v1/auth/login')",
+      "file": "apps/web/src/features/auth/api.ts:33",
+      "backend_route": "/api/v1/auth/login",
+      "method": "POST",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Secondary auth feature API client, works identically to useLogin."
+    },
+    {
+      "frontend_call": "authApi.me() -> apiClient.get('/api/v1/auth/me')",
+      "file": "apps/web/src/features/auth/api.ts:40",
+      "backend_route": "/api/v1/auth/me",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Returns current user."
+    },
+    {
+      "frontend_call": "authApi.logout() -> apiClient.post('/api/v1/auth/logout')",
+      "file": "apps/web/src/features/auth/api.ts:44",
+      "backend_route": "/api/v1/auth/logout",
+      "method": "POST",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Clears auth session."
+    },
+    {
+      "frontend_call": "useHealth() -> apiClient(API_ENDPOINTS.HEALTH)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:99",
+      "backend_route": "/api/v1/health",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Returns active health status, workers_up=2, queue_depth=0."
+    },
+    {
+      "frontend_call": "useConfigDefaults() -> apiClient(API_ENDPOINTS.CONFIG_DEFAULTS)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:111",
+      "backend_route": "/api/v1/config/defaults",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Returns platform default limits and budget constraints."
+    },
+    {
+      "frontend_call": "useStats() -> apiClient(API_ENDPOINTS.STATS)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:130",
+      "backend_route": "/api/v1/stats",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Returns platform system stats, active worker count, uptime."
+    },
+    {
+      "frontend_call": "useTargetCheck() -> apiClient(API_ENDPOINTS.TARGETS_CHECK)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:144",
+      "backend_route": "/api/v1/targets/check",
+      "method": "POST",
+      "live_status": 200,
+      "verdict": "CONTRACT-MISMATCH",
+      "details": "Backend TargetCheckPayload expects 'target_url', but some forms send 'targetUrl' (camelCase), resulting in 422 Unprocessable Content."
+    },
+    {
+      "frontend_call": "useUploadSpec() -> uploadWithProgress(API_ENDPOINTS.SPECS_UPLOAD)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:183",
+      "backend_route": "/api/v1/specs/upload",
+      "method": "POST",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Accepts multipart/form-data spec file upload or JSON spec_text, returns spec_id and item count."
+    },
+    {
+      "frontend_call": "useRuns() -> apiClient(API_ENDPOINTS.RUNS)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:201",
+      "backend_route": "/api/v1/runs",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Lists runs. Uses transform_run_to_frontend mapper for UI shape."
+    },
+    {
+      "frontend_call": "useRun(runId) -> apiClient(API_ENDPOINTS.RUN_BY_ID(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:212",
+      "backend_route": "/api/v1/runs/{run_id}",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 for non-system users because run is never inserted into SQL 'runs' table upon creation (only saved to filesystem 'run.json'). get_owned_run dependency rejects with 404."
+    },
+    {
+      "frontend_call": "useCreateRun() -> apiClient(API_ENDPOINTS.RUNS)",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:249",
+      "backend_route": "/api/v1/runs",
+      "method": "POST",
+      "live_status": 201,
+      "verdict": "CONTRACT-MISMATCH",
+      "details": "CreateRunPayload expects 'target_url' (snake_case), while project forms send 'targetUrl' (camelCase). Also, backend does not insert the created run into SQL 'runs' table, causing all subsequent get_owned_run calls to return 404."
+    },
+    {
+      "frontend_call": "useStartRun() -> apiClient(API_ENDPOINTS.RUN_START(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:265",
+      "backend_route": "/api/v1/runs/{run_id}/start",
+      "method": "POST",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 because get_owned_run fails to find run in SQL database for authenticated users."
+    },
+    {
+      "frontend_call": "useCancelRun() -> apiClient(API_ENDPOINTS.RUN_CANCEL(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:280",
+      "backend_route": "/api/v1/runs/{run_id}/cancel",
+      "method": "POST",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 due to get_owned_run missing SQL DB record."
+    },
+    {
+      "frontend_call": "useRetryRun() -> apiClient(API_ENDPOINTS.RUN_RETRY(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:295",
+      "backend_route": "/api/v1/runs/{run_id}/retry",
+      "method": "POST",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 due to get_owned_run missing SQL DB record."
+    },
+    {
+      "frontend_call": "useRunStream() -> EventSource(RUN_STREAM(runId))",
+      "file": "apps/web/src/shared/hooks/useRunStream.ts:302",
+      "backend_route": "/api/runs/{run_id}/stream",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "URL-MISMATCH",
+      "details": "Frontend config sets RUN_STREAM to '/api/runs/:id/stream' (legacy SSE route), which sends 'event: stage_change'. But EventSource.onmessage only listens to default events. Furthermore, the payload has 'stage' instead of 'type', failing SSEEventSchema.safeParse(). It should call '/api/v1/runs/:id/stream'."
+    },
+    {
+      "frontend_call": "useRunStream() logs preload -> fetch('/api/v1/runs/:id/logs')",
+      "file": "apps/web/src/shared/hooks/useRunStream.ts:45",
+      "backend_route": "/api/v1/runs/{run_id}/logs",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 due to get_owned_run missing SQL DB record."
+    },
+    {
+      "frontend_call": "useRunEventsPoll() -> apiClient(API_ENDPOINTS.RUN_EVENTS_POLL(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:37",
+      "backend_route": "/api/v1/runs/{run_id}/events",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 due to get_owned_run missing SQL DB record."
+    },
+    {
+      "frontend_call": "useAppMap() -> apiClient(API_ENDPOINTS.RUN_APP_MAP(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:314",
+      "backend_route": "/api/v1/runs/{run_id}/app-map",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "CONTRACT-MISMATCH",
+      "details": "Endpoint succeeds, but returns state-graph schema ('states' and 'edges'). Frontend AppMap tab previously expected legacy 'root_node' tree structure, leading to permanent empty graph state."
+    },
+    {
+      "frontend_call": "useCatalog() -> apiClient(API_ENDPOINTS.RUN_CATALOG(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:329",
+      "backend_route": "/api/v1/runs/{run_id}/catalog",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 due to get_owned_run missing SQL DB record."
+    },
+    {
+      "frontend_call": "useAddCatalogTest() -> apiClient(API_ENDPOINTS.RUN_CATALOG_TEST(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:344",
+      "backend_route": "/api/v1/runs/{run_id}/catalog/test",
+      "method": "POST",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Invokes Groq planner agent to generate ad-hoc test case."
+    },
+    {
+      "frontend_call": "useUpdateReview() -> apiClient(API_ENDPOINTS.RUN_REVIEW(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:374",
+      "backend_route": "/api/v1/runs/{run_id}/review",
+      "method": "POST",
+      "live_status": 422,
+      "verdict": "CONTRACT-MISMATCH",
+      "details": "Requires decisions array with status enum; returns 422 if invalid."
+    },
+    {
+      "frontend_call": "useReviewLog() -> apiClient(API_ENDPOINTS.RUN_REVIEW_LOG(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:436",
+      "backend_route": "/api/v1/runs/{run_id}/review-log",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Returns array of review audit decisions."
+    },
+    {
+      "frontend_call": "useExecution() -> apiClient(API_ENDPOINTS.RUN_EXECUTION(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:458",
+      "backend_route": "/api/v1/runs/{run_id}/execution",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 due to get_owned_run missing SQL DB record."
+    },
+    {
+      "frontend_call": "useTests() -> apiClient(API_ENDPOINTS.RUN_TESTS(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:470",
+      "backend_route": "/api/v1/runs/{run_id}/tests",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 due to get_owned_run missing SQL DB record."
+    },
+    {
+      "frontend_call": "useBugs() -> apiClient(API_ENDPOINTS.RUN_BUGS(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:486",
+      "backend_route": "/api/v1/runs/{run_id}/bugs",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 due to get_owned_run missing SQL DB record."
+    },
+    {
+      "frontend_call": "useBug(bugId) -> apiClient(API_ENDPOINTS.BUG_BY_ID(bugId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:497",
+      "backend_route": "/api/v1/bugs/{bug_id}",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 if bug record does not belong to project owned by authenticated user."
+    },
+    {
+      "frontend_call": "useReport() -> apiClient(API_ENDPOINTS.RUN_REPORT(runId))",
+      "file": "apps/web/src/shared/lib/api/hooks.ts:512",
+      "backend_route": "/api/v1/runs/{run_id}/report",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "Returns 404 due to get_owned_run missing SQL DB record."
+    },
+    {
+      "frontend_call": "projectApi.list() -> apiClient.get('/api/v1/projects')",
+      "file": "apps/web/src/features/projects/api.ts:36",
+      "backend_route": "/api/v1/projects",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Lists all projects owned by authenticated user."
+    },
+    {
+      "frontend_call": "projectApi.get(id) -> apiClient.get('/api/v1/projects/:id')",
+      "file": "apps/web/src/features/projects/api.ts:40",
+      "backend_route": "/api/v1/projects/{project_id}",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "SERVED-OK",
+      "details": "Returns project details."
+    },
+    {
+      "frontend_call": "projectApi.create() -> apiClient.post('/api/v1/projects')",
+      "file": "apps/web/src/features/projects/api.ts:44",
+      "backend_route": "/api/v1/projects",
+      "method": "POST",
+      "live_status": 201,
+      "verdict": "SERVED-OK",
+      "details": "Creates project with target URL and default budgets."
+    },
+    {
+      "frontend_call": "projectApi.delete(id) -> apiClient.delete('/api/v1/projects/:id')",
+      "file": "apps/web/src/features/projects/api.ts:48",
+      "backend_route": "/api/v1/projects/{project_id}",
+      "method": "DELETE",
+      "live_status": 500,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "CRASH: Raises AttributeError: 'ProjectRepository' object has no attribute 'archive_project'. Returns 500."
+    },
+    {
+      "frontend_call": "projectApi.update(id) -> apiClient.put('/api/v1/projects/:id')",
+      "file": "apps/web/src/features/projects/api.ts:52",
+      "backend_route": "/api/v1/projects/{project_id}",
+      "method": "PUT",
+      "live_status": 500,
+      "verdict": "SERVED-BUT-ERROR",
+      "details": "CRASH: Raises AttributeError: 'ProjectRepository' object has no attribute 'update_project'. Returns 500."
+    },
+    {
+      "frontend_call": "Next.js middleware -> request.cookies.get('auth_token')",
+      "file": "apps/web/middleware.ts:24",
+      "backend_route": "N/A (Frontend Server Middleware)",
+      "method": "EDGE",
+      "live_status": 307,
+      "verdict": "AUTH-MISMATCH",
+      "details": "Next.js middleware runs on frontend server origin. If frontend (port 3000) and backend (port 8000) are separate servers without proxying, the browser will not send cross-origin backend cookies to the frontend server, causing redirect loop to /login."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/auth/tokens",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "UNUSED",
+      "details": "API Token listing endpoint has no UI in apps/web."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/auth/tokens",
+      "method": "POST",
+      "live_status": 201,
+      "verdict": "UNUSED",
+      "details": "API Token creation endpoint has no UI in apps/web."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/auth/tokens/{token_id}",
+      "method": "DELETE",
+      "live_status": 200,
+      "verdict": "UNUSED",
+      "details": "API Token revocation endpoint has no UI in apps/web."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/projects/{project_id}/saved-tests",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "UNUSED",
+      "details": "Saved test library listing endpoint has no UI in apps/web."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/projects/{project_id}/saved-tests",
+      "method": "POST",
+      "live_status": 201,
+      "verdict": "UNUSED",
+      "details": "Saving test to regression suite has no UI button in apps/web."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/projects/{project_id}/saved-tests/{test_id}",
+      "method": "DELETE",
+      "live_status": 204,
+      "verdict": "UNUSED",
+      "details": "Deleting saved test has no UI in apps/web."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/projects/{project_id}/commits",
+      "method": "GET",
+      "live_status": 200,
+      "verdict": "UNUSED",
+      "details": "Commit listing endpoint exists in backend, but /projects/[id]/commits/page.tsx displays a static placeholder card (CommitEmptyState) with no fetch call."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/projects/{project_id}/commits",
+      "method": "POST",
+      "live_status": 422,
+      "verdict": "UNUSED",
+      "details": "Commit event ingestion endpoint has no UI in apps/web (intended for webhooks / CI)."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/projects/{project_id}/commits/{commit_id}/analysis",
+      "method": "GET",
+      "live_status": 404,
+      "verdict": "UNUSED",
+      "details": "Failure localization analysis has no UI in apps/web."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/projects/{project_id}/commits/{commit_id}/suggest-fix",
+      "method": "POST",
+      "live_status": 404,
+      "verdict": "UNUSED",
+      "details": "Fix suggestion generation has no UI button in apps/web."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/projects/{project_id}/commits/{commit_id}/auto-fix",
+      "method": "POST",
+      "live_status": 422,
+      "verdict": "UNUSED",
+      "details": "Auto-fix PR creation has no UI button in apps/web."
+    },
+    {
+      "frontend_call": "N/A (Backend only)",
+      "file": "N/A",
+      "backend_route": "/api/v1/webhooks/github",
+      "method": "POST",
+      "live_status": 401,
+      "verdict": "UNUSED",
+      "details": "GitHub HMAC webhook ingestion (intended for GitHub server-to-server calls)."
+    }
+  ],
+  "endpoint_audit_details": [
+    {
+      "method": "GET",
+      "path": "/api/runs/{run_id}/stream",
+      "operationId": "stream_run_progress_api_runs__run_id__stream_get",
+      "test_url": "/api/runs/20261023-183514-4052/stream",
+      "status": 200,
+      "latency_ms": 1.1,
+      "content_type": "text/event-stream; charset=utf-8",
+      "is_json": false,
+      "classification": "non-JSON",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "stream": "str",
+        "content_type": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/artifacts/{artifact_id}",
+      "operationId": "get_artifact_api_v1_artifacts__artifact_id__get",
+      "test_url": "/api/v1/artifacts/art_01",
+      "status": 404,
+      "latency_ms": 2.35,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 404,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Artifact not found"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "operationId": "login_api_v1_auth_login_post",
+      "test_url": "/api/v1/auth/login",
+      "status": 200,
+      "latency_ms": 9.53,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "id": "str",
+        "email": "str",
+        "displayName": "str",
+        "name": "str",
+        "username": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "operationId": "logout_api_v1_auth_logout_post",
+      "test_url": "/api/v1/auth/logout",
+      "status": 200,
+      "latency_ms": 2.21,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "ok": "bool"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "operationId": "auth_me_api_v1_auth_me_get",
+      "test_url": "/api/v1/auth/me",
+      "status": 200,
+      "latency_ms": 1.21,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 200,
+      "noauth_status": 401,
+      "body_sample": {
+        "id": "str",
+        "email": "str",
+        "displayName": "str",
+        "name": "str",
+        "username": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "operationId": "refresh_session_api_v1_auth_refresh_post",
+      "test_url": "/api/v1/auth/refresh",
+      "status": 200,
+      "latency_ms": 2.33,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "token": "str",
+        "refreshToken": "str",
+        "user": "dict"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "operationId": "register_api_v1_auth_register_post",
+      "test_url": "/api/v1/auth/register",
+      "status": 200,
+      "latency_ms": 9.6,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "id": "str",
+        "email": "str",
+        "displayName": "str",
+        "name": "str",
+        "token": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/tokens",
+      "operationId": "list_tokens_api_v1_auth_tokens_get",
+      "test_url": "/api/v1/auth/tokens",
+      "status": 200,
+      "latency_ms": 1.97,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 403,
+      "noauth_status": 200,
+      "body_sample": [
+        {
+          "id": "2e49bc2b-336c-4b11-b2a0-aa001d6f8cb5",
+          "name": "Audit Token 1792781459",
+          "token_prefix": "kw_live_95f...",
+          "scopes": [
+            "runs:read",
+            "runs:write",
+            "tests:read",
+            "tests:write",
+            "fixes:apply",
+            "tokens:admin"
+          ],
+          "expires_at": "2026-11-22T18:50:59.164126",
+          "revoked_at": null,
+          "last_used_at": "2026-10-23T18:50:59.227067",
+          "created_at": "2026-10-23T18:50:59.164469"
+        }
+      ],
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/tokens",
+      "operationId": "create_token_api_v1_auth_tokens_post",
+      "test_url": "/api/v1/auth/tokens",
+      "status": 201,
+      "latency_ms": 2.9,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "id": "6ba3a51f-f727-4429-ac11-c31dde44aa60",
+        "name": "Tok_59247",
+        "token_prefix": "kw_live_eb9...",
+        "scopes": [
+          "runs:read"
+        ],
+        "expires_at": "2026-11-22T18:50:59.248207",
+        "revoked_at": null,
+        "last_used_at": null,
+        "created_at": "2026-10-23T18:50:59.248450",
+        "token_secret": "kw_live_eb980ce5a3a1ad47f3c3258ed80669fea3cd944bcf51549c"
+      },
+      "error": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/auth/tokens/{token_id}",
+      "operationId": "revoke_token_api_v1_auth_tokens__token_id__delete",
+      "test_url": "/api/v1/auth/tokens/2e49bc2b-336c-4b11-b2a0-aa001d6f8cb5",
+      "status": 200,
+      "latency_ms": 2.94,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "ok": "bool",
+        "message": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/bugs/{bug_id}",
+      "operationId": "get_single_bug_api_v1_bugs__bug_id__get",
+      "test_url": "/api/v1/bugs/bug_01",
+      "status": 404,
+      "latency_ms": 4.49,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Bug bug_01 not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/config/defaults",
+      "operationId": "get_config_defaults_api_v1_config_defaults_get",
+      "test_url": "/api/v1/config/defaults",
+      "status": 200,
+      "latency_ms": 0.92,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 200,
+      "noauth_status": 200,
+      "body_sample": {
+        "allowedHosts": "list",
+        "default_budgets": "dict",
+        "limits": "dict",
+        "accepted_spec_extensions": "list",
+        "max_spec_file_size_mb": "int"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/health",
+      "operationId": "get_health_api_v1_health_get",
+      "test_url": "/api/v1/health",
+      "status": 200,
+      "latency_ms": 0.71,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 200,
+      "noauth_status": 200,
+      "body_sample": {
+        "ok": "bool",
+        "status": "str",
+        "workers_up": "int",
+        "queue_depth": "int",
+        "message": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects",
+      "operationId": "list_projects_api_v1_projects_get",
+      "test_url": "/api/v1/projects",
+      "status": 200,
+      "latency_ms": 2.76,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 401,
+      "noauth_status": 200,
+      "body_sample": [
+        {
+          "id": "47a5289f-9b3e-4094-bb6f-fd0d8b8216c6",
+          "ownerId": "1b93eaf0-6c23-478e-bed4-95c0628b384e",
+          "name": "Audit Project 1792781459",
+          "slug": "audit-project-1792781459",
+          "targetUrl": "http://localhost:3000",
+          "description": "Throwaway audit project",
+          "defaultMode": "manual",
+          "budgets": {
+            "maxPages": 10,
+            "exploreSeconds": 60,
+            "maxTests": 12,
+            "testTimeoutMs": 30000
+          },
+          "allowedHosts": [],
+          "specVersion": 1,
+          "createdAt": "2026-10-23T18:50:59.168758",
+          "updatedAt": "2026-10-23T18:50:59.168759",
+          "archivedAt": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects",
+      "operationId": "create_project_api_v1_projects_post",
+      "test_url": "/api/v1/projects",
+      "status": 201,
+      "latency_ms": 2.22,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "id": "459678f4-5946-4092-a6a1-5839e56e8c61",
+        "ownerId": "1b93eaf0-6c23-478e-bed4-95c0628b384e",
+        "name": "P_59277",
+        "slug": "p-59277",
+        "targetUrl": "http://localhost:3000",
+        "description": null,
+        "defaultMode": "manual",
+        "budgets": {},
+        "allowedHosts": [],
+        "specVersion": 1,
+        "createdAt": "2026-10-23T18:50:59.279131+00:00",
+        "updatedAt": "2026-10-23T18:50:59.279133+00:00",
+        "archivedAt": null
+      },
+      "error": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/projects/{project_id}",
+      "operationId": "delete_project_api_v1_projects__project_id__delete",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6",
+      "status": 500,
+      "latency_ms": 1.87,
+      "content_type": "text/plain; charset=utf-8",
+      "is_json": false,
+      "classification": "500",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": "Internal Server Error",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}",
+      "operationId": "get_project_api_v1_projects__project_id__get",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6",
+      "status": null,
+      "latency_ms": 11.85,
+      "content_type": "",
+      "is_json": false,
+      "classification": "non-JSON",
+      "cookie_status": 200,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": null,
+      "error": "[Errno 54] Connection reset by peer"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/projects/{project_id}",
+      "operationId": "update_project_api_v1_projects__project_id__put",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6",
+      "status": 500,
+      "latency_ms": 6.11,
+      "content_type": "text/plain; charset=utf-8",
+      "is_json": false,
+      "classification": "500",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": "Internal Server Error",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}/commits",
+      "operationId": "list_commits_api_v1_projects__project_id__commits_get",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/commits",
+      "status": null,
+      "latency_ms": 3.64,
+      "content_type": "",
+      "is_json": false,
+      "classification": "non-JSON",
+      "cookie_status": 200,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": null,
+      "error": "[Errno 54] Connection reset by peer"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{project_id}/commits",
+      "operationId": "trigger_commit_regression_api_v1_projects__project_id__commits_post",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/commits",
+      "status": 422,
+      "latency_ms": 2.38,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "422",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "sha"
+            ],
+            "msg": "Field required",
+            "input": {
+              "commit_sha": "sha_59325",
+              "message": "Test commit"
+            }
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "branch"
+            ],
+            "msg": "Field required",
+            "input": {
+              "commit_sha": "sha_59325",
+              "message": "Test commit"
+            }
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "pushed_at"
+            ],
+            "msg": "Field required",
+            "input": {
+              "commit_sha": "sha_59325",
+              "message": "Test commit"
+            }
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "webhook_delivery_id"
+            ],
+            "msg": "Field required",
+            "input": {
+              "commit_sha": "sha_59325",
+              "message": "Test commit"
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}/commits/{commit_id}/analysis",
+      "operationId": "get_failure_analysis_api_v1_projects__project_id__commits__commit_id__analysis_get",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/commits/c0ffee998877/analysis",
+      "status": 404,
+      "latency_ms": 3.09,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "No failure analysis found for commit c0ffee998877"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{project_id}/commits/{commit_id}/auto-fix",
+      "operationId": "trigger_auto_fix_pr_api_v1_projects__project_id__commits__commit_id__auto_fix_post",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/commits/c0ffee998877/auto-fix",
+      "status": 422,
+      "latency_ms": 2.0,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "422",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "action"
+            ],
+            "msg": "Field required",
+            "input": {
+              "fix_id": "fix_01"
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{project_id}/commits/{commit_id}/suggest-fix",
+      "operationId": "request_fix_suggestion_api_v1_projects__project_id__commits__commit_id__suggest_fix_post",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/commits/c0ffee998877/suggest-fix",
+      "status": 404,
+      "latency_ms": 2.08,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "No failure analysis available for commit c0ffee998877 to generate a fix from."
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}/credentials",
+      "operationId": "get_credentials_info_api_v1_projects__project_id__credentials_get",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/credentials",
+      "status": 200,
+      "latency_ms": 2.34,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "hasSecret": "bool",
+        "username": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/projects/{project_id}/credentials",
+      "operationId": "set_credentials_api_v1_projects__project_id__credentials_put",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/credentials",
+      "status": 200,
+      "latency_ms": 2.67,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "hasSecret": "bool",
+        "username": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{project_id}/saved-tests",
+      "operationId": "list_saved_tests_api_v1_projects__project_id__saved_tests_get",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/saved-tests",
+      "status": 200,
+      "latency_ms": 2.63,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": [
+        {
+          "id": "c4fab44e-55eb-4a09-a87f-f66da91ce2c2",
+          "project_id": "47a5289f-9b3e-4094-bb6f-fd0d8b8216c6",
+          "origin_run_id": null,
+          "origin_test_case_id": "T01",
+          "name": "Saved Test T01",
+          "description": null,
+          "script_path": "/Users/parasgajam/Desktop/Vit_it/data/artifacts/saved_tests/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/c4fab44e-55eb-4a09-a87f-f66da91ce2c2.spec.ts",
+          "tags": [
+            "smoke",
+            "p0"
+          ],
+          "is_active": true,
+          "created_at": "2026-10-23T18:50:59.196373",
+          "updated_at": "2026-10-23T18:50:59.196375"
+        }
+      ],
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{project_id}/saved-tests",
+      "operationId": "save_test_api_v1_projects__project_id__saved_tests_post",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/saved-tests",
+      "status": 201,
+      "latency_ms": 3.16,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "id": "cd379410-a1a7-4101-a38f-d14b2f65411d",
+        "project_id": "47a5289f-9b3e-4094-bb6f-fd0d8b8216c6",
+        "origin_run_id": null,
+        "origin_test_case_id": "T01",
+        "name": "Saved Test T01",
+        "description": null,
+        "script_path": "/Users/parasgajam/Desktop/Vit_it/data/artifacts/saved_tests/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/cd379410-a1a7-4101-a38f-d14b2f65411d.spec.ts",
+        "tags": [],
+        "is_active": true,
+        "created_at": "2026-10-23T18:50:59.359022",
+        "updated_at": "2026-10-23T18:50:59.359023"
+      },
+      "error": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/projects/{project_id}/saved-tests/{test_id}",
+      "operationId": "delete_saved_test_api_v1_projects__project_id__saved_tests__test_id__delete",
+      "test_url": "/api/v1/projects/47a5289f-9b3e-4094-bb6f-fd0d8b8216c6/saved-tests/c4fab44e-55eb-4a09-a87f-f66da91ce2c2",
+      "status": 204,
+      "latency_ms": 3.65,
+      "content_type": "",
+      "is_json": false,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": "",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs",
+      "operationId": "list_runs_api_v1_runs_get",
+      "test_url": "/api/v1/runs",
+      "status": 200,
+      "latency_ms": 5.86,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 401,
+      "noauth_status": 200,
+      "body_sample": [
+        {
+          "id": "20261023-183514-4052",
+          "target_url": "http://localhost:4000",
+          "prompt": "Test authentication, dashboard item management, and settings against spec\n",
+          "review_mode": "manual",
+          "status": "failed",
+          "progress": 100,
+          "created_at": "2026-10-23T18:35:14Z",
+          "finished_at": "2026-10-23T18:35:49Z",
+          "budgets": {
+            "max_pages": 20,
+            "max_steps_per_test": 30,
+            "max_run_minutes": 15,
+            "parallel_workers": 2
+          },
+          "budget_usage": {
+            "pages_crawled": 0,
+            "steps_executed": 0,
+            "elapsed_minutes": 0.6,
+            "active_workers": 0
+          },
+          "counts": {
+            "total_tests": 0,
+            "passed_tests": 0,
+            "failed_tests": 0,
+            "suspected_bugs": 0,
+            "confirmed_bugs": 0,
+            "flaky_bugs": 0,
+            "not_reproduced_bugs": 0,
+            "pending_reviews": 0
+          }
+        },
+        {
+          "id": "20261023-183512-122e",
+          "target_url": "http://localhost:4000",
+          "prompt": "Test authentication, dashboard item management, and settings against spec\n",
+          "review_mode": "manual",
+          "status": "failed",
+          "progress": 100,
+          "created_at": "2026-10-23T18:35:12Z",
+          "finished_at": "2026-10-23T18:35:49Z",
+          "budgets": {
+            "max_pages": 20,
+            "max_steps_per_test": 30,
+            "max_run_minutes": 15,
+            "parallel_workers": 2
+          },
+          "budget_usage": {
+            "pages_crawled": 0,
+            "steps_executed": 0,
+            "elapsed_minutes": 0.6,
+            "active_workers": 0
+          },
+          "counts": {
+            "total_tests": 0,
+            "passed_tests": 0,
+            "failed_tests": 0,
+            "suspected_bugs": 0,
+            "confirmed_bugs": 0,
+            "flaky_bugs": 0,
+            "not_reproduced_bugs": 0,
+            "pending_reviews": 0
+          }
+        },
+        {
+          "id": "20261023-181842-f1cb",
+          "target_url": "http://localhost:4000",
+          "prompt": "Test authentication, dashboard item management, and settings against spec",
+          "review_mode": "manual",
+          "status": "awaiting_review",
+          "progress": 50,
+          "created_at": "2026-10-23T18:18:42Z",
+          "finished_at": null,
+          "budgets": {
+            "max_pages": 10,
+            "max_steps_per_test": 30,
+            "max_run_minutes": 15,
+            "parallel_workers": 2
+          },
+          "budget_usage": {
+            "pages_crawled": 0,
+            "steps_executed": 0,
+            "elapsed_minutes": 32.3,
+            "active_workers": 0
+          },
+          "counts": {
+            "total_tests": 11,
+            "passed_tests": 0,
+            "failed_tests": 0,
+            "suspected_bugs": 0,
+            "confirmed_bugs": 0,
+            "flaky_bugs": 0,
+            "not_reproduced_bugs": 0,
+            "pending_reviews": 11
+          }
+        },
+        {
+          "id": "20261023-180651-6ef0",
+          "target_url": "http://localhost:4000",
+          "prompt": "test this app ",
+          "review_mode": "manual",
+          "status": "failed",
+          "progress": 100,
+          "created_at": "2026-10-23T18:06:51Z",
+          "finished_at": "2026-10-23T18:09:03Z",
+          "budgets": {
+            "max_pages": 10,
+            "max_steps_per_test": 30,
+            "max_run_minutes": 15,
+            "parallel_workers": 2
+          },
+          "budget_usage": {
+            "pages_crawled": 0,
+            "steps_executed": 0,
+            "elapsed_minutes": 2.2,
+            "active_workers": 0
+          },
+          "counts": {
+            "total_tests": 0,
+            "passed_tests": 0,
+            "failed_tests": 0,
+            "suspected_bugs": 0,
+            "confirmed_bugs": 0,
+            "flaky_bugs": 0,
+            "not_reproduced_bugs": 0,
+            "pending_reviews": 0
+          }
+        },
+        {
+          "id": "20261023-174504-1408",
+          "target_url": "http://localhost:4000",
+          "prompt": "test this app ",
+          "review_mode": "manual",
+          "status": "failed",
+          "progress": 100,
+          "created_at": "2026-10-23T17:45:04Z",
+          "finished_at": "2026-10-23T17:45:07Z",
+          "budgets": {
+            "max_pages": 10,
+            "max_steps_per_test": 30,
+            "max_run_minutes": 15,
+            "parallel_workers": 2
+          },
+          "budget_usage": {
+            "pages_crawled": 0,
+            "steps_executed": 0,
+            "elapsed_minutes": 0.1,
+            "active_workers": 0
+          },
+          "counts": {
+            "total_tests": 0,
+            "passed_tests": 0,
+            "failed_tests": 0,
+            "suspected_bugs": 0,
+            "confirmed_bugs": 0,
+            "flaky_bugs": 0,
+            "not_reproduced_bugs": 0,
+            "pending_reviews": 0
+          }
+        },
+        {
+          "id": "20261023-174419-36e4",
+          "target_url": "http://localhost:4000",
+          "prompt": "test this app ",
+          "review_mode": "manual",
+          "status": "failed",
+          "progress": 100,
+          "created_at": "2026-10-23T17:44:19Z",
+          "finished_at": "2026-10-23T17:44:22Z",
+          "budgets": {
+            "max_pages": 10,
+            "max_steps_per_test": 30,
+            "max_run_minutes": 15,
+            "parallel_workers": 2
+          },
+          "budget_usage": {
+            "pages_crawled": 0,
+            "steps_executed": 0,
+            "elapsed_minutes": 0.1,
+            "active_workers": 0
+          },
+          "counts": {
+            "total_tests": 0,
+            "passed_tests": 0,
+            "failed_tests": 0,
+            "suspected_bugs": 0,
+            "confirmed_bugs": 0,
+            "flaky_bugs": 0,
+            "not_reproduced_bugs": 0,
+            "pending_reviews": 0
+          }
+        },
+        {
+          "id": "20261023-174412-584f",
+          "target_url": "http://localhost:4000",
+          "prompt": "test this app ",
+          "review_mode": "manual",
+          "status": "failed",
+          "progress": 100,
+          "created_at": "2026-10-23T17:44:12Z",
+          "finished_at": "2026-10-23T17:44:18Z",
+          "budgets": {
+            "max_pages": 10,
+            "max_steps_per_test": 30,
+            "max_run_minutes": 15,
+            "parallel_workers": 2
+          },
+          "budget_usage": {
+            "pages_crawled": 0,
+            "steps_executed": 0,
+            "elapsed_minutes": 0.1,
+            "active_workers": 0
+          },
+          "counts": {
+            "total_tests": 0,
+            "passed_tests": 0,
+            "failed_tests": 0,
+            "suspected_bugs": 0,
+            "confirmed_bugs": 0,
+            "flaky_bugs": 0,
+            "not_reproduced_bugs": 0,
+            "pending_reviews": 0
+          }
+        },
+        {
+          "id": "20261022-061759-2cbd",
+          "target_url": "http://localhost:4000",
+          "prompt": "Test the TaskBoard app against the provided specification. Cover account signup and login, including invalid inputs and case-insensitive email; dashboard item creation and deletion; settings save behavior and console errors; and logout behavior, including browser Back. Use the supplied QA credentials for authenticated flows. Verify the exact expected messages and outcomes in the spec, and report any discrepancies as bugs.",
+          "review_mode": "autonomous",
+          "status": "failed",
+          "progress": 100,
+          "created_at": "2026-10-22T06:17:59Z",
+          "finished_at": "2026-10-23T16:39:01Z",
+          "budgets": {
+            "max_pages": 10,
+            "max_steps_per_test": 30,
+            "max_run_minutes": 15,
+            "parallel_workers": 2
+          },
+          "budget_usage": {
+            "pages_crawled": 0,
+            "steps_executed": 0,
+            "elapsed_minutes": 2061.0,
+            "active_workers": 0
+          },
+          "counts": {
+            "total_tests": 0,
+            "passed_tests": 0,
+            "failed_tests": 0,
+            "suspected_bugs": 0,
+            "confirmed_bugs": 0,
+            "flaky_bugs": 0,
+            "not_reproduced_bugs": 0,
+            "pending_reviews": 0
+          }
+        },
+        {
+          "id": "20261018-020000-a1b2",
+          "target_url": "http://localhost:4000",
+          "prompt": "TaskBoard is a collaboration to-do app with auth, items list, and profile settings.",
+          "review_mode": "autonomous",
+          "status": "completed",
+          "progress": 100,
+          "created_at": "2026-10-18T02:00:00Z",
+          "finished_at": "2026-10-18T02:06:00Z",
+          "budgets": {
+            "max_pages": 10,
+            "max_steps_per_test": 30,
+            "max_run_minutes": 15,
+            "parallel_workers": 2
+          },
+          "budget_usage": {
+            "pages_crawled": 4,
+            "steps_executed": 13,
+            "elapsed_minutes": 6.0,
+            "active_workers": 0
+          },
+          "counts": {
+            "total_tests": 11,
+            "passed_tests": 3,
+            "failed_tests": 10,
+            "suspected_bugs": 0,
+            "confirmed_bugs": 8,
+            "flaky_bugs": 1,
+            "not_reproduced_bugs": 1,
+            "pending_reviews": 0
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs",
+      "operationId": "create_run_api_v1_runs_post",
+      "test_url": "/api/v1/runs",
+      "status": 422,
+      "latency_ms": 1.76,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "422",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "target_url"
+            ],
+            "msg": "Field required",
+            "input": {
+              "targetUrl": "http://localhost:3000",
+              "mode": "manual"
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/runs/{run_id}",
+      "operationId": "delete_run_endpoint_api_v1_runs__run_id__delete",
+      "test_url": "/api/v1/runs/20261023-183514-4052",
+      "status": 200,
+      "latency_ms": 1.64,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "ok": "bool",
+        "run_id": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}",
+      "operationId": "get_single_run_api_v1_runs__run_id__get",
+      "test_url": "/api/v1/runs/20261023-183514-4052",
+      "status": 404,
+      "latency_ms": 1.69,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/app-map",
+      "operationId": "get_app_map_api_v1_runs__run_id__app_map_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/app-map",
+      "status": 200,
+      "latency_ms": 1.28,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 200,
+      "noauth_status": 200,
+      "body_sample": {
+        "run_id": "str",
+        "root_url": "str",
+        "crawled_at": "str",
+        "total_pages": "int",
+        "pages": "list"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/bugs",
+      "operationId": "get_run_bugs_api_v1_runs__run_id__bugs_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/bugs",
+      "status": 404,
+      "latency_ms": 2.23,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/bugs/{bug_id}/retest",
+      "operationId": "retest_bug_endpoint_api_v1_runs__run_id__bugs__bug_id__retest_post",
+      "test_url": "/api/v1/runs/20261023-183514-4052/bugs/bug_01/retest",
+      "status": 404,
+      "latency_ms": 1.77,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/cancel",
+      "operationId": "cancel_run_endpoint_api_v1_runs__run_id__cancel_post",
+      "test_url": "/api/v1/runs/20261023-183514-4052/cancel",
+      "status": 404,
+      "latency_ms": 0.91,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/catalog",
+      "operationId": "get_catalog_api_v1_runs__run_id__catalog_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/catalog",
+      "status": 404,
+      "latency_ms": 1.75,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/catalog/test",
+      "operationId": "add_custom_test_api_v1_runs__run_id__catalog_test_post",
+      "test_url": "/api/v1/runs/20261023-183514-4052/catalog/test",
+      "status": 200,
+      "latency_ms": 1105.09,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "id": "str",
+        "title": "str",
+        "spec_item_ids": "list",
+        "steps": "list",
+        "expected_result": "str"
+      },
+      "error": null
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/runs/{run_id}/catalog/{test_id}",
+      "operationId": "patch_test_api_v1_runs__run_id__catalog__test_id__patch",
+      "test_url": "/api/v1/runs/20261023-183514-4052/catalog/T01",
+      "status": 404,
+      "latency_ms": 5.27,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/events",
+      "operationId": "poll_run_events_api_v1_runs__run_id__events_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/events",
+      "status": 404,
+      "latency_ms": 3.54,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/execution",
+      "operationId": "get_execution_state_api_v1_runs__run_id__execution_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/execution",
+      "status": 404,
+      "latency_ms": 1.88,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/export",
+      "operationId": "export_passing_tests_api_v1_runs__run_id__export_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/export",
+      "status": 404,
+      "latency_ms": 4.01,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/export/scripts",
+      "operationId": "export_scripts_only_api_v1_runs__run_id__export_scripts_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/export/scripts",
+      "status": 404,
+      "latency_ms": 2.43,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/files/{path}",
+      "operationId": "get_run_file_api_v1_runs__run_id__files__path__get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/files/report.md",
+      "status": 404,
+      "latency_ms": 2.16,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 404,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "File not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/logs",
+      "operationId": "get_logs_api_v1_runs__run_id__logs_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/logs",
+      "status": 404,
+      "latency_ms": 14.88,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/metrics",
+      "operationId": "get_metrics_api_v1_runs__run_id__metrics_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/metrics",
+      "status": 404,
+      "latency_ms": 2.42,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/report",
+      "operationId": "get_report_api_v1_runs__run_id__report_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/report",
+      "status": 404,
+      "latency_ms": 1.78,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/report/export",
+      "operationId": "export_passing_tests_api_v1_runs__run_id__report_export_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/report/export",
+      "status": 404,
+      "latency_ms": 1.65,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/results",
+      "operationId": "get_results_api_v1_runs__run_id__results_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/results",
+      "status": 404,
+      "latency_ms": 1.6,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/resume",
+      "operationId": "resume_run_endpoint_api_v1_runs__run_id__resume_post",
+      "test_url": "/api/v1/runs/20261023-183514-4052/resume",
+      "status": 404,
+      "latency_ms": 1.72,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/retry",
+      "operationId": "retry_run_api_v1_runs__run_id__retry_post",
+      "test_url": "/api/v1/runs/20261023-183514-4052/retry",
+      "status": 404,
+      "latency_ms": 0.94,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/review",
+      "operationId": "submit_review_api_v1_runs__run_id__review_post",
+      "test_url": "/api/v1/runs/20261023-183514-4052/review",
+      "status": 422,
+      "latency_ms": 1.02,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "422",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "test_ids"
+            ],
+            "msg": "Field required",
+            "input": {
+              "decisions": [
+                {
+                  "testId": "T01",
+                  "decision": "approve",
+                  "reason": "Verified"
+                }
+              ]
+            }
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "decision"
+            ],
+            "msg": "Field required",
+            "input": {
+              "decisions": [
+                {
+                  "testId": "T01",
+                  "decision": "approve",
+                  "reason": "Verified"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/review-log",
+      "operationId": "get_review_log_api_v1_runs__run_id__review_log_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/review-log",
+      "status": 200,
+      "latency_ms": 0.88,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 200,
+      "noauth_status": 200,
+      "body_sample": [],
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/runs/{run_id}/start",
+      "operationId": "start_run_pipeline_api_v1_runs__run_id__start_post",
+      "test_url": "/api/v1/runs/20261023-183514-4052/start",
+      "status": 404,
+      "latency_ms": 1.65,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/stream",
+      "operationId": "stream_run_sse_api_v1_runs__run_id__stream_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/stream",
+      "status": 404,
+      "latency_ms": 2.09,
+      "content_type": "application/json",
+      "is_json": false,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "stream": "SSE connected",
+        "content_type": "application/json"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/tests",
+      "operationId": "get_tests_api_v1_runs__run_id__tests_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/tests",
+      "status": 404,
+      "latency_ms": 2.0,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/runs/{run_id}/tests/export",
+      "operationId": "export_passing_tests_api_v1_runs__run_id__tests_export_get",
+      "test_url": "/api/v1/runs/20261023-183514-4052/tests/export",
+      "status": 404,
+      "latency_ms": 2.09,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 401,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/specs/upload",
+      "operationId": "upload_spec_api_v1_specs_upload_post",
+      "test_url": "/api/v1/specs/upload",
+      "status": 200,
+      "latency_ms": 1.24,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "spec_id": "str",
+        "filename": "str",
+        "file_size_bytes": "int",
+        "item_count": "int"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/stats",
+      "operationId": "get_stats_api_v1_stats_get",
+      "test_url": "/api/v1/stats",
+      "status": 200,
+      "latency_ms": 2.41,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 200,
+      "noauth_status": 200,
+      "body_sample": {
+        "total_runs": "int",
+        "confirmed_bugs": "int",
+        "flaky_bugs": "int",
+        "pending_reviews": "int"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/targets/check",
+      "operationId": "check_target_api_v1_targets_check_post",
+      "test_url": "/api/v1/targets/check",
+      "status": 422,
+      "latency_ms": 0.94,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "422",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "target_url"
+            ],
+            "msg": "Field required",
+            "input": {
+              "targetUrl": "http://localhost:3000"
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/webhooks/github",
+      "operationId": "receive_github_webhook_api_v1_webhooks_github_post",
+      "test_url": "/api/v1/webhooks/github",
+      "status": 401,
+      "latency_ms": 1.53,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "401",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Invalid HMAC-SHA256 signature"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/config",
+      "operationId": "get_config_config_get",
+      "test_url": "/config",
+      "status": 200,
+      "latency_ms": 0.82,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 200,
+      "noauth_status": 200,
+      "body_sample": {
+        "allowedHosts": "list",
+        "budgets": "dict",
+        "defaultTargetUrl": "str",
+        "stubMode": "bool"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "operationId": "health_health_get",
+      "test_url": "/health",
+      "status": 200,
+      "latency_ms": 0.78,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 200,
+      "noauth_status": 200,
+      "body_sample": {
+        "ok": "bool"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/runs",
+      "operationId": "list_runs_runs_get",
+      "test_url": "/runs",
+      "status": 200,
+      "latency_ms": 1.98,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "OK",
+      "cookie_status": 200,
+      "kw_status": 200,
+      "noauth_status": 200,
+      "body_sample": [
+        {
+          "runId": "20261023-183512-122e",
+          "createdAt": "2026-10-23T18:35:12Z",
+          "stage": "failed",
+          "mode": "manual",
+          "targetUrl": "http://localhost:4000",
+          "counts": {
+            "tests": 0,
+            "bugs": 0,
+            "confirmed": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "runId": "20261023-181842-f1cb",
+          "createdAt": "2026-10-23T18:18:42Z",
+          "stage": "awaiting_review",
+          "mode": "manual",
+          "targetUrl": "http://localhost:4000",
+          "counts": {
+            "tests": 11,
+            "bugs": 0,
+            "confirmed": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "runId": "20261023-180651-6ef0",
+          "createdAt": "2026-10-23T18:06:51Z",
+          "stage": "failed",
+          "mode": "manual",
+          "targetUrl": "http://localhost:4000",
+          "counts": {
+            "tests": 0,
+            "bugs": 0,
+            "confirmed": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "runId": "20261023-174504-1408",
+          "createdAt": "2026-10-23T17:45:04Z",
+          "stage": "failed",
+          "mode": "manual",
+          "targetUrl": "http://localhost:4000",
+          "counts": {
+            "tests": 0,
+            "bugs": 0,
+            "confirmed": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "runId": "20261023-174419-36e4",
+          "createdAt": "2026-10-23T17:44:19Z",
+          "stage": "failed",
+          "mode": "manual",
+          "targetUrl": "http://localhost:4000",
+          "counts": {
+            "tests": 0,
+            "bugs": 0,
+            "confirmed": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "runId": "20261023-174412-584f",
+          "createdAt": "2026-10-23T17:44:12Z",
+          "stage": "failed",
+          "mode": "manual",
+          "targetUrl": "http://localhost:4000",
+          "counts": {
+            "tests": 0,
+            "bugs": 0,
+            "confirmed": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "runId": "20261022-061759-2cbd",
+          "createdAt": "2026-10-22T06:17:59Z",
+          "stage": "failed",
+          "mode": "autonomous",
+          "targetUrl": "http://localhost:4000",
+          "counts": {
+            "tests": 0,
+            "bugs": 0,
+            "confirmed": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "runId": "run_golden_demo",
+          "createdAt": "2026-10-18T02:00:00Z",
+          "stage": "done",
+          "mode": "autonomous",
+          "targetUrl": "http://localhost:4000",
+          "counts": {
+            "tests": 11,
+            "bugs": 10,
+            "confirmed": 8,
+            "flaky": 1
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/runs",
+      "operationId": "start_run_runs_post",
+      "test_url": "/runs",
+      "status": 422,
+      "latency_ms": 1.91,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "422",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "errors": [
+          {
+            "field": "spec",
+            "message": "Spec must contain at least one item like 'S1: ...'"
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}",
+      "operationId": "get_run_runs__run_id__get",
+      "test_url": "/runs/20261023-183514-4052",
+      "status": 404,
+      "latency_ms": 2.22,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 404,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run 20261023-183514-4052 not found"
+      },
+      "error": null
+    },
+    {
+      "method": "PUT",
+      "path": "/runs/{run_id}/catalog",
+      "operationId": "update_catalog_runs__run_id__catalog_put",
+      "test_url": "/runs/20261023-183514-4052/catalog",
+      "status": 404,
+      "latency_ms": 1.06,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/runs/{run_id}/execute",
+      "operationId": "execute_run_runs__run_id__execute_post",
+      "test_url": "/runs/20261023-183514-4052/execute",
+      "status": 404,
+      "latency_ms": 0.97,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}/export",
+      "operationId": "export_passing_tests_runs__run_id__export_get",
+      "test_url": "/runs/20261023-183514-4052/export",
+      "status": 404,
+      "latency_ms": 0.87,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 404,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Run results not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}/files/{path}",
+      "operationId": "get_run_file_runs__run_id__files__path__get",
+      "test_url": "/runs/20261023-183514-4052/files/report.md",
+      "status": 404,
+      "latency_ms": 0.96,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 404,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "File not found"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}/report",
+      "operationId": "get_report_runs__run_id__report_get",
+      "test_url": "/runs/20261023-183514-4052/report",
+      "status": 404,
+      "latency_ms": 0.81,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": 404,
+      "kw_status": 404,
+      "noauth_status": 404,
+      "body_sample": {
+        "detail": "Report not generated yet"
+      },
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{run_id}/stream",
+      "operationId": "stream_run_progress_runs__run_id__stream_get",
+      "test_url": "/runs/20261023-183514-4052/stream",
+      "status": 404,
+      "latency_ms": 1.02,
+      "content_type": "application/json",
+      "is_json": false,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "stream": "SSE connected",
+        "content_type": "application/json"
+      },
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/runs/{run_id}/tests",
+      "operationId": "add_test_runs__run_id__tests_post",
+      "test_url": "/runs/20261023-183514-4052/tests",
+      "status": 404,
+      "latency_ms": 1.5,
+      "content_type": "application/json",
+      "is_json": true,
+      "classification": "404",
+      "cookie_status": null,
+      "kw_status": null,
+      "noauth_status": null,
+      "body_sample": {
+        "detail": "Run not found"
+      },
+      "error": null
+    }
+  ]
+}

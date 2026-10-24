@@ -329,11 +329,10 @@ export default function DashboardPage() {
                     ].map((agent) => (
                       <span
                         key={agent.name}
-                        className={`text-[11px] px-2.5 py-1 rounded-lg font-mono transition-colors border ${
-                          agent.active
+                        className={`text-[11px] px-2.5 py-1 rounded-lg font-mono transition-colors border ${agent.active
                             ? "bg-[#D97757] text-white border-[#D97757] font-semibold shadow-xs animate-pulse"
                             : "bg-[#FAF9F5] text-[#8A887F] border-[#E3DACC]"
-                        }`}
+                          }`}
                       >
                         {agent.name}
                       </span>

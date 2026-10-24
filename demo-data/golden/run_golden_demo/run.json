@@ -1,12 +1,16 @@
 {
   "runId": "20261018-020000-a1b2",
   "createdAt": "2026-10-18T02:00:00Z",
-  "updatedAt": "2026-10-18T02:06:00Z",
-  "stage": "done",
+  "updatedAt": "2026-10-23T22:24:25Z",
+  "stage": "cancelled",
   "mode": "autonomous",
   "targetUrl": "http://localhost:4000",
   "error": null,
-  "progress": null,
+  "progress": {
+    "step": "Cancelled by user",
+    "done": 0,
+    "total": 0
+  },
   "stageTimes": {
     "created": {
       "startedAt": "2026-10-18T02:00:00Z",
@@ -26,11 +30,11 @@
     },
     "scripting": {
       "startedAt": "2026-10-18T02:02:45Z",
-      "endedAt": "2026-10-18T02:03:45Z"
+      "endedAt": "2026-10-23T22:21:25Z"
     },
     "running": {
       "startedAt": "2026-10-18T02:03:45Z",
-      "endedAt": "2026-10-18T02:04:30Z"
+      "endedAt": "2026-10-23T22:24:25Z"
     },
     "verifying": {
       "startedAt": "2026-10-18T02:04:30Z",
@@ -43,6 +47,10 @@
     "done": {
       "startedAt": "2026-10-18T02:06:00Z",
       "endedAt": "2026-10-18T02:06:00Z"
+    },
+    "cancelled": {
+      "startedAt": "2026-10-23T22:18:50Z",
+      "endedAt": null
     }
   },
   "golden": true

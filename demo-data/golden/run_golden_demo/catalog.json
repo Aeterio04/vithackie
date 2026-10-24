@@ -1,6 +1,6 @@
 {
   "runId": "20261018-020000-a1b2",
-  "generatedAt": "2026-10-18T02:03:00Z",
+  "generatedAt": "2026-10-23T22:21:24Z",
   "tests": [
     {
       "id": "T01",
@@ -10,33 +10,52 @@
         "S1"
       ],
       "priority": "high",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Navigate to /signup",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Fill Email with unique('user')@example.com",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Fill Password with 'Passw0rd!123'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 4,
           "action": "Click 'Sign up' button",
-          "expected": "User lands on /dashboard"
+          "expected": "User lands on /dashboard",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T01.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T01.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T01.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     },
     {
       "id": "T02",
@@ -46,33 +65,52 @@
         "S2"
       ],
       "priority": "medium",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Navigate to /signup",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Fill Email with 'not-an-email'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Fill Password with 'ValidPass123'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 4,
           "action": "Click 'Sign up' button",
-          "expected": "Shows message \"Enter a valid email address\""
+          "expected": "Shows message \"Enter a valid email address\"",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T02.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T02.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T02.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     },
     {
       "id": "T03",
@@ -82,33 +120,52 @@
         "S3"
       ],
       "priority": "medium",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Navigate to /signup",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Fill Email with unique('user')@example.com",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Fill Password with '1234567'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 4,
           "action": "Click 'Sign up' button",
-          "expected": "Shows message \"Password must be at least 8 characters\""
+          "expected": "Shows message \"Password must be at least 8 characters\"",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T03.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T03.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T03.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     },
     {
       "id": "T04",
@@ -118,33 +175,52 @@
         "S4"
       ],
       "priority": "high",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Navigate to /login",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Fill Email with 'qa.tester@example.com'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Fill Password with 'Passw0rd!23'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 4,
           "action": "Click 'Log in' button",
-          "expected": "User lands on /dashboard"
+          "expected": "User lands on /dashboard",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T04.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T04.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T04.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     },
     {
       "id": "T05",
@@ -154,33 +230,52 @@
         "S5"
       ],
       "priority": "high",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Navigate to /login",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Fill Email with 'qa.tester@example.com'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Fill Password with 'WrongPassword!'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 4,
           "action": "Click 'Log in' button",
-          "expected": "Shows message \"Invalid email or password\" and remains on /login"
+          "expected": "Shows message \"Invalid email or password\" and remains on /login",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T05.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T05.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T05.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     },
     {
       "id": "T06",
@@ -190,33 +285,52 @@
         "S6"
       ],
       "priority": "high",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Navigate to /login",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Fill Email with 'QA.Tester@Example.com'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Fill Password with 'Passw0rd!23'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 4,
           "action": "Click 'Log in' button",
-          "expected": "User lands on /dashboard"
+          "expected": "User lands on /dashboard",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T06.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T06.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T06.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     },
     {
       "id": "T07",
@@ -226,28 +340,44 @@
         "S7"
       ],
       "priority": "high",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Log in as qa.tester@example.com and open /dashboard",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Fill Item title with unique('Task')",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Click 'Add item' button",
-          "expected": "Item appears in task list"
+          "expected": "Item appears in task list",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T07.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
     },
     {
       "id": "T08",
@@ -257,28 +387,44 @@
         "S8"
       ],
       "priority": "medium",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Log in as qa.tester@example.com and open /dashboard",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Clear Item title",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Click 'Add item' button",
-          "expected": "Shows message \"Title is required\" and no item is added"
+          "expected": "Shows message \"Title is required\" and no item is added",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T08.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T08.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T08.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     },
     {
       "id": "T09",
@@ -288,23 +434,36 @@
         "S9"
       ],
       "priority": "high",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Log in and ensure two distinct items exist on /dashboard",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Click 'Delete' on the second item",
-          "expected": "Only the second item is removed; first remains"
+          "expected": "Only the second item is removed; first remains",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T09.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T09.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T09.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     },
     {
       "id": "T10",
@@ -314,28 +473,44 @@
         "S10"
       ],
       "priority": "medium",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Log in and navigate to /settings",
-          "expected": "Page loads without console errors"
+          "expected": "Page loads without console errors",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Fill Display name with 'Quality Tester'",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Click 'Save settings'",
-          "expected": "Shows status \"Settings saved\""
+          "expected": "Shows status \"Settings saved\"",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T10.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T10.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T10.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     },
     {
       "id": "T11",
@@ -345,28 +520,45 @@
         "S11"
       ],
       "priority": "high",
+      "depth": 1,
+      "category": "single_step",
+      "preconditions": [],
+      "setup": [],
+      "edgeTags": [],
+      "coverageRef": [],
+      "riskScore": 0.0,
       "steps": [
         {
           "n": 1,
           "action": "Log in and navigate to /dashboard",
-          "expected": null
+          "expected": null,
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 2,
           "action": "Click 'Log out'",
-          "expected": "Navigates to /login"
+          "expected": "Navigates to /login",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         },
         {
           "n": 3,
           "action": "Click browser Back button",
-          "expected": "Dashboard is not displayed; redirected to /login"
+          "expected": "Dashboard is not displayed; redirected to /login",
+          "checkpoint": null,
+          "assertion": null,
+          "locator": null
         }
       ],
       "status": "approved",
       "origin": "planner",
       "script": "scripts/T11.spec.ts",
-      "scriptStatus": "ok",
-      "scriptError": null
+      "scriptStatus": "error",
+      "scriptError": "Error: Cannot find module '../../../apps/runner/fixtures'\nRequire stack:\n- /Users/parasgajam/Desktop/Vit_it/demo-data/golden/run_golden_demo/scripts/T11.spec.ts\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/common/index.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/playwright/lib/program.js\n- /Users/parasgajam/Desktop/Vit_it/apps/runner/node_modules/@playwright/test/cli.js\n\n   at T11.spec.ts:1\n\n> 1 | import { test, expect, credentials, unique } from "
     }
-  ]
+  ],
+  "coverageMatrix": null
 }

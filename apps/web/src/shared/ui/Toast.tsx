@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, AlertCircle, Info, X } from "lucide-react";
 
@@ -72,6 +72,27 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     },
     [addToast]
   );
+
+  useEffect(() => {
+    const handleApiError = (e: Event) => {
+      const customEvent = e as CustomEvent<{
+        status: number;
+        url: string;
+        code: string;
+        requestId?: string;
+        message: string;
+      }>;
+      const detail = customEvent.detail;
+      if (!detail) return;
+      error(
+        `HTTP ${detail.status}: ${detail.code}`,
+        `${detail.message} • ${detail.url}${detail.requestId ? ` (Req ID: ${detail.requestId})` : ""}`
+      );
+    };
+
+    window.addEventListener("kawach:api-error", handleApiError);
+    return () => window.removeEventListener("kawach:api-error", handleApiError);
+  }, [error]);
 
   return (
     <ToastContext.Provider value={{ toast: addToast, success, error, info }}>

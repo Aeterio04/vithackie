@@ -309,17 +309,17 @@ class GroqHandler:
         run_id: Optional[str] = None,
         max_attempts: int = 5,
     ) -> Tuple[str, int, int]:
-        active_model = model or getattr(settings, "GROQ_DEFAULT_MODEL", "llama-3.3-70b-versatile")
-        # Guard against leftover model names from other providers (e.g., qwen, claude, gpt)
+        active_model = model or getattr(settings, "GROQ_DEFAULT_MODEL", "qwen/qwen3.8-27b")
+        # Guard against leftover model names from other providers (e.g., claude, gpt)
         if (
             not active_model
-            or "qwen" in active_model.lower()
             or "claude" in active_model.lower()
             or "gpt" in active_model.lower()
+            or "llama-3" in active_model.lower()
         ):
-            active_model = getattr(settings, "GROQ_DEFAULT_MODEL", "llama-3.3-70b-versatile")
+            active_model = getattr(settings, "GROQ_DEFAULT_MODEL", "qwen/qwen3.8-27b")
 
-        fallback_model = getattr(settings, "GROQ_FALLBACK_MODEL", "llama-3.1-8b-instant")
+        fallback_model = getattr(settings, "GROQ_FALLBACK_MODEL", "qwen/qwen3.8-27b")
 
         est_prompt_tokens = len(system + prompt) // 4
         current_max_tokens = max_tokens

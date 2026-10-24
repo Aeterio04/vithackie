@@ -50,6 +50,7 @@ class PageInfo(BaseModel):
     links: List[LinkInfo] = Field(default_factory=list)
     buttons: List[ButtonInfo] = Field(default_factory=list)
     forms: List[FormInfo] = Field(default_factory=list)
+    interactiveElements: List[Any] = Field(default_factory=list)
     consoleErrors: List[str] = Field(default_factory=list)
 
 

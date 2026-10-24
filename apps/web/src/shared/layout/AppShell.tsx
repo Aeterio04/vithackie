@@ -1,13 +1,20 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useUiStore } from "@/lib/store/uiStore";
 import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAuthPage = pathname.startsWith("/login");
+  const { resetUIState } = useUiStore();
+
+  // Clear UI state on app initialization to prevent displaying stale run data after restart
+  useEffect(() => {
+    resetUIState();
+  }, [resetUIState]);
 
   if (isAuthPage) {
     return <main className="min-h-screen bg-[#FAF9F5]">{children}</main>;

@@ -698,7 +698,7 @@ def run_tests(
                     prompt=repair_prompt,
                     schema_name="script_writer",
                     run_id=run_id,
-                    max_tokens=750,
+                    max_tokens=500,
                     temperature=0.1,
                 )
                 fixed_code = clean_and_sanitize_script(fixed_code_raw, t.testId, t.title)

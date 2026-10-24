@@ -12,7 +12,6 @@ from kawach.api.v1.mappers.run_mapper import map_stage_to_status
 from kawach.db.models.runs import Run as DbRun
 from kawach.schemas import ReviewDecision
 from kawach.services.catalog_service import add_test_case, batch_review, update_test_case
-from kawach.services.run_service import resume_run
 from kawach.storage import artifacts as storage
 
 router = APIRouter(tags=["catalog"])
@@ -83,7 +82,7 @@ def add_custom_test(run_id: str, payload: AddTestPayload):
 
 @router.post("/runs/{run_id}/review")
 def submit_review(run_id: str, payload: ReviewSubmission):
-    """Apply QA decisions to catalog tests and advance to script synthesis if all are reviewed."""
+    """Apply QA decisions to catalog tests and auto-start execution."""
     decisions = [
         ReviewDecision(
             testId=tid,
@@ -102,8 +101,14 @@ def submit_review(run_id: str, payload: ReviewSubmission):
     approved_count = sum(1 for t in cat.tests if getattr(t, "status", "") == "approved") if cat else 0
 
     run = storage.get_run(run_id)
-    if run.stage == "awaiting_review" and remaining_pending == 0 and approved_count > 0:
-        resume_run(run_id)
+    
+    # Auto-start execution after approval
+    if approved_count > 0:
+        try:
+            from kawach.workflows import run_execute
+            run_execute(run_id)
+        except Exception as e:
+            pass  # Execution queued in background
 
     return {
         "applied_count": len(payload.test_ids),

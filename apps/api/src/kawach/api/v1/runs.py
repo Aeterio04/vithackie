@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 from sqlalchemy.orm import Session
 
 from kawach.api.deps import get_current_user, get_owned_run, get_user_scope, require_scope
@@ -14,6 +14,7 @@ from kawach.db.models.runs import Run as DbRun
 from kawach.db.session import get_db
 from kawach.repositories.audit_repo import AuditRepository
 from kawach.repositories.base import Scope
+from kawach.repositories.project_repo import ProjectRepository
 from kawach.repositories.run_repo import RunRepository
 from kawach.schemas import Budgets
 from kawach.services.idempotency import IdempotencyService
@@ -28,13 +29,26 @@ router = APIRouter(tags=["runs"])
 
 class CreateRunPayload(BaseModel):
     model_config = ConfigDict(extra="ignore")
-    target_url: str
+    target_url: Optional[str] = None
+    targetUrl: Optional[str] = None
     prompt: str = ""
     spec_id: Optional[str] = None
     spec_text: Optional[str] = None
-    review_mode: str = "manual"
+    review_mode: Optional[str] = "manual"
+    reviewMode: Optional[str] = None
+    project_id: Optional[str] = None
+    projectId: Optional[str] = None
     budgets: Optional[Dict[str, Any]] = None
     credentials: Optional[Dict[str, Any]] = None
+
+    @model_validator(mode="after")
+    def normalize_fields(self) -> "CreateRunPayload":
+        self.target_url = self.target_url or self.targetUrl
+        self.review_mode = self.review_mode or self.reviewMode or "manual"
+        self.project_id = self.project_id or self.projectId
+        if not self.target_url:
+            raise ValueError("target_url or targetUrl is required")
+        return self
 
 
 @router.get("/runs")
@@ -112,6 +126,37 @@ def create_run(
         password=password,
         budgets=budgets,
     )
+
+    # Persist run in SQLite DB linked to user's project
+    run_repo = RunRepository(db)
+    proj_repo = ProjectRepository(db)
+    user_scope = Scope.user(current_user.id)
+    proj_id = payload.project_id
+    if not proj_id:
+        user_projects = proj_repo.list_projects(user_scope)
+        matching = next((p for p in user_projects if p.target_url == payload.target_url), None)
+        if matching:
+            proj_id = matching.id
+        elif user_projects:
+            proj_id = user_projects[0].id
+        else:
+            import urllib.parse
+            parsed_host = urllib.parse.urlparse(payload.target_url).hostname or "Target"
+            new_proj = proj_repo.create_project(
+                scope=user_scope,
+                name=f"{parsed_host} App",
+                target_url=payload.target_url,
+                default_mode=payload.review_mode or "manual",
+            )
+            proj_id = new_proj.id
+
+    run_repo.create_run(
+        scope=user_scope,
+        run_id=run.runId,
+        project_id=proj_id,
+        mode=payload.review_mode or "manual",
+    )
+    db.commit()
 
     AuditRepository(db).record(
         action="run_start",

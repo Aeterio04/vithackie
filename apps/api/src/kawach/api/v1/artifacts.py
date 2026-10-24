@@ -81,21 +81,34 @@ def get_app_map(run_id: str) -> dict:
     nodes_list = []
     if app_map and app_map.pages:
         for idx, p in enumerate(app_map.pages, 1):
+            forms_count = len(p.forms) if p.forms else 0
+            buttons_count = len(p.buttons) if p.buttons else 0
+            links_count = len(p.links) if p.links else 0
+            interactive_elems = getattr(p, "interactiveElements", None) or []
+            interactive_count = len(interactive_elems) if interactive_elems else (buttons_count + links_count)
+
             pages_list.append({
                 "id": f"page_{idx}",
                 "url": p.url,
                 "title": p.title or p.url,
-                "status_code": 200,
+                "status_code": getattr(p, "status", 200),
                 "depth": 1 if p.url == root_url else 2,
-                "forms_count": len(p.forms) if p.forms else 0,
-                "interactive_elements": len(p.interactiveElements) if p.interactiveElements else 0,
+                "forms_count": forms_count,
+                "interactive_elements": interactive_count,
             })
+
+            actions = []
+            if interactive_elems:
+                actions = [f"{getattr(e, 'tag', 'element')} {getattr(e, 'name', '') or getattr(e, 'selector', '')}".strip() for e in interactive_elems[:5]]
+            else:
+                actions = [f"button {b.text}" for b in (p.buttons or [])[:3]] + [f"link {l.text}" for l in (p.links or [])[:2]]
+
             nodes_list.append({
                 "id": f"node_{idx}",
                 "url": p.url,
                 "title": p.title or p.url,
-                "status_code": 200,
-                "actions_found": [f"{e.tag} {e.name or e.selector}" for e in (p.interactiveElements or [])[:5]],
+                "status_code": getattr(p, "status", 200),
+                "actions_found": actions,
                 "children": [],
             })
 

@@ -40,12 +40,13 @@ class RunRepository(BaseRepository):
         return run
 
     def get_run(self, scope: Scope, run_id: str) -> Optional[Run]:
-        """Fetch run ensuring user owns the parent project."""
-        stmt = select(Run).join(Project, Run.project_id == Project.id).where(Run.id == run_id)
+        """Fetch run ensuring user owns the parent project or created the run."""
+        from sqlalchemy import or_
+        stmt = select(Run).outerjoin(Project, Run.project_id == Project.id).where(Run.id == run_id)
         if not scope.is_system:
             if not scope.user_id:
                 return None
-            stmt = stmt.where(Project.owner_id == scope.user_id)
+            stmt = stmt.where(or_(Project.owner_id == scope.user_id, Run.created_by == scope.user_id))
         return self.db.scalars(stmt).first()
 
     def list_runs(self, scope: Scope, project_id: Optional[str] = None) -> List[Run]:

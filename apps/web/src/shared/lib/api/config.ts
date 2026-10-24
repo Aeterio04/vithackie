@@ -31,8 +31,7 @@ export const API_ENDPOINTS = {
   RUN_RETRY: (runId: string) => `${API_BASE_PREFIX}/runs/${runId}/retry`,
 
   // Real-time & Polling
-  // Note: Stream route in Next.js goes through /api/runs/:runId/stream route handler
-  RUN_STREAM: (runId: string) => `/api/runs/${runId}/stream`,
+  RUN_STREAM: (runId: string) => `${API_BASE_PREFIX}/runs/${runId}/stream`,
   RUN_EVENTS_POLL: (runId: string, sinceCursor?: string) =>
     `${API_BASE_PREFIX}/runs/${runId}/events${sinceCursor ? `?since=${encodeURIComponent(sinceCursor)}` : ""}`,
 

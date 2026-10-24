@@ -3,6 +3,7 @@
 Maintains strict backwards compatibility with baseline tests and direct runner clients.
 """
 
+import asyncio
 from datetime import datetime, timezone
 import json
 import logging
@@ -514,6 +515,6 @@ async def stream_run_progress(run_id: str):
             if r.stage in ("done", "failed"):
                 break
 
-            time.sleep(1.0)
+            await asyncio.sleep(1.0)
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
