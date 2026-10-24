@@ -27,7 +27,7 @@ class RunInput(BaseModel):
     createdAt: str
     targetUrl: str
     prompt: str = ""
-    specRaw: str
+    specRaw: str = ""
     spec: List[SpecItem] = Field(default_factory=list)
     username: str = ""
     mode: Mode = "manual"
@@ -59,6 +59,7 @@ class Run(BaseModel):
     progress: Optional[Progress] = None
     stageTimes: Dict[str, StageTime] = Field(default_factory=dict)
     golden: bool = False
+    projectId: Optional[str] = None
 
 
 class RunListItemCounts(BaseModel):

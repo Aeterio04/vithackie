@@ -103,6 +103,23 @@ def node_build_report(run_id: str) -> None:
     storage.set_stage(run_id, "done", step="Run completed successfully")
     _log(run_id, "Pipeline: QA execution workflow finished successfully.")
 
+    try:
+        from kawach.db.session import SessionLocal
+        from kawach.db.models.runs import Run as DbRun
+        from kawach.services.saved_test_service import SavedTestService
+        from kawach.db.base import utc_now
+
+        with SessionLocal() as db:
+            db_run = db.query(DbRun).filter(DbRun.id == run_id).first()
+            if db_run and db_run.project_id:
+                svc = SavedTestService(db)
+                svc.sync_run_tests(db_run.project_id, run_id, user_id=db_run.created_by)
+                db_run.stage = "done"
+                db_run.ended_at = utc_now()
+                db.commit()
+    except Exception as e:
+        _log(run_id, f"Notice: Could not auto-sync tests to project catalog: {e}", level="warning")
+
 
 def should_continue(state: ExecuteState) -> str:
     run_id = state.get("runId", "")

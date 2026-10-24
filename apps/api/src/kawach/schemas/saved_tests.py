@@ -34,6 +34,8 @@ class SavedTestRead(BaseModel):
     script_path: str
     tags: List[str] = Field(default_factory=list)
     is_active: bool = True
+    last_result: Optional[str] = None
+    lastResult: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 

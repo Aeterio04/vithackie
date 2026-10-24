@@ -25,6 +25,9 @@ class ProjectRepository(BaseRepository):
         default_mode: str = "manual",
         budgets: Optional[Dict[str, Any]] = None,
         allowed_hosts: Optional[List[str]] = None,
+        workspace_id: Optional[str] = None,
+        github_url: Optional[str] = None,
+        pat_encrypted: Optional[str] = None,
     ) -> Project:
         """Create a new project owned by scope.user_id."""
         import re
@@ -32,9 +35,12 @@ class ProjectRepository(BaseRepository):
         clean_slug = slug or re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-") or "project"
         project = Project(
             owner_id=owner_id,
+            workspace_id=workspace_id,
             name=name,
             slug=clean_slug,
             target_url=target_url,
+            github_url=github_url,
+            pat_encrypted=pat_encrypted,
             description=description,
             default_mode=default_mode,
             budgets=budgets or {},
@@ -83,6 +89,8 @@ class ProjectRepository(BaseRepository):
         description: Optional[str] = None,
         default_mode: Optional[str] = None,
         budgets: Optional[Dict[str, Any]] = None,
+        github_url: Optional[str] = None,
+        pat_encrypted: Optional[str] = None,
     ) -> Optional[Project]:
         """Update owned project attributes."""
         project = self.get_project(scope, project_id)
@@ -98,6 +106,10 @@ class ProjectRepository(BaseRepository):
             project.default_mode = default_mode
         if budgets is not None:
             project.budgets = budgets
+        if github_url is not None:
+            project.github_url = github_url
+        if pat_encrypted is not None:
+            project.pat_encrypted = pat_encrypted
         self.db.flush()
         return project
 

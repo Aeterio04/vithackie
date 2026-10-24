@@ -49,6 +49,11 @@ import {
 
 export default function DashboardPage() {
   const router = useRouter();
+
+  React.useEffect(() => {
+    router.replace("/projects");
+  }, [router]);
+
   const { toast } = useToast();
   const { setSelectedRunId } = useUiStore();
 

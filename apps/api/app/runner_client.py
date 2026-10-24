@@ -217,12 +217,19 @@ def run_playwright(
                 except ValueError:
                     cmd.append(str(p).replace("\\", "/"))
             else:
-                full_p = r_dir / f
-                try:
-                    rel_p = full_p.relative_to(target_spec_dir)
-                    cmd.append(str(rel_p).replace("\\", "/"))
-                except ValueError:
-                    cmd.append(str(full_p).replace("\\", "/"))
+                if (target_spec_dir / f).exists():
+                    cmd.append(str(f).replace("\\", "/"))
+                elif (r_dir / f).exists():
+                    full_p = r_dir / f
+                    try:
+                        rel_p = full_p.relative_to(target_spec_dir)
+                        cmd.append(str(rel_p).replace("\\", "/"))
+                    except ValueError:
+                        cmd.append(str(full_p).replace("\\", "/"))
+                elif (target_spec_dir / p.name).exists():
+                    cmd.append(p.name)
+                else:
+                    cmd.append(str(f).replace("\\", "/"))
 
     if grep:
         cmd.extend(["-g", grep])

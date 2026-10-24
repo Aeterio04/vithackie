@@ -16,29 +16,36 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # 1. Create api_tokens table
-    op.create_table(
-        'api_tokens',
-        sa.Column('id', sa.String(length=36), nullable=False),
-        sa.Column('user_id', sa.String(length=36), nullable=False),
-        sa.Column('name', sa.String(length=100), nullable=False),
-        sa.Column('token_prefix', sa.String(length=16), nullable=False),
-        sa.Column('token_hash', sa.String(length=64), nullable=False),
-        sa.Column('scopes', sa.String(length=255), nullable=False),
-        sa.Column('expires_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('revoked_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('last_used_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-        sa.PrimaryKeyConstraint('id')
-    )
-    with op.batch_alter_table('api_tokens', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_api_tokens_token_hash'), ['token_hash'], unique=True)
-        batch_op.create_index(batch_op.f('ix_api_tokens_user_id'), ['user_id'], unique=False)
+    bind = op.get_bind()
+    insp = sa.inspect(bind)
+    tables = insp.get_table_names()
 
-    # 2. Add client_type to audit_logs
-    with op.batch_alter_table('audit_logs', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('client_type', sa.String(length=20), nullable=False, server_default='web'))
+    # 1. Create api_tokens table if not exists
+    if 'api_tokens' not in tables:
+        op.create_table(
+            'api_tokens',
+            sa.Column('id', sa.String(length=36), nullable=False),
+            sa.Column('user_id', sa.String(length=36), nullable=False),
+            sa.Column('name', sa.String(length=100), nullable=False),
+            sa.Column('token_prefix', sa.String(length=16), nullable=False),
+            sa.Column('token_hash', sa.String(length=64), nullable=False),
+            sa.Column('scopes', sa.String(length=255), nullable=False),
+            sa.Column('expires_at', sa.DateTime(timezone=True), nullable=True),
+            sa.Column('revoked_at', sa.DateTime(timezone=True), nullable=True),
+            sa.Column('last_used_at', sa.DateTime(timezone=True), nullable=True),
+            sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+            sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+            sa.PrimaryKeyConstraint('id')
+        )
+        with op.batch_alter_table('api_tokens', schema=None) as batch_op:
+            batch_op.create_index(batch_op.f('ix_api_tokens_token_hash'), ['token_hash'], unique=True)
+            batch_op.create_index(batch_op.f('ix_api_tokens_user_id'), ['user_id'], unique=False)
+
+    # 2. Add client_type to audit_logs if not exists
+    audit_cols = [c['name'] for c in insp.get_columns('audit_logs')]
+    if 'client_type' not in audit_cols:
+        with op.batch_alter_table('audit_logs', schema=None) as batch_op:
+            batch_op.add_column(sa.Column('client_type', sa.String(length=20), nullable=False, server_default='web'))
 
 
 def downgrade() -> None:

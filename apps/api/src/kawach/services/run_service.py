@@ -36,6 +36,7 @@ def create_run(
     username: str = "",
     password: str = "",
     budgets: Optional[Budgets] = None,
+    project_id: Optional[str] = None,
 ) -> Run:
     """Initialize a new test run, persist metadata and inputs, and start explore/plan."""
     run_id = new_run_id()
@@ -67,6 +68,7 @@ def create_run(
         stage="created",
         mode=mode,
         targetUrl=target_url,
+        projectId=project_id,
     )
     storage.save_model(run_id, "run.json", run)
 

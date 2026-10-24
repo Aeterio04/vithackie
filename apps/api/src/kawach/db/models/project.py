@@ -29,15 +29,34 @@ class Project(Base, TimestampMixin):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
     owner_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    workspace_id: Mapped[Optional[str]] = mapped_column(String(36), nullable=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     slug: Mapped[str] = mapped_column(String(255), nullable=False)
     target_url: Mapped[str] = mapped_column(String(1024), nullable=False)
+    github_url: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    pat_encrypted: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     default_mode: Mapped[str] = mapped_column(String(32), default="manual", nullable=False)
     budgets: Mapped[Dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
     allowed_hosts: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=False)
     spec_version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     archived_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    @property
+    def user_id(self) -> str:
+        return self.owner_id
+
+    @user_id.setter
+    def user_id(self, val: str) -> None:
+        self.owner_id = val
+
+    @property
+    def test_url(self) -> str:
+        return self.target_url
+
+    @test_url.setter
+    def test_url(self, val: str) -> None:
+        self.target_url = val
 
     # Relationships
     owner: Mapped["User"] = relationship("User")

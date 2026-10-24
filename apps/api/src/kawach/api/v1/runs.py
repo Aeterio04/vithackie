@@ -53,25 +53,50 @@ class CreateRunPayload(BaseModel):
 
 @router.get("/runs")
 def list_runs(
+    project_id: Optional[str] = None,
+    projectId: Optional[str] = None,
     _user: User = Depends(require_scope("runs:read")),
     scope: Scope = Depends(get_user_scope),
     db: Session = Depends(get_db),
 ):
-    """List test runs scoped to the authenticated user."""
+    """List test runs scoped to the authenticated user, optionally filtered by project."""
+    target_project_id = project_id or projectId
     all_runs = storage.list_runs()
     result = []
     run_repo = RunRepository(db)
 
     for r in all_runs:
+        db_run = run_repo.get_run(scope, r.runId)
         # Check ownership
         if not scope.is_system:
-            if not run_repo.get_run(scope, r.runId):
+            if not db_run:
                 continue  # Skip runs not owned by current user
+        if target_project_id and db_run and db_run.project_id != target_project_id:
+            continue
         try:
-            result.append(transform_run_to_frontend(r.runId))
+            fe_run = transform_run_to_frontend(r.runId)
+            if db_run:
+                fe_run["projectId"] = db_run.project_id
+                fe_run["project_id"] = db_run.project_id
+                # Sync DB stage with actual stage
+                if fe_run.get("stage") and db_run.stage != fe_run["stage"]:
+                    db_run.stage = fe_run["stage"]
+                    db.commit()
+            result.append(fe_run)
         except Exception:
             continue
     return result
+
+
+@router.get("/projects/{project_id}/runs")
+def list_project_runs(
+    project_id: str,
+    _user: User = Depends(require_scope("runs:read")),
+    scope: Scope = Depends(get_user_scope),
+    db: Session = Depends(get_db),
+):
+    """List test runs for a specific project."""
+    return list_runs(project_id=project_id, _user=_user, scope=scope, db=db)
 
 
 @router.post("/runs", status_code=status.HTTP_201_CREATED)
@@ -116,18 +141,7 @@ def create_run(
         testTimeoutMs=b_dict.get("test_timeout_ms", settings.TEST_TIMEOUT_MS),
     )
 
-    run = create_run_service(
-        target_url=payload.target_url,
-        mode=payload.review_mode,  # type: ignore
-        prompt=payload.prompt,
-        spec_raw=spec_raw,
-        username=username,
-        password=password,
-        budgets=budgets,
-    )
-
-    # Persist run in SQLite DB linked to user's project
-    run_repo = RunRepository(db)
+    # Determine project association
     proj_repo = ProjectRepository(db)
     user_scope = Scope.user(current_user.id)
     proj_id = payload.project_id
@@ -149,6 +163,19 @@ def create_run(
             )
             proj_id = new_proj.id
 
+    run = create_run_service(
+        target_url=payload.target_url,
+        mode=payload.review_mode,  # type: ignore
+        prompt=payload.prompt,
+        spec_raw=spec_raw,
+        username=username,
+        password=password,
+        budgets=budgets,
+        project_id=proj_id,
+    )
+
+    # Persist run in SQLite DB linked to user's project
+    run_repo = RunRepository(db)
     run_repo.create_run(
         scope=user_scope,
         run_id=run.runId,

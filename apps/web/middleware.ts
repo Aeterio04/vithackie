@@ -28,6 +28,14 @@ export function middleware(request: NextRequest) {
   // Allow bypass in dev mock mode if configured
   const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === "true";
 
+  // Redirect root path to /projects
+  if (pathname === "/") {
+    if (!sessionCookie && !useMocks) {
+      return NextResponse.redirect(new URL("/login?returnUrl=%2Fprojects", request.url));
+    }
+    return NextResponse.redirect(new URL("/projects", request.url));
+  }
+
   if (!sessionCookie && !useMocks) {
     const returnUrl = encodeURIComponent(pathname + request.nextUrl.search);
     return NextResponse.redirect(new URL(`/login?returnUrl=${returnUrl}`, request.url));

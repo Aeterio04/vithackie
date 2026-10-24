@@ -32,8 +32,28 @@ async def lifespan(app: FastAPI):
     for r in storage.list_runs():
         if r.stage in active_stages:
             storage.fail_run(r.runId, "Server restarted while the run was in progress")
-            logger.info("Recovered stale active run %s by failing it", r.runId)
-    
+    # Initialize DB schema and run light column migrations
+    try:
+        from kawach.db.base import Base
+        from kawach.db.session import engine
+        Base.metadata.create_all(bind=engine)
+        if str(engine.url).startswith("sqlite"):
+            with engine.connect() as conn:
+                from sqlalchemy import text
+                res = conn.execute(text("PRAGMA table_info(projects)")).fetchall()
+                p_cols = [r[1] for r in res]
+                for col, ctype in [("workspace_id", "VARCHAR(36)"), ("github_url", "VARCHAR(512)"), ("pat_encrypted", "TEXT"), ("user_id", "VARCHAR(36)")]:
+                    if col not in p_cols:
+                        conn.execute(text(f"ALTER TABLE projects ADD COLUMN {col} {ctype}"))
+                res_s = conn.execute(text("PRAGMA table_info(saved_tests)")).fetchall()
+                s_cols = [r[1] for r in res_s]
+                for col, ctype in [("script_path", "VARCHAR(512)"), ("name", "VARCHAR(255)"), ("description", "TEXT"), ("last_result", "VARCHAR(32)"), ("last_run_at", "DATETIME")]:
+                    if col not in s_cols:
+                        conn.execute(text(f"ALTER TABLE saved_tests ADD COLUMN {col} {ctype}"))
+                conn.commit()
+    except Exception as e:
+        logger.warning(f"DB schema initialization warning: {e}")
+
     yield
 
 

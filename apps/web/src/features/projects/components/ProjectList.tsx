@@ -28,16 +28,16 @@ export function ProjectList() {
   if (loading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center">
-        <Loader2 className="w-8 h-8 text-[#D97757] animate-spin mb-3" />
-        <p className="text-xs text-[#6B6A64]">Loading projects...</p>
+        <Loader2 className="w-8 h-8 text-clay animate-spin mb-3" />
+        <p className="text-xs text-text-secondary">Loading projects...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="py-12 text-center bg-white border border-[#E3DACC] rounded-[16px] p-8">
-        <p className="text-sm text-[#C4473A] mb-3">{error}</p>
+      <div className="py-12 text-center bg-white border border-card-border rounded-2xl p-8">
+        <p className="text-sm text-status-failed mb-3">{error}</p>
         <Button variant="secondary" onClick={() => window.location.reload()}>
           Retry
         </Button>
@@ -47,14 +47,14 @@ export function ProjectList() {
 
   if (projects.length === 0) {
     return (
-      <div className="py-16 text-center bg-white border border-[#E3DACC] rounded-[16px] p-8 max-w-md mx-auto">
-        <div className="w-12 h-12 rounded-2xl bg-[#FAF9F5] border border-[#E3DACC] flex items-center justify-center mx-auto mb-4 text-[#D97757]">
+      <div className="py-16 text-center bg-white border border-card-border rounded-2xl p-8 max-w-md mx-auto shadow-xs">
+        <div className="w-12 h-12 rounded-2xl bg-cloud border border-card-border flex items-center justify-center mx-auto mb-4 text-clay">
           <FolderPlus className="w-6 h-6" />
         </div>
-        <h3 className="font-heading text-lg font-medium text-[#141413] mb-1">
+        <h3 className="font-heading text-lg font-medium text-text-primary mb-1">
           No projects found
         </h3>
-        <p className="text-xs text-[#6B6A64] mb-6">
+        <p className="text-xs text-text-secondary mb-6">
           Create your first QA project to configure a target web app and execute autonomous test runs.
         </p>
         <Link href="/projects/new">
@@ -71,14 +71,14 @@ export function ProjectList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-heading text-2xl font-normal text-[#141413]">
+          <h2 className="font-heading text-2xl font-normal text-text-primary">
             Projects ({projects.length})
           </h2>
-          <p className="text-xs text-[#6B6A64] mt-0.5">
+          <p className="text-xs text-text-secondary mt-0.5">
             Select a project to inspect runs, view verified defects, or launch regressions.
           </p>
         </div>
-        <Link href="/projects/new">
+        <Link href="/projects/new?tab=project">
           <Button variant="primary" className="gap-2">
             <Plus className="w-4 h-4" />
             <span>New Project</span>

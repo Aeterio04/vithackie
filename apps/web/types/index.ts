@@ -167,13 +167,16 @@ export type BugSeverity = z.infer<typeof BugSeveritySchema>;
 export const BugSourceSchema = z.enum(["test_runner", "exploratory"]);
 export type BugSource = z.infer<typeof BugSourceSchema>;
 
-export const BugStatusSchema = z.enum([
-  "suspected",
-  "verifying",
-  "confirmed",
-  "flaky",
-  "not_reproduced",
-]);
+export const BugStatusSchema = z.preprocess(
+  (val) => (val === "candidate" ? "suspected" : val),
+  z.enum([
+    "suspected",
+    "verifying",
+    "confirmed",
+    "flaky",
+    "not_reproduced",
+  ])
+);
 export type BugStatus = z.infer<typeof BugStatusSchema>;
 
 export const ReplayResultSchema = z.enum([
