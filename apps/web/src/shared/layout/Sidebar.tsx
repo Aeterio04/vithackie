@@ -41,12 +41,14 @@ export function Sidebar() {
     pathname.startsWith("/start/") ||
     pathname === "/projects/new";
 
-  const isDashboardPage = pathname === "/" && !isStartPage;
+  const isDashboardPage =
+    (pathname === "/projects" || pathname.startsWith("/projects")) &&
+    pathname !== "/projects/new";
 
   const navItems = [
     {
       label: "Dashboard",
-      href: "/",
+      href: "/projects",
       icon: LayoutDashboard,
       isActive: isDashboardPage,
     },
@@ -93,7 +95,7 @@ export function Sidebar() {
       {/* Top Fixed Section: exactly h-16 with border-b to align with the header level */}
       <div className="h-16 border-b border-stone-200 flex items-center justify-center text-center shrink-0 px-4">
         <Link
-          href="/"
+          href="/projects"
           className="inline-block hover:opacity-80 transition-opacity duration-150"
         >
           <span

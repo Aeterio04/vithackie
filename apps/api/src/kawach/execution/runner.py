@@ -216,12 +216,19 @@ def run_playwright(
                 except ValueError:
                     cmd.append(str(p).replace("\\", "/"))
             else:
-                full_p = r_dir / f
-                try:
-                    rel_p = full_p.relative_to(target_spec_dir)
-                    cmd.append(str(rel_p).replace("\\", "/"))
-                except ValueError:
-                    cmd.append(str(full_p).replace("\\", "/"))
+                if (target_spec_dir / f).exists():
+                    cmd.append(str(f).replace("\\", "/"))
+                elif (r_dir / f).exists():
+                    full_p = r_dir / f
+                    try:
+                        rel_p = full_p.relative_to(target_spec_dir)
+                        cmd.append(str(rel_p).replace("\\", "/"))
+                    except ValueError:
+                        cmd.append(str(full_p).replace("\\", "/"))
+                elif (target_spec_dir / p.name).exists():
+                    cmd.append(p.name)
+                else:
+                    cmd.append(str(f).replace("\\", "/"))
 
     if grep:
         cmd.extend(["-g", grep])
@@ -579,27 +586,65 @@ def run_tests(
                 content_type = att.get("contentType", "")
 
                 target_filename: Optional[str] = None
+                file_type = "other"
                 if content_type == "image/png" or name == "screenshot" or (att_path and Path(att_path).suffix == ".png"):
                     target_filename = "screenshot.png"
+                    file_type = "screenshot"
                 elif content_type == "video/webm" or name == "video" or (att_path and Path(att_path).suffix == ".webm"):
                     target_filename = "video.webm"
+                    file_type = "screen_recording"
                 elif content_type == "application/zip" or name == "trace" or (att_path and Path(att_path).name == "trace.zip"):
                     target_filename = "trace.zip"
+                    file_type = "trace"
                 elif name == "console.json":
                     target_filename = "console.json"
+                    file_type = "log"
                 elif name == "network.json":
                     target_filename = "network.json"
+                    file_type = "log"
 
                 if target_filename:
                     dest = ev_dir / target_filename
+                    data_bytes = None
                     if att_body:
                         try:
-                            data = base64.b64decode(att_body)
-                            dest.write_bytes(data)
+                            data_bytes = base64.b64decode(att_body)
+                            dest.write_bytes(data_bytes)
                         except Exception:
                             pass
                     elif att_path and Path(att_path).exists():
                         shutil.copy2(Path(att_path), dest)
+                        try:
+                            data_bytes = Path(att_path).read_bytes()
+                        except Exception:
+                            pass
+
+                    # Persist in storage/users/<user_id>/tests/<test_id>/<uuid>.<ext>
+                    if data_bytes:
+                        try:
+                            from kawach.db.models.runs import Run as DbRun
+                            from kawach.db.session import SessionLocal
+                            from kawach.storage.file_storage import save_artifact_file
+
+                            with SessionLocal() as db_session:
+                                db_run = db_session.get(DbRun, run_id)
+                                owner_user_id = (db_run.created_by if db_run and db_run.created_by else None) or "system"
+                                proj_id = db_run.project_id if db_run else None
+                                ext = Path(target_filename).suffix.lstrip(".")
+                                save_artifact_file(
+                                    user_id=owner_user_id,
+                                    test_id=test_id,
+                                    data=data_bytes,
+                                    file_type=file_type,
+                                    ext=ext,
+                                    mime_type=content_type or None,
+                                    project_id=proj_id,
+                                    run_id=run_id,
+                                    db=db_session,
+                                )
+                                db_session.commit()
+                        except Exception:
+                            pass
 
         test_results.append(
             TestResult(

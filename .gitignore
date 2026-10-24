@@ -25,6 +25,10 @@ runs/
 runs
 data/
 /data/
+storage/
+/storage/
+apps/runner/pw-report.json
+pw-report.json
 
 # Environment variables
 .env

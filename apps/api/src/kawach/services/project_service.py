@@ -38,6 +38,9 @@ class ProjectService:
         default_mode: str = "manual",
         budgets: Optional[Dict[str, Any]] = None,
         allowed_hosts: Optional[List[str]] = None,
+        workspace_id: Optional[str] = None,
+        github_url: Optional[str] = None,
+        pat_encrypted: Optional[str] = None,
     ) -> Project:
         """Create a new project owned by the scoped user."""
         if not name or not name.strip():
@@ -54,6 +57,9 @@ class ProjectService:
             default_mode=default_mode,
             budgets=budgets,
             allowed_hosts=allowed_hosts,
+            workspace_id=workspace_id,
+            github_url=github_url,
+            pat_encrypted=pat_encrypted,
         )
 
         self.audit_repo.record(
@@ -81,6 +87,8 @@ class ProjectService:
         description: Optional[str] = None,
         default_mode: Optional[str] = None,
         budgets: Optional[Dict[str, Any]] = None,
+        github_url: Optional[str] = None,
+        pat_encrypted: Optional[str] = None,
     ) -> Optional[Project]:
         """Update owned project properties."""
         project = self.project_repo.update_project(
@@ -91,6 +99,8 @@ class ProjectService:
             description=description,
             default_mode=default_mode,
             budgets=budgets,
+            github_url=github_url,
+            pat_encrypted=pat_encrypted,
         )
         if project:
             self.audit_repo.record(

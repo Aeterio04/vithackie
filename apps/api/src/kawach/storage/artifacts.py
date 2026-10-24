@@ -200,6 +200,32 @@ def set_stage(
             run.progress = None
 
         save_model(run_id, "run.json", run)
+
+        try:
+            from kawach.db.session import SessionLocal
+            from kawach.db.models.runs import Run as DbRun
+            from kawach.db.base import utc_now
+            with SessionLocal() as db:
+                db_run = db.query(DbRun).filter(DbRun.id == run_id).first()
+                if db_run:
+                    db_run.stage = stage
+                    if step is not None:
+                        prog = dict(db_run.progress or {})
+                        prog["stage"] = stage
+                        prog["step"] = step
+                        if done is not None:
+                            prog["done"] = done
+                        if total is not None:
+                            prog["total"] = total
+                        db_run.progress = prog
+                    if stage == "exploring" and not db_run.started_at:
+                        db_run.started_at = utc_now()
+                    elif stage in ("done", "failed", "cancelled"):
+                        db_run.ended_at = utc_now()
+                    db.commit()
+        except Exception:
+            pass
+
         return run
 
 

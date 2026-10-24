@@ -51,15 +51,17 @@ class RunRepository(BaseRepository):
 
     def list_runs(self, scope: Scope, project_id: Optional[str] = None) -> List[Run]:
         """List runs scoped to user and optionally filtered by project."""
-        stmt = select(Run).join(Project, Run.project_id == Project.id)
+        from sqlalchemy import or_
+        stmt = select(Run).outerjoin(Project, Run.project_id == Project.id)
         if not scope.is_system:
             if not scope.user_id:
                 return []
-            stmt = stmt.where(Project.owner_id == scope.user_id)
+            stmt = stmt.where(or_(Project.owner_id == scope.user_id, Run.created_by == scope.user_id))
         if project_id:
             stmt = stmt.where(Run.project_id == project_id)
         stmt = stmt.order_by(Run.created_at.desc())
         return list(self.db.scalars(stmt).all())
+
 
     def set_stage(
         self,

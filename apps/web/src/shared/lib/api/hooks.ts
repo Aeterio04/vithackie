@@ -230,6 +230,8 @@ export function useRun(runId: string | null | undefined) {
 }
 
 export interface CreateRunPayload {
+  project_id?: string;
+  projectId?: string;
   target_url: string;
   prompt: string;
   spec_id?: string;
@@ -240,6 +242,13 @@ export interface CreateRunPayload {
     username?: string;
     password?: string;
   };
+}
+
+export function useProjects() {
+  return useQuery<any[], ApiError>({
+    queryKey: ["projects"],
+    queryFn: () => apiClient("/api/v1/projects"),
+  });
 }
 
 export function useCreateRun() {

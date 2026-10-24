@@ -4,13 +4,14 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { cn } from "@/lib/utils";
 import { CheckCircle2, AlertCircle, Info, X } from "lucide-react";
 
-export type ToastType = "success" | "error" | "info";
+export type ToastType = "success" | "error" | "info" | "warning";
 
 export interface ToastItem {
   id: string;
   type: ToastType;
   title: string;
   message?: string;
+  description?: string;
   action?: {
     label: string;
     onClick: () => void;
@@ -112,6 +113,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             icon = <AlertCircle className="w-5 h-5 text-[#C4473A]" />;
             borderStyle = "border-[#F2CAC5]";
             bgStyle = "bg-[#FFF9F9]";
+          } else if (t.type === "warning") {
+            icon = <AlertCircle className="w-5 h-5 text-amber-600" />;
+            borderStyle = "border-amber-200";
+            bgStyle = "bg-amber-50";
           }
 
           return (
@@ -129,9 +134,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 <h5 className="text-sm font-semibold text-[#141413]">
                   {t.title}
                 </h5>
-                {t.message && (
+                {(t.message || t.description) && (
                   <p className="text-xs text-[#6B6A64] mt-0.5 leading-relaxed">
-                    {t.message}
+                    {t.message || t.description}
                   </p>
                 )}
                 {t.action && (

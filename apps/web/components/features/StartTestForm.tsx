@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,6 +11,7 @@ import {
   useUploadSpec,
   useCreateRun,
   useStartRun,
+  useProjects,
 } from "@/lib/api/hooks";
 import { useUiStore } from "@/lib/store/uiStore";
 import { useToast } from "@/components/ui/Toast";
@@ -30,9 +31,11 @@ import {
   Eye,
   EyeOff,
   Sparkles,
+  FolderKanban,
 } from "lucide-react";
 
 const StartFormSchema = z.object({
+  project_id: z.string().optional(),
   target_url: z
     .string()
     .min(1, "Target URL is required")
@@ -56,13 +59,18 @@ type StartFormValues = z.infer<typeof StartFormSchema>;
 interface StartTestFormProps {
   onSuccess?: (runId: string) => void;
   className?: string;
+  defaultProjectId?: string;
 }
 
-export function StartTestForm({ onSuccess, className }: StartTestFormProps) {
+export function StartTestForm({ onSuccess, className, defaultProjectId }: StartTestFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const paramProjectId = searchParams.get("projectId") || defaultProjectId || "";
+
   const { toast } = useToast();
   const { setSelectedRunId } = useUiStore();
   const { data: config } = useConfigDefaults();
+  const { data: projects = [], isLoading: isLoadingProjects } = useProjects();
 
   const [specFile, setSpecFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
@@ -80,6 +88,7 @@ export function StartTestForm({ onSuccess, className }: StartTestFormProps) {
   } = useForm<StartFormValues>({
     resolver: zodResolver(StartFormSchema),
     defaultValues: {
+      project_id: paramProjectId,
       target_url: "",
       prompt: "",
       spec_text: "",
@@ -103,6 +112,25 @@ export function StartTestForm({ onSuccess, className }: StartTestFormProps) {
       setValue("parallel_workers", config.default_budgets.parallel_workers);
     }
   }, [config, setValue]);
+
+  // Pre-fill target_url if project is selected or given via query param
+  useEffect(() => {
+    const selectedPid = paramProjectId || watch("project_id");
+    if (selectedPid && projects && projects.length > 0) {
+      setValue("project_id", selectedPid);
+      const proj = projects.find((p: any) => p.id === selectedPid);
+      if (proj) {
+        const url = proj.targetUrl || proj.testUrl || proj.target_url;
+        if (url && !watch("target_url")) {
+          setValue("target_url", url, { shouldValidate: true });
+        }
+        if (proj.defaultMode || proj.default_mode) {
+          setValue("review_mode", (proj.defaultMode || proj.default_mode) as any);
+        }
+      }
+    }
+  }, [paramProjectId, projects, setValue, watch]);
+
 
   const watchedTargetUrl = watch("target_url");
   const watchedReviewMode = watch("review_mode");
@@ -171,6 +199,7 @@ export function StartTestForm({ onSuccess, className }: StartTestFormProps) {
       // 2. Create Run
       setSubmissionStep("Creating test run...");
       const created = await createRun({
+        project_id: data.project_id || undefined,
         target_url: data.target_url,
         prompt: data.prompt,
         spec_id: uploadedSpecId,
@@ -241,6 +270,59 @@ export function StartTestForm({ onSuccess, className }: StartTestFormProps) {
       onSubmit={handleSubmit(onSubmit)}
       className={`bg-white border border-[#E3DACC] rounded-[16px] p-6 shadow-[0_1px_2px_rgba(20,20,19,0.05)] space-y-6 ${className || ""}`}
     >
+      {/* 0. Project Selector Dropdown */}
+      <div className="space-y-2">
+        <label
+          htmlFor="project-select"
+          className="text-xs font-semibold text-[#141413] flex items-center justify-between"
+        >
+          <span className="flex items-center gap-1.5">
+            <FolderKanban className="w-3.5 h-3.5 text-[#D97757]" />
+            <span>Link to Project</span>
+          </span>
+          <span className="text-[11px] font-normal text-[#8A887F]">
+            {projects && projects.length > 0
+              ? `${projects.length} project${projects.length > 1 ? "s" : ""} available`
+              : "No projects created yet"}
+          </span>
+        </label>
+
+        <div className="relative">
+          <select
+            id="project-select"
+            {...register("project_id")}
+            onChange={(e) => {
+              register("project_id").onChange(e);
+              const pId = e.target.value;
+              if (pId && projects && projects.length > 0) {
+                const selected = projects.find((p: any) => p.id === pId);
+                if (selected) {
+                  const pUrl = selected.targetUrl || selected.testUrl || selected.target_url;
+                  if (pUrl) {
+                    setValue("target_url", pUrl, { shouldValidate: true });
+                    if (checkResult) resetTargetCheck();
+                  }
+                  if (selected.defaultMode || selected.default_mode) {
+                    setValue("review_mode", (selected.defaultMode || selected.default_mode) as any);
+                  }
+                }
+              }
+            }}
+            className="w-full h-11 px-3.5 py-2.5 text-xs bg-[#FAF9F5] border border-[#E3DACC] rounded-xl text-[#141413] focus:outline-none focus:ring-2 focus:ring-[#D97757] focus:bg-white transition-all cursor-pointer font-sans appearance-none pr-9"
+          >
+            <option value="">-- None (Standalone Run) --</option>
+            {projects.map((proj: any) => (
+              <option key={proj.id} value={proj.id}>
+                {proj.name} ({proj.targetUrl || proj.testUrl || proj.target_url || "No URL"})
+              </option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[#8A887F]">
+            <ChevronDown className="w-4 h-4" />
+          </div>
+        </div>
+      </div>
+
       {/* 1. Target URL + Pre-flight Check */}
       <div className="space-y-2">
         <label

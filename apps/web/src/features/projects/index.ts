@@ -3,3 +3,7 @@ export * from "./components/ProjectCard";
 export * from "./components/ProjectList";
 export * from "./components/NewProjectForm";
 export * from "./components/ProjectSettings";
+export * from "./components/ProjectOverviewTab";
+export * from "./components/SavedTestsTab";
+export * from "./components/TestRunsTab";
+export * from "./components/CommitsTab";

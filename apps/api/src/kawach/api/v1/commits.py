@@ -26,6 +26,98 @@ from kawach.services.regression_service import RegressionService
 router = APIRouter(prefix="/projects/{project_id}/commits", tags=["commits"])
 
 
+@router.get("/github")
+def get_github_commits(
+    project_id: str,
+    _user: User = Depends(require_scope("tests:read")),
+    project: Project = Depends(get_owned_project),
+):
+    """List recent commits from GitHub using the project's configured GitHub link and PAT."""
+    import re
+    if not project.github_url:
+        return {
+            "configured": False,
+            "message": "GitHub repository link is not configured for this project. Add your repository URL in Settings to view recent commits.",
+            "commits": [],
+        }
+
+    clean_url = project.github_url.strip()
+    match = re.search(r"(?:https?://github\.com/|git@github\.com:)?([^/\s]+)/([^/\s#?]+?)(?:\.git)?(?:/.*)?$", clean_url)
+    if not match:
+        return {
+            "configured": False,
+            "message": f"Invalid GitHub URL format '{project.github_url}'. Expected format: https://github.com/owner/repo",
+            "commits": [],
+        }
+
+    owner, repo = match.group(1), match.group(2)
+    token = None
+    if project.pat_encrypted:
+        try:
+            from kawach.core.security import secret_store
+            token = secret_store.decrypt(project.pat_encrypted)
+        except Exception:
+            token = None
+
+    try:
+        import httpx
+        headers = {
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "Kawach-QA-Agent",
+        }
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+        api_url = f"https://api.github.com/repos/{owner}/{repo}/commits?per_page=15"
+        resp = httpx.get(api_url, headers=headers, timeout=10.0)
+
+        if resp.status_code == 200:
+            raw_commits = resp.json()
+            commits = []
+            for item in raw_commits:
+                commit_info = item.get("commit", {})
+                author_info = commit_info.get("author", {}) or {}
+                committer_info = item.get("author") or {}
+                commits.append({
+                    "sha": item.get("sha", "")[:8],
+                    "fullSha": item.get("sha", ""),
+                    "message": commit_info.get("message", "").split("\n")[0],
+                    "author": author_info.get("name") or committer_info.get("login") or "Unknown",
+                    "date": author_info.get("date"),
+                    "url": item.get("html_url"),
+                })
+            return {
+                "configured": True,
+                "owner": owner,
+                "repo": repo,
+                "commits": commits,
+            }
+        elif resp.status_code == 404:
+            return {
+                "configured": True,
+                "error": f"Repository '{owner}/{repo}' not found or access denied. Ensure the repository exists and your Personal Access Token (PAT) has repo read access.",
+                "commits": [],
+            }
+        elif resp.status_code == 401:
+            return {
+                "configured": True,
+                "error": "GitHub Personal Access Token (PAT) is invalid or expired. Please update it in Project Settings.",
+                "commits": [],
+            }
+        else:
+            return {
+                "configured": True,
+                "error": f"GitHub API error (status {resp.status_code}): {resp.text[:200]}",
+                "commits": [],
+            }
+    except Exception as exc:
+        return {
+            "configured": True,
+            "error": f"Failed to connect to GitHub API: {str(exc)}",
+            "commits": [],
+        }
+
+
 @router.get("", response_model=List[CommitEventRead])
 def list_commits(
     project_id: str,

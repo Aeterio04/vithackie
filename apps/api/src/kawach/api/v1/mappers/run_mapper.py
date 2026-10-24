@@ -61,7 +61,7 @@ def build_frontend_counts(run_id: str) -> dict:
     res = storage.load_model(run_id, "results.json", Results)
     bugs_f = storage.load_model(run_id, "bugs.json", BugsFile)
 
-    total_tests = len(cat.tests) if cat else 0
+    total_tests = len(cat.tests) if (cat and cat.tests) else (len(res.tests) if (res and res.tests) else 0)
     passed_tests = 0
     failed_tests = 0
     if res and res.tests:
@@ -75,9 +75,21 @@ def build_frontend_counts(run_id: str) -> dict:
     confirmed = 0
     flaky = 0
     not_reproduced = 0
+    rdir = storage.run_dir(run_id)
     if bugs_f and bugs_f.bugs:
+        from kawach.schemas import Verification
         for b in bugs_f.bugs:
-            st = getattr(b, "status", "")
+            ver_status = None
+            ver_file = rdir / "verification" / f"{b.id}.json"
+            if ver_file.exists():
+                try:
+                    ver = storage.load_model(run_id, f"verification/{b.id}.json", Verification)
+                    if ver and hasattr(ver, "status") and ver.status:
+                        ver_status = ver.status
+                except Exception:
+                    pass
+
+            st = ver_status or getattr(b, "status", "")
             if st == "confirmed":
                 confirmed += 1
             elif st == "flaky":
@@ -100,6 +112,14 @@ def build_frontend_counts(run_id: str) -> dict:
         "flaky_bugs": flaky,
         "not_reproduced_bugs": not_reproduced,
         "pending_reviews": pending_reviews,
+        # Frontend aliases for ProjectOverviewTab & TestRunsTab
+        "tests": total_tests,
+        "passed": passed_tests,
+        "failed": failed_tests,
+        "confirmed": confirmed,
+        "suspected": suspected,
+        "flaky": flaky,
+        "not_reproduced": not_reproduced,
     }
 
 
@@ -141,17 +161,29 @@ def transform_run_to_frontend(run_id: str) -> dict:
         except Exception:
             elapsed_minutes = 0.5
 
+    duration_sec = None
+    if res and hasattr(res, "durationSeconds") and res.durationSeconds is not None:
+        duration_sec = res.durationSeconds
+    elif elapsed_minutes:
+        duration_sec = round(elapsed_minutes * 60, 1)
+
     is_active = run.stage in ("running", "scripting", "verifying", "exploring")
 
     return {
         "id": run.runId,
+        "runId": run.runId,
+        "projectId": getattr(run, "projectId", None),
+        "project_id": getattr(run, "projectId", None),
         "target_url": target_url,
+        "targetUrl": target_url,
         "prompt": prompt,
         "review_mode": run.mode or "manual",
         "status": frontend_status,
+        "stage": run.stage,
         "progress": progress_pct,
         "created_at": run.createdAt,
         "finished_at": finished_at,
+        "duration_seconds": duration_sec,
         "budgets": {
             "max_pages": run_input.budgets.maxPages if (run_input and run_input.budgets) else settings.MAX_PAGES,
             "max_steps_per_test": 30,
@@ -253,22 +285,27 @@ def build_execution_state(run_id: str) -> dict:
     w2_status = "running" if (is_active and (w2_active_test or running_stage == "running")) else ("error" if running_stage == "failed" else "idle")
 
     w1_screenshot = latest_screenshot_url
+    w1_ts = screenshot_ts
     if live_dir.exists() and (live_dir / "w1.png").exists():
         w1_screenshot = f"/api/v1/runs/{run_id}/files/live/w1.png"
+        w1_ts = datetime.fromtimestamp((live_dir / "w1.png").stat().st_mtime, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
     w2_screenshot = latest_screenshot_url
+    w2_ts = screenshot_ts
     if live_dir.exists() and (live_dir / "w2.png").exists():
         w2_screenshot = f"/api/v1/runs/{run_id}/files/live/w2.png"
+        w2_ts = datetime.fromtimestamp((live_dir / "w2.png").stat().st_mtime, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     workers = [
         {
             "id": "w1",
             "name": "Playwright Worker 1",
-            "kind": "runner",
+            "kind": "exploratory" if running_stage == "exploring" else "runner",
             "status": w1_status,
             "current_test_id": w1_active_test,
             "current_step": w1_step_text,
             "latest_screenshot_url": w1_screenshot,
-            "screenshot_updated_at": screenshot_ts,
+            "screenshot_updated_at": w1_ts,
         },
         {
             "id": "w2",
@@ -278,7 +315,7 @@ def build_execution_state(run_id: str) -> dict:
             "current_test_id": w2_active_test,
             "current_step": w2_step_text,
             "latest_screenshot_url": w2_screenshot,
-            "screenshot_updated_at": screenshot_ts,
+            "screenshot_updated_at": w2_ts,
         },
     ]
 

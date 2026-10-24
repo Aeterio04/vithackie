@@ -24,6 +24,8 @@ import {
   FileSearch,
   ArrowRight,
   FileBarChart2,
+  Download,
+  Play,
 } from "lucide-react";
 
 export function ResultsView() {
@@ -46,6 +48,32 @@ export function ResultsView() {
   const [severityFilter, setSeverityFilter] = useState<string>("all");
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [previewBug, setPreviewBug] = useState<Bug | null>(null);
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSelectedVideoUrl(null);
+  }, [previewBug]);
+
+  const activeVideoUrl = useMemo(() => {
+    if (selectedVideoUrl) return selectedVideoUrl;
+    if (!previewBug) return null;
+    return (
+      previewBug.evidence?.video_url ||
+      previewBug.replays?.find((r) => r.video_url)?.video_url ||
+      null
+    );
+  }, [previewBug, selectedVideoUrl]);
+
+  const replayVideos = useMemo(() => {
+    if (!previewBug?.replays) return [];
+    return previewBug.replays
+      .filter((r) => Boolean(r.video_url))
+      .map((r) => ({
+        index: r.index,
+        result: r.result,
+        url: r.video_url!,
+      }));
+  }, [previewBug]);
 
   // Status counts
   const counts = useMemo(() => {
@@ -288,18 +316,31 @@ export function ResultsView() {
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-2 text-[#8A887F]">
+                        <div className="flex items-center gap-2 text-[#8A887F] flex-wrap">
+                          {(() => {
+                            const bVideo = bug.evidence?.video_url || bug.replays?.find((r) => r.video_url)?.video_url;
+                            return bVideo ? (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setPreviewBug(bug);
+                                  setSelectedVideoUrl(bVideo);
+                                }}
+                                className="inline-flex items-center gap-1 text-[11px] font-medium text-[#D97757] bg-[#FAF9F5] border border-[#E3DACC] hover:border-[#D97757] hover:bg-orange-50 px-2 py-0.5 rounded-lg cursor-pointer transition-colors shadow-2xs"
+                                title="Watch replay screen recording"
+                              >
+                                <Video className="w-3.5 h-3.5 text-[#D97757]" />
+                                <span>Watch Video</span>
+                              </button>
+                            ) : null;
+                          })()}
                           {bug.evidence?.screenshots &&
                             bug.evidence.screenshots.length > 0 && (
                               <span title={`${bug.evidence.screenshots.length} Screenshots`}>
                                 <Camera className="w-4 h-4 text-[#6B6A64]" />
                               </span>
                             )}
-                          {bug.evidence?.video_url && (
-                            <span title="Video playback">
-                              <Video className="w-4 h-4 text-[#6B6A64]" />
-                            </span>
-                          )}
                           {bug.evidence?.trace_url && (
                             <span title="Playwright trace archive">
                               <FileSearch className="w-4 h-4 text-[#6B6A64]" />
@@ -480,10 +521,80 @@ export function ResultsView() {
                 </div>
               )}
 
+            {/* Screen Recording Video Playback */}
+            {activeVideoUrl && (
+              <div className="space-y-2 pt-2 border-t border-[#E3DACC]/60">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Video className="w-4 h-4 text-[#D97757]" />
+                    <span className="text-xs font-semibold text-[#141413]">
+                      Screen Recording Playback (.webm)
+                    </span>
+                  </div>
+                  <a
+                    href={activeVideoUrl}
+                    download={`${previewBug.id}-recording.webm`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[11px] text-[#D97757] hover:underline flex items-center gap-1 font-mono"
+                  >
+                    <Download className="w-3 h-3" />
+                    <span>Download</span>
+                  </a>
+                </div>
+
+                {/* Replay Attempt Video Selector */}
+                {replayVideos.length > 0 && (
+                  <div className="flex items-center gap-1.5 flex-wrap pb-1">
+                    <span className="text-[11px] text-[#8A887F] font-mono">Select Replay:</span>
+                    {previewBug.evidence?.video_url && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedVideoUrl(previewBug.evidence!.video_url!)}
+                        className={`text-[10px] px-2 py-0.5 rounded font-mono border transition-all cursor-pointer ${
+                          activeVideoUrl === previewBug.evidence.video_url
+                            ? "bg-[#D97757] text-white border-[#D97757]"
+                            : "bg-[#FAF9F5] text-[#6B6A64] border-[#E3DACC] hover:border-[#D97757]"
+                        }`}
+                      >
+                        Main Execution
+                      </button>
+                    )}
+                    {replayVideos.map((rv) => (
+                      <button
+                        key={rv.index}
+                        type="button"
+                        onClick={() => setSelectedVideoUrl(rv.url)}
+                        className={`text-[10px] px-2 py-0.5 rounded font-mono border transition-all cursor-pointer ${
+                          activeVideoUrl === rv.url
+                            ? "bg-[#D97757] text-white border-[#D97757]"
+                            : "bg-[#FAF9F5] text-[#6B6A64] border-[#E3DACC] hover:border-[#D97757]"
+                        }`}
+                      >
+                        Replay #{rv.index} ({rv.result})
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="rounded-xl overflow-hidden border border-[#E3DACC] bg-black shadow-xs">
+                  <video
+                    key={activeVideoUrl}
+                    controls
+                    preload="metadata"
+                    src={activeVideoUrl}
+                    className="w-full aspect-video"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+            )}
+
             {/* Screenshot Evidence Artifact */}
             {previewBug.evidence?.screenshots &&
               previewBug.evidence.screenshots.length > 0 && (
-                <div className="space-y-1.5 pt-1">
+                <div className="space-y-1.5 pt-2 border-t border-[#E3DACC]/60">
                   <span className="text-xs font-semibold text-[#141413] block">
                     Evidence Screenshot Artifact
                   </span>

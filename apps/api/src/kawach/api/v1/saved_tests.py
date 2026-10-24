@@ -61,4 +61,40 @@ def delete_saved_test(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Saved test {test_id} not found in project {project_id}",
         )
+    try:
+        from kawach.storage.file_storage import delete_test_artifact_files
+        delete_test_artifact_files(user_id=project.owner_id, test_id=test_id, db=db)
+    except Exception:
+        pass
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/run-all")
+def run_all_saved_tests(
+    project_id: str,
+    user: User = Depends(require_scope("tests:write")),
+    project: Project = Depends(get_owned_project),
+    db: Session = Depends(get_db),
+):
+    """Run all saved tests for this project on the runner workers."""
+    svc = SavedTestService(db)
+    try:
+        return svc.run_all_saved_tests(project_id=project_id, user_id=user.id, background=True)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.post("/{test_id}/run")
+def run_single_saved_test(
+    project_id: str,
+    test_id: str,
+    user: User = Depends(require_scope("tests:write")),
+    project: Project = Depends(get_owned_project),
+    db: Session = Depends(get_db),
+):
+    """Run a specific saved test on the runner worker."""
+    svc = SavedTestService(db)
+    try:
+        return svc.run_saved_test(project_id=project_id, test_id=test_id, user_id=user.id, background=True)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

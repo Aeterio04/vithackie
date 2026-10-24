@@ -144,22 +144,31 @@ export const test = base.extend<{ evidence: void }>({
           }
         });
 
-        p.on('framenavigated', (frame) => {
+        const liveDir = process.env.LIVE_DIR;
+        const workerId = `w${((testInfo.workerIndex ?? 0) % 2) + 1}`;
+
+        p.on('framenavigated', async (frame) => {
           if (frame === p.mainFrame()) {
             const url = frame.url();
             if (url && !visitedUrls.includes(url)) {
               visitedUrls.push(url);
             }
+            if (liveDir) {
+              try {
+                const workerImgPath = path.join(liveDir, `${workerId}.png`);
+                await p.screenshot({ path: workerImgPath, timeout: 2000 }).catch(() => {});
+              } catch {}
+            }
           }
         });
       };
 
+      const liveDir = process.env.LIVE_DIR;
+      const workerId = `w${((testInfo.workerIndex ?? 0) % 2) + 1}`;
+
       // Listen to existing and new pages in the context
       context.pages().forEach(setupPageListeners);
       context.on('page', setupPageListeners);
-
-      const liveDir = process.env.LIVE_DIR;
-      const workerId = `w${((testInfo.workerIndex ?? 0) % 2) + 1}`;
       if (liveDir && testId) {
         try {
           if (!fs.existsSync(liveDir)) {
