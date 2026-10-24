@@ -1,0 +1,27 @@
+{
+  "sha": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b",
+  "commit": {
+    "message": "refactor: optimize counter state handling",
+    "author": {
+      "name": "Developer Dev",
+      "email": "dev@example.com"
+    }
+  },
+  "files": [
+    {
+      "filename": "src/components/Counter.tsx",
+      "status": "modified",
+      "patch": "@@ -10,3 +10,3 @@\n-  setCount(c => c + 1);\n+  setCount(c => c);\n",
+      "blob_url": "https://github.com/owner/example-repo/blob/9a8b7c6/src/components/Counter.tsx"
+    },
+    {
+      "filename": "package-lock.json",
+      "status": "modified",
+      "patch": "@@ -1,5 +1,5 @@\n-  \"version\": \"1.0.0\"\n+  \"version\": \"1.0.1\"\n"
+    },
+    {
+      "filename": "deleted_feature.ts",
+      "status": "removed"
+    }
+  ]
+}

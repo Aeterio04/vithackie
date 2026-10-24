@@ -1,0 +1,41 @@
+diff --git a/src/discounts.js b/src/discounts.js
+index 29c5bce..16214b9 100644
+--- a/src/discounts.js
++++ b/src/discounts.js
+@@ -7,4 +7,9 @@ function applyDiscount(subtotalCents, coupon) {
+   return 0;
+ }
+ 
+-module.exports = { applyDiscount };
++// Helper to compute net base amount
++function calculateNetBase(baseCents, discountCents) {
++  return Math.max(0, baseCents - discountCents);
++}
++
++module.exports = { applyDiscount, calculateNetBase };
+diff --git a/src/format.js b/src/format.js
+index fd07b65..5fe3747 100644
+--- a/src/format.js
++++ b/src/format.js
+@@ -1,3 +1,4 @@
++// Currency formatting utilities
+ // Convert cents to dollars with 2 decimal places
+ function centsToDollars(cents) {
+   return Number((cents / 100).toFixed(2));
+diff --git a/src/pricing.js b/src/pricing.js
+index ed69847..e45ab14 100644
+--- a/src/pricing.js
++++ b/src/pricing.js
+@@ -1,6 +1,6 @@
+ // Calculate quote with pricing logic in integer cents
+ const items = require('./items');
+-const { applyDiscount } = require('./discounts');
++const { applyDiscount, calculateNetBase } = require('./discounts');
+ const { centsToDollars } = require('./format');
+ 
+ function quote(quantities, coupon) {
+@@ -14,3 +14,3 @@ function quote(quantities, coupon) {
+   const discountCents = applyDiscount(subtotalCents, coupon);
+-  const taxableCents = subtotalCents - discountCents;
++  const taxableCents = calculateNetBase(subtotalCents, discountCents) - discountCents;
+ 

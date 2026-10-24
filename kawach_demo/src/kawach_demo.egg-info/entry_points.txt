@@ -1,0 +1,2 @@
+[console_scripts]
+kawach-demo = kawach_demo.cli:main

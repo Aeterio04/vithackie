@@ -1,0 +1,36 @@
+{
+  "status": "no_editable_changes",
+  "reason": "No editable source files found in commit 4111050 (3 files were skipped due to filtering rules or limits).",
+  "verification": {
+    "runs": [
+      {
+        "index": 1,
+        "passed": false,
+        "error_text": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+        "duration_ms": 2695
+      },
+      {
+        "index": 2,
+        "passed": false,
+        "error_text": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+        "duration_ms": 2456
+      },
+      {
+        "index": 3,
+        "passed": false,
+        "error_text": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+        "duration_ms": 2428
+      }
+    ],
+    "failures": 3,
+    "verdict": "confirmed",
+    "observed_error": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
+  },
+  "commit": {
+    "sha": "41110504df8ad5e177615a1a4cf8ea523adfb7b8",
+    "message": "refactor: simplify total calculation and add format helpers",
+    "files": []
+  },
+  "proposal": null,
+  "pull_request": null
+}

@@ -1,0 +1,29 @@
+{
+  "repo": "owner/example-repo",
+  "github_pat": "github_pat_11AAAAAA0000000000000000000000000000000000000000000000000000000000",
+  "base_branch": "main",
+  "error": {
+    "test_name": "T05: Item count increment on click",
+    "failing_step": "Click button:has-text('Add')",
+    "message": "Error: Timed out waiting for element text to equal 'Count: 1'. Received: 'Count: 0'",
+    "console": [
+      "[error] Counter failed to increment due to NaN handler"
+    ],
+    "network": [
+      "POST /api/items 200 OK"
+    ]
+  },
+  "playwright_script": "import { test, expect } from '@playwright/test';\ntest('T05: Item count increment', async ({ page }) => {\n  await page.goto('/counter');\n  await page.click('button#add');\n  await expect(page.locator('#count')).toHaveText('Count: 1');\n});",
+  "target_url": "http://localhost:4000",
+  "playwright_project_dir": "./target-app",
+  "options": {
+    "verify_runs": 3,
+    "min_failures": 2,
+    "dry_run": false,
+    "draft_pr": false,
+    "max_files": 10,
+    "max_file_bytes": 100000,
+    "max_patch_chars": 20000,
+    "run_timeout_sec": 15
+  }
+}

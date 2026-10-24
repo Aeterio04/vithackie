@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kawach_fix"
+version = "0.1.0"
+description = "Autonomous GitHub Fix Pipeline for Kawach QA - verifies test failures, collects commit diffs, proposes LLM fixes, and raises pull requests."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.7.0",
+    "langgraph>=0.2.0",
+    "httpx>=0.25.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+]
+llm = [
+    "groq>=0.11.0",
+]
+
+[project.scripts]
+kawach-fix = "kawach_fix.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+    "asyncio: mark test as asyncio coroutine",
+]

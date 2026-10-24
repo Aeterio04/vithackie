@@ -1,0 +1,20 @@
+{
+  "sha": "41110504df8ad5e177615a1a4cf8ea523adfb7b8",
+  "message": "refactor: simplify total calculation and add format helpers",
+  "author": "Demo User",
+  "files": [],
+  "skipped": [
+    {
+      "path": "src/format.js",
+      "reason": "Failed to fetch content at commit sha: All connection attempts failed"
+    },
+    {
+      "path": "src/items.js",
+      "reason": "Failed to fetch content at commit sha: All connection attempts failed"
+    },
+    {
+      "path": "src/pricing.js",
+      "reason": "Failed to fetch content at commit sha: [Errno 11001] getaddrinfo failed"
+    }
+  ]
+}

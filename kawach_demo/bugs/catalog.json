@@ -1,0 +1,38 @@
+[
+  {
+    "id": "bug_1",
+    "title": "Tax silently dropped from order total calculation",
+    "commit_message": "refactor: simplify total calculation and add format helpers",
+    "difficulty": "easy",
+    "files_touched": [
+      "src/format.js",
+      "src/items.js",
+      "src/pricing.js"
+    ],
+    "causal_file": "src/pricing.js"
+  },
+  {
+    "id": "bug_2",
+    "title": "Discount subtracted twice from taxable base via extracted helper",
+    "commit_message": "refactor: extract net base calculation into discounts helper module",
+    "difficulty": "medium",
+    "files_touched": [
+      "src/discounts.js",
+      "src/format.js",
+      "src/pricing.js"
+    ],
+    "causal_file": "src/pricing.js"
+  },
+  {
+    "id": "bug_3",
+    "title": "Floating-point rate adjustment error on discounted quotes",
+    "commit_message": "refactor: adjust tax rate calculation precision for promotional orders",
+    "difficulty": "harder",
+    "files_touched": [
+      "src/format.js",
+      "src/items.js",
+      "src/pricing.js"
+    ],
+    "causal_file": "src/pricing.js"
+  }
+]

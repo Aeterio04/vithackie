@@ -1,0 +1,25 @@
+{
+  "runs": [
+    {
+      "index": 1,
+      "passed": false,
+      "error_text": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+      "duration_ms": 2739
+    },
+    {
+      "index": 2,
+      "passed": false,
+      "error_text": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+      "duration_ms": 2863
+    },
+    {
+      "index": 3,
+      "passed": false,
+      "error_text": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+      "duration_ms": 2508
+    }
+  ],
+  "failures": 3,
+  "verdict": "confirmed",
+  "observed_error": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
+}
