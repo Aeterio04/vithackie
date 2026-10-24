@@ -27,7 +27,10 @@ import {
   Video as VideoIcon,
   Download,
   Maximize2,
+  Sparkles,
 } from "lucide-react";
+import { fixesApi } from "@/features/fixes/api";
+import { ConfigureGithubModal } from "@/features/reports/components/ConfigureGithubModal";
 
 export function BugDetailView() {
   const params = useParams();
@@ -39,6 +42,30 @@ export function BugDetailView() {
 
   // Lightbox modal state for screenshots
   const [activeScreenshot, setActiveScreenshot] = useState<string | null>(null);
+
+  // Fix pipeline states
+  const [isFixModalOpen, setIsFixModalOpen] = useState(false);
+  const [defaultRepo, setDefaultRepo] = useState("");
+  const [launchingFix, setLaunchingFix] = useState(false);
+
+  const handleTriggerFix = async () => {
+    if (!bug) return;
+    setLaunchingFix(true);
+    try {
+      const readiness = await fixesApi.checkReadiness(runId);
+      if (readiness.configured) {
+        const res = await fixesApi.createFix({ runId, bugId: bug.id });
+        router.push(`/reports/${runId}/fix/${res.fixId}`);
+      } else {
+        setDefaultRepo(readiness.githubUrl || "");
+        setIsFixModalOpen(true);
+      }
+    } catch {
+      setIsFixModalOpen(true);
+    } finally {
+      setLaunchingFix(false);
+    }
+  };
 
   const mismatchInfo = useMemo(() => {
     return bug ? verifyReplayStatus(bug) : null;
@@ -133,41 +160,56 @@ ${(bug.steps_to_reproduce || ['    // Step: ' + bug.title])
       </Link>
 
       {/* Header */}
-      <div className="bg-white border border-[#E3DACC] rounded-[16px] p-6 shadow-xs space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <Chip variant={bug.severity} size="sm">
-            {bug.severity}
-          </Chip>
-          <Chip variant={bug.status} size="sm">
-            {bug.status}
-          </Chip>
-          <span className="text-xs font-mono text-[#8A887F]">
-            Source: {bug.source === "test_runner" ? "Test Runner" : "Exploratory Tester"}
-          </span>
-          <span className="text-xs font-mono text-[#8A887F]">
-            Bug ID: {bug.id}
-          </span>
+      <div className="bg-white border border-[#E3DACC] rounded-[16px] p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Chip variant={bug.severity} size="sm">
+              {bug.severity}
+            </Chip>
+            <Chip variant={bug.status} size="sm">
+              {bug.status}
+            </Chip>
+            <span className="text-xs font-mono text-[#8A887F]">
+              Source: {bug.source === "test_runner" ? "Test Runner" : "Exploratory Tester"}
+            </span>
+            <span className="text-xs font-mono text-[#8A887F]">
+              Bug ID: {bug.id}
+            </span>
+          </div>
+
+          <h1 className="font-heading text-2xl font-normal text-[#141413] leading-snug">
+            {bug.title}
+          </h1>
+
+          {bug.spec_item_ids.length > 0 && (
+            <div className="flex items-center gap-1.5 pt-1">
+              <span className="text-xs text-[#6B6A64] font-medium">
+                Linked Spec:
+              </span>
+              {bug.spec_item_ids.map((id) => (
+                <span
+                  key={id}
+                  className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#F0EEE6] border border-[#E3DACC] text-[#6B6A64]"
+                >
+                  {id}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
-        <h1 className="font-heading text-2xl font-normal text-[#141413] leading-snug">
-          {bug.title}
-        </h1>
-
-        {bug.spec_item_ids.length > 0 && (
-          <div className="flex items-center gap-1.5 pt-1">
-            <span className="text-xs text-[#6B6A64] font-medium">
-              Linked Spec:
-            </span>
-            {bug.spec_item_ids.map((id) => (
-              <span
-                key={id}
-                className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#F0EEE6] border border-[#E3DACC] text-[#6B6A64]"
-              >
-                {id}
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="shrink-0 flex items-center gap-2">
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleTriggerFix}
+            disabled={launchingFix}
+            className="gap-2 bg-[#D97757] hover:bg-[#C26243] text-white shadow-xs"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Autonomous AI Fix (PR)</span>
+          </Button>
+        </div>
       </div>
 
       {/* Replay Verdict Card */}
@@ -520,6 +562,18 @@ ${(bug.steps_to_reproduce || ['    // Step: ' + bug.title])
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Configure GitHub Modal */}
+      <ConfigureGithubModal
+        isOpen={isFixModalOpen}
+        onClose={() => setIsFixModalOpen(false)}
+        runId={runId}
+        bugId={bug.id}
+        defaultRepo={defaultRepo}
+        onLaunchSuccess={(fixId) => {
+          router.push(`/reports/${runId}/fix/${fixId}`);
+        }}
+      />
     </div>
   );
 }

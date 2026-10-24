@@ -61,4 +61,12 @@ export const API_ENDPOINTS = {
   ) => `${API_BASE_PREFIX}/runs/${runId}/report/export?format=${format}`,
   RUN_TESTS_EXPORT: (runId: string) =>
     `${API_BASE_PREFIX}/runs/${runId}/tests/export`,
+
+  // Fixes Pipeline
+  RUN_FIX_READINESS: (runId: string) =>
+    `${API_BASE_PREFIX}/runs/${runId}/fix-readiness`,
+  RUN_FIX_CONFIG: (runId: string) =>
+    `${API_BASE_PREFIX}/runs/${runId}/fix-config`,
+  FIXES: `${API_BASE_PREFIX}/fixes`,
+  FIX_BY_ID: (fixId: string) => `${API_BASE_PREFIX}/fixes/${fixId}`,
 } as const;

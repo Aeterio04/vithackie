@@ -33,7 +33,11 @@ import {
   Bot,
   User,
   Info,
+  Sparkles,
+  GitPullRequest,
 } from "lucide-react";
+import { fixesApi } from "@/features/fixes/api";
+import { ConfigureGithubModal } from "@/features/reports/components/ConfigureGithubModal";
 
 export function ReportView() {
   const params = useParams();
@@ -47,6 +51,31 @@ export function ReportView() {
 
   const { data: report, isLoading } = useReport(runId);
   const [isNotReproOpen, setIsNotReproOpen] = useState(false);
+
+  // Fix pipeline states
+  const [isFixModalOpen, setIsFixModalOpen] = useState(false);
+  const [targetBugId, setTargetBugId] = useState<string | undefined>(undefined);
+  const [defaultRepo, setDefaultRepo] = useState("");
+  const [launchingFix, setLaunchingFix] = useState(false);
+
+  const handleTriggerFix = async (bugId?: string) => {
+    setLaunchingFix(true);
+    setTargetBugId(bugId);
+    try {
+      const readiness = await fixesApi.checkReadiness(runId);
+      if (readiness.configured) {
+        const res = await fixesApi.createFix({ runId, bugId });
+        router.push(`/reports/${runId}/fix/${res.fixId}`);
+      } else {
+        setDefaultRepo(readiness.githubUrl || "");
+        setIsFixModalOpen(true);
+      }
+    } catch {
+      setIsFixModalOpen(true);
+    } finally {
+      setLaunchingFix(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -187,6 +216,19 @@ export function ReportView() {
             <FileCode className="w-4 h-4" />
             <span>Download Reusable Tests (.zip)</span>
           </Button>
+
+          {confirmedBugs.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleTriggerFix(confirmedBugs[0]?.id)}
+              disabled={launchingFix}
+              className="gap-1.5 border-[#D97757]/40 text-[#D97757] hover:bg-[#D97757]/10 bg-white"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Auto-Fix Top Defect (PR)</span>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -447,7 +489,17 @@ export function ReportView() {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => handleTriggerFix(b.id)}
+                        disabled={launchingFix}
+                        className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#FAF9F5] border border-[#D97757]/30 text-[#D97757] hover:bg-[#D97757] hover:text-white transition-all inline-flex items-center gap-1.5 shadow-2xs"
+                        title="Synthesize targeted fix and open an autonomous GitHub Pull Request"
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        <span>Auto-Fix (PR)</span>
+                      </button>
                       <ReplayPips
                         replays={b.replays}
                         status={b.status}
@@ -533,7 +585,17 @@ export function ReportView() {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => handleTriggerFix(b.id)}
+                        disabled={launchingFix}
+                        className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#FAF9F5] border border-[#D97757]/30 text-[#D97757] hover:bg-[#D97757] hover:text-white transition-all inline-flex items-center gap-1.5 shadow-2xs"
+                        title="Synthesize targeted fix and open an autonomous GitHub Pull Request"
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        <span>Auto-Fix (PR)</span>
+                      </button>
                       <ReplayPips
                         replays={b.replays}
                         status={b.status}
@@ -712,6 +774,18 @@ export function ReportView() {
           reference.
         </p>
       </div>
+
+      {/* Configure GitHub PAT & Repo Modal */}
+      <ConfigureGithubModal
+        isOpen={isFixModalOpen}
+        onClose={() => setIsFixModalOpen(false)}
+        runId={runId}
+        bugId={targetBugId}
+        defaultRepo={defaultRepo}
+        onLaunchSuccess={(fixId) => {
+          router.push(`/reports/${runId}/fix/${fixId}`);
+        }}
+      />
     </div>
   );
 }

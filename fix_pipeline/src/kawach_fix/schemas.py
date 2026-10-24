@@ -32,8 +32,8 @@ class FixOptions(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    verify_runs: int = Field(default=3, ge=1, le=10, description="Total replay runs to verify test defect.")
-    min_failures: int = Field(default=2, ge=1, le=10, description="Minimum failures to classify as confirmed defect.")
+    verify_runs: int = Field(default=1, ge=1, le=10, description="Total replay runs to verify test defect.")
+    min_failures: int = Field(default=1, ge=1, le=10, description="Minimum failures to classify as confirmed defect.")
     dry_run: bool = Field(default=False, description="When true, computes fix and PR payload but skips write operations.")
     draft_pr: bool = Field(default=False, description="Whether the created pull request should be in draft state.")
     max_files: int = Field(default=15, ge=1, le=50, description="Maximum files from commit to inspect.")
