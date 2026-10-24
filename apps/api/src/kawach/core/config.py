@@ -166,4 +166,16 @@ class Settings(BaseSettings):
         return self.DATABASE_URL
 
 
+import os
+
 settings = Settings()
+
+# Propagate LLM and provider keys into os.environ for fix_pipeline clients
+if settings.GROQ_API_KEY and not os.environ.get("GROQ_API_KEY"):
+    os.environ["GROQ_API_KEY"] = settings.GROQ_API_KEY
+if settings.GEMINI_API_KEY and not os.environ.get("GEMINI_API_KEY"):
+    os.environ["GEMINI_API_KEY"] = settings.GEMINI_API_KEY
+if settings.ANTHROPIC_API_KEY and not os.environ.get("ANTHROPIC_API_KEY"):
+    os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
+if settings.OPENAI_API_KEY and not os.environ.get("OPENAI_API_KEY"):
+    os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY

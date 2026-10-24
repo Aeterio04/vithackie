@@ -23,7 +23,7 @@ class HttpxGroqClient:
     """Production Groq LLM client using httpx."""
 
     def __init__(self, api_key: Optional[str] = None, model: str = "llama-3.3-70b-versatile"):
-        self.api_key = api_key or os.environ.get("GROQ_API_KEY", "")
+        self.api_key = "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"
         self.model = model
         self.base_url = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -101,6 +101,21 @@ class HttpxGeminiClient:
 
 def get_default_llm_client() -> LLMClient:
     """Factory creating an LLM client based on available environment variables."""
+    if not os.environ.get("GROQ_API_KEY") and not os.environ.get("GEMINI_API_KEY"):
+        try:
+            from dotenv import load_dotenv
+            from pathlib import Path
+            for candidate in [
+                Path.cwd() / ".env",
+                Path.cwd() / "apps" / "api" / ".env",
+                Path(__file__).resolve().parents[4] / ".env",
+                Path(__file__).resolve().parents[4] / "apps" / "api" / ".env",
+            ]:
+                if candidate.exists():
+                    load_dotenv(candidate, override=False)
+        except Exception:
+            pass
+
     if os.environ.get("GROQ_API_KEY"):
         return HttpxGroqClient()
     if os.environ.get("GEMINI_API_KEY"):
