@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useBug } from "@/lib/api/hooks";
@@ -29,7 +29,8 @@ import {
   Maximize2,
   Sparkles,
 } from "lucide-react";
-import { fixesApi } from "@/features/fixes/api";
+import { fixesApi, FixReadiness } from "@/features/fixes/api";
+import { AutoFixButton } from "@/features/fixes";
 import { ConfigureGithubModal } from "@/features/reports/components/ConfigureGithubModal";
 
 export function BugDetailView() {
@@ -47,20 +48,34 @@ export function BugDetailView() {
   const [isFixModalOpen, setIsFixModalOpen] = useState(false);
   const [defaultRepo, setDefaultRepo] = useState("");
   const [launchingFix, setLaunchingFix] = useState(false);
+  const [readiness, setReadiness] = useState<FixReadiness | null>(null);
+  const [checkingReadiness, setCheckingReadiness] = useState(true);
+
+  const refreshReadiness = async () => {
+    if (!runId) return;
+    try {
+      const res = await fixesApi.checkReadiness(runId);
+      setReadiness(res);
+      if (res.githubUrl) setDefaultRepo(res.githubUrl);
+    } catch {
+      setReadiness(null);
+    } finally {
+      setCheckingReadiness(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshReadiness();
+  }, [runId]);
 
   const handleTriggerFix = async () => {
     if (!bug) return;
     setLaunchingFix(true);
     try {
-      const readiness = await fixesApi.checkReadiness(runId);
-      if (readiness.configured) {
-        const res = await fixesApi.createFix({ runId, bugId: bug.id });
-        router.push(`/reports/${runId}/fix/${res.fixId}`);
-      } else {
-        setDefaultRepo(readiness.githubUrl || "");
-        setIsFixModalOpen(true);
-      }
+      const res = await fixesApi.createFix({ runId, bugId: bug.id });
+      router.push(`/reports/${runId}/fix/${res.fixId}`);
     } catch {
+      await refreshReadiness();
       setIsFixModalOpen(true);
     } finally {
       setLaunchingFix(false);
@@ -199,16 +214,18 @@ ${(bug.steps_to_reproduce || ['    // Step: ' + bug.title])
         </div>
 
         <div className="shrink-0 flex items-center gap-2">
-          <Button
+          <AutoFixButton
+            runId={runId}
+            bugId={bug.id}
+            bugTitle={bug.title}
+            projectId={readiness?.projectId}
+            isConfigured={Boolean(readiness?.configured)}
+            checkingReadiness={checkingReadiness}
+            launchingFix={launchingFix}
+            onLaunch={handleTriggerFix}
+            onOpenModal={() => setIsFixModalOpen(true)}
             variant="primary"
-            size="sm"
-            onClick={handleTriggerFix}
-            disabled={launchingFix}
-            className="gap-2 bg-[#D97757] hover:bg-[#C26243] text-white shadow-xs"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Autonomous AI Fix (PR)</span>
-          </Button>
+          />
         </div>
       </div>
 
@@ -571,6 +588,8 @@ ${(bug.steps_to_reproduce || ['    // Step: ' + bug.title])
         bugId={bug.id}
         defaultRepo={defaultRepo}
         onLaunchSuccess={(fixId) => {
+          setIsFixModalOpen(false);
+          refreshReadiness();
           router.push(`/reports/${runId}/fix/${fixId}`);
         }}
       />

@@ -206,7 +206,7 @@ export function ProjectSettings({ projectId }: ProjectSettingsProps) {
         </div>
 
         {/* GitHub & PAT Integration */}
-        <div className="bg-white border border-card-border rounded-2xl p-6 shadow-xs space-y-4">
+        <div id="github-integration" className="bg-white border border-card-border rounded-2xl p-6 shadow-xs space-y-4 scroll-mt-6">
           <div className="flex items-center gap-2 pb-3 border-b border-card-border">
             <GitBranch className="w-4 h-4 text-clay" />
             <h2 className="text-sm font-medium text-text-primary">GitHub Integration & PAT</h2>
