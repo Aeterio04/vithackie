@@ -33,15 +33,19 @@ def get_single_bug(
     db: Session = Depends(get_db),
 ):
     """Find a specific defect report across all runs, respecting tenant ownership."""
+    from kawach.repositories.run_repo import RunRepository
+    run_repo = RunRepository(db)
+
     # Check database first
     db_bug = db.get(DbBug, bug_id)
     if db_bug:
-        proj = db.get(DbProject, db_bug.project_id)
-        if proj and not scope.is_system and proj.owner_id != scope.user_id:
+        if not scope.is_system and not run_repo.get_run(scope, db_bug.run_id):
             raise HTTPException(status_code=404, detail="Bug not found")
         return transform_bug_to_frontend(db_bug.run_id, get_bug(db_bug.run_id, db_bug.key))
 
     for r in storage.list_runs():
+        if not scope.is_system and not run_repo.get_run(scope, r.runId):
+            continue
         b = get_bug(r.runId, bug_id)
         if b:
             return transform_bug_to_frontend(r.runId, b)

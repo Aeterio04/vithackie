@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     # 4. Storage & Persistence
     RUNS_DIR: str = "runs"
     ARTIFACTS_DIR: str = "data/artifacts"
+    STORAGE_BASE_DIR: str = "storage"
 
     # 5. Security & Network Sandboxing
     SECRET_ENCRYPTION_KEY: str = ""
@@ -108,6 +109,7 @@ class Settings(BaseSettings):
     _repo_root: Optional[Path] = None
     _runs_dir: Optional[Path] = None
     _artifacts_dir: Optional[Path] = None
+    _storage_dir: Optional[Path] = None
 
     @property
     def repo_root(self) -> Path:
@@ -140,6 +142,18 @@ class Settings(BaseSettings):
     @artifacts_dir.setter
     def artifacts_dir(self, val: Path) -> None:
         self._artifacts_dir = Path(val).resolve()
+
+    @property
+    def storage_dir(self) -> Path:
+        if self._storage_dir is not None:
+            return self._storage_dir
+        p = (self.repo_root / self.STORAGE_BASE_DIR).resolve()
+        p.mkdir(parents=True, exist_ok=True)
+        return p
+
+    @storage_dir.setter
+    def storage_dir(self, val: Path) -> None:
+        self._storage_dir = Path(val).resolve()
 
     @property
     def resolved_database_url(self) -> str:

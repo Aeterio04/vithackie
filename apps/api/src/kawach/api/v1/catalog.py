@@ -71,8 +71,12 @@ def patch_test(
 
 
 @router.post("/runs/{run_id}/catalog/test")
-def add_custom_test(run_id: str, payload: AddTestPayload):
-    """Generate and append a new test case to catalog from prompt."""
+def add_custom_test(
+    run_id: str,
+    payload: AddTestPayload,
+    _run: DbRun = Depends(get_owned_run),
+):
+    """Generate and append a new test case to catalog from prompt. Returns 404 if run not owned."""
     try:
         new_test = add_test_case(run_id, payload.prompt)
         return transform_test_to_frontend(new_test)
@@ -81,8 +85,12 @@ def add_custom_test(run_id: str, payload: AddTestPayload):
 
 
 @router.post("/runs/{run_id}/review")
-def submit_review(run_id: str, payload: ReviewSubmission):
-    """Apply QA decisions to catalog tests and auto-start execution."""
+def submit_review(
+    run_id: str,
+    payload: ReviewSubmission,
+    _run: DbRun = Depends(get_owned_run),
+):
+    """Apply QA decisions to catalog tests and auto-start execution. Returns 404 if run not owned."""
     decisions = [
         ReviewDecision(
             testId=tid,
@@ -117,6 +125,9 @@ def submit_review(run_id: str, payload: ReviewSubmission):
 
 
 @router.get("/runs/{run_id}/review-log")
-def get_review_log(run_id: str):
-    """Retrieve decision log for catalog reviews."""
+def get_review_log(
+    run_id: str,
+    _run: DbRun = Depends(get_owned_run),
+):
+    """Retrieve decision log for catalog reviews. Returns 404 if run not owned."""
     return build_review_log_frontend(run_id)

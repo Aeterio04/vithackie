@@ -63,11 +63,10 @@ def list_runs(
     run_repo = RunRepository(db)
 
     for r in all_runs:
-        # Check ownership if run is in DB
-        db_run = db.get(DbRun, r.runId)
-        if db_run and not scope.is_system:
+        # Check ownership
+        if not scope.is_system:
             if not run_repo.get_run(scope, r.runId):
-                continue  # Skip runs owned by other tenants
+                continue  # Skip runs not owned by current user
         try:
             result.append(transform_run_to_frontend(r.runId))
         except Exception:
@@ -217,8 +216,12 @@ def resume_run_endpoint(
 
 
 @router.post("/runs/{run_id}/cancel")
-def cancel_run_endpoint(run_id: str):
-    """Cancel an active run."""
+def cancel_run_endpoint(
+    run_id: str,
+    _user: User = Depends(require_scope("runs:write")),
+    _run: DbRun = Depends(get_owned_run),
+):
+    """Cancel an active run. Returns 404 if run is not owned by the caller."""
     try:
         cancel_run_service(run_id)
         return transform_run_to_frontend(run_id)
@@ -227,8 +230,12 @@ def cancel_run_endpoint(run_id: str):
 
 
 @router.post("/runs/{run_id}/retry")
-def retry_run(run_id: str):
-    """Reset run state and retry execution."""
+def retry_run(
+    run_id: str,
+    _user: User = Depends(require_scope("runs:write")),
+    _run: DbRun = Depends(get_owned_run),
+):
+    """Reset run state and retry execution. Returns 404 if run is not owned by the caller."""
     run = storage.load_model(run_id, "run.json", storage.Run)
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
@@ -237,7 +244,24 @@ def retry_run(run_id: str):
 
 
 @router.delete("/runs/{run_id}")
-def delete_run_endpoint(run_id: str):
-    """Delete run artifacts and remove from memory."""
+def delete_run_endpoint(
+    run_id: str,
+    _user: User = Depends(require_scope("runs:write")),
+    _run: DbRun = Depends(get_owned_run),
+    db: Session = Depends(get_db),
+):
+    """Delete run artifacts and remove from memory. Returns 404 if run is not owned by the caller."""
     delete_run_service(run_id)
+
+    # Clean up associated artifacts from disk and database
+    from kawach.repositories.artifact_repo import ArtifactRepository
+    from kawach.storage.file_storage import delete_artifact_file
+    art_repo = ArtifactRepository(db)
+    artifacts = art_repo.list_artifacts_for_run(Scope.system(), run_id)
+    for art in artifacts:
+        delete_artifact_file(art, db)
+
+    db.delete(_run)
+    db.commit()
     return {"ok": True, "run_id": run_id}
+

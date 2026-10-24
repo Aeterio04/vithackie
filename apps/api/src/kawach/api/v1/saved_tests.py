@@ -61,4 +61,6 @@ def delete_saved_test(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Saved test {test_id} not found in project {project_id}",
         )
+    from kawach.storage.file_storage import delete_test_artifact_files
+    delete_test_artifact_files(user_id=project.owner_id, test_id=test_id, db=db)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

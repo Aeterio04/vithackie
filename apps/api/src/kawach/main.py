@@ -29,15 +29,10 @@ async def lifespan(app: FastAPI):
     storage.RUN_LOGS_CACHE.clear()
     logger.info("Cleared run event and log caches on startup")
     
-    # Clear all persisted runs on startup for clean state
-    import shutil
-    if settings.runs_dir.exists():
-        try:
-            shutil.rmtree(settings.runs_dir)
-            settings.runs_dir.mkdir(parents=True, exist_ok=True)
-            logger.info("Cleared all persisted runs on startup")
-        except Exception as e:
-            logger.error(f"Error clearing runs directory on startup: {e}")
+    for r in storage.list_runs():
+        if r.stage in active_stages:
+            storage.fail_run(r.runId, "Server restarted while the run was in progress")
+            logger.info("Recovered stale active run %s by failing it", r.runId)
     
     yield
 
