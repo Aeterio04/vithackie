@@ -19,12 +19,41 @@ class LLMClient(Protocol):
         ...
 
 
-class HttpxGroqClient:
-    """Production Groq LLM client using httpx."""
+GROQ_CANDIDATE_MODELS = [
+    "qwen/qwen3.8-27b",
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "openai/gpt-oss-120b",
+]
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "llama-3.3-70b-versatile"):
-        self.api_key = "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"
-        self.model = model
+
+class HttpxGroqClient:
+    """Production Groq LLM client using httpx with automatic model discovery and fallback."""
+
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+        if not api_key and not os.environ.get("GROQ_API_KEY"):
+            try:
+                from dotenv import load_dotenv
+                from pathlib import Path
+                for candidate in [
+                    Path.cwd() / ".env",
+                    Path.cwd() / "apps" / "api" / ".env",
+                    Path(__file__).resolve().parents[4] / ".env",
+                    Path(__file__).resolve().parents[4] / "apps" / "api" / ".env",
+                ]:
+                    if candidate.exists():
+                        load_dotenv(candidate, override=False)
+            except Exception:
+                pass
+
+        self.api_key = api_key or os.environ.get("GROQ_API_KEY", "")
+        self.model = (
+            model
+            or os.environ.get("LLM_MODEL")
+            or os.environ.get("GROQ_MODEL")
+            or os.environ.get("GROQ_DEFAULT_MODEL")
+            or "qwen/qwen3.8-27b"
+        )
         self.base_url = "https://api.groq.com/openai/v1/chat/completions"
 
     async def generate(self, system_prompt: str, user_prompt: str, temperature: float = 0.0) -> str:
@@ -34,28 +63,40 @@ class HttpxGroqClient:
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-        }
-        payload = {
-            "model": self.model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            "temperature": temperature,
-            "response_format": {"type": "json_object"},
+            "User-Agent": "Mozilla/5.0 (KAWACH-Fix-Pipeline)",
         }
 
+        # Build list of candidate models with preferred model first
+        models_to_try = [self.model] + [m for m in GROQ_CANDIDATE_MODELS if m != self.model]
+
+        last_error = None
         async with httpx.AsyncClient(timeout=60.0) as client:
-            try:
-                res = await client.post(self.base_url, headers=headers, json=payload)
-                if res.is_error:
-                    raise LLMClientError(f"Groq API error ({res.status_code}): {res.text}")
-                data = res.json()
-                return data["choices"][0]["message"]["content"]
-            except Exception as e:
-                if isinstance(e, LLMClientError):
+            for candidate in models_to_try:
+                payload = {
+                    "model": candidate,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    "temperature": temperature,
+                    "response_format": {"type": "json_object"},
+                }
+                try:
+                    res = await client.post(self.base_url, headers=headers, json=payload)
+                    if res.status_code == 404 and "model_not_found" in res.text:
+                        last_error = f"Model '{candidate}' not accessible on this Groq key, trying fallback..."
+                        continue
+                    if res.is_error:
+                        raise LLMClientError(f"Groq API error ({res.status_code}): {res.text}")
+                    data = res.json()
+                    return data["choices"][0]["message"]["content"]
+                except LLMClientError:
                     raise
-                raise LLMClientError(f"Failed to communicate with Groq: {str(e)}")
+                except Exception as e:
+                    last_error = str(e)
+                    continue
+
+        raise LLMClientError(f"Failed to communicate with Groq: {last_error}")
 
 
 class HttpxGeminiClient:
