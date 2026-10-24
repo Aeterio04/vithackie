@@ -54,17 +54,21 @@ export interface FixSession {
     observed_error?: string;
   };
   commitContext?: {
-    summary: {
+    sha?: string;
+    author?: string;
+    message?: string;
+    summary?: {
       sha: string;
       author: string;
       message: string;
-      timestamp: string;
+      timestamp?: string;
     };
-    files: Array<{
-      filename: string;
-      status: string;
-      additions: number;
-      deletions: number;
+    files?: Array<{
+      filename?: string;
+      path?: string;
+      status?: string;
+      additions?: number;
+      deletions?: number;
       patch?: string;
     }>;
   };

@@ -423,11 +423,20 @@ test.describe('Deterministic Defect Reproduction: {title}', () => {{
                     elif node_name == "collect":
                         commit_ctx = node_update.get("commit_context")
                         if commit_ctx:
-                            session["commitContext"] = commit_ctx.model_dump()
-                            summary = commit_ctx.summary
+                            commit_dict = commit_ctx.model_dump() if hasattr(commit_ctx, "model_dump") else commit_ctx
+                            sha = getattr(commit_ctx, "sha", "") or commit_dict.get("sha", "")
+                            author = getattr(commit_ctx, "author", "") or commit_dict.get("author", "Unknown")
+                            message = getattr(commit_ctx, "message", "") or commit_dict.get("message", "")
+                            files = getattr(commit_ctx, "files", []) or commit_dict.get("files", [])
+                            commit_dict["summary"] = {
+                                "sha": sha,
+                                "author": author,
+                                "message": message,
+                            }
+                            session["commitContext"] = commit_dict
                             cls._add_log(
                                 fix_id,
-                                f"Pinned origin/main commit {summary.sha[:7]} by {summary.author}: '{summary.message}' ({len(commit_ctx.files)} files modified).",
+                                f"Pinned origin/main commit {sha[:7]} by {author}: '{message}' ({len(files)} files modified).",
                                 "success",
                             )
                             session["status"] = "analyzing"

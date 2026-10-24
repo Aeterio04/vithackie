@@ -397,24 +397,32 @@ export function FixWorkflowView() {
                 <div className="flex items-center justify-between">
                   <span className="text-[#6B6A64]">Latest SHA:</span>
                   <span className="font-semibold text-[#D97757]">
-                    {session.commitContext.summary.sha.slice(0, 7)}
+                    {(
+                      session.commitContext.sha ||
+                      session.commitContext.summary?.sha ||
+                      "Pinned"
+                    ).slice(0, 7)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[#6B6A64]">Author:</span>
                   <span className="text-[#141413] truncate max-w-[200px]">
-                    {session.commitContext.summary.author}
+                    {session.commitContext.author ||
+                      session.commitContext.summary?.author ||
+                      "GitHub Author"}
                   </span>
                 </div>
                 <div className="pt-1 border-t border-[#E3DACC]/40">
                   <span className="text-[#6B6A64] block text-[10px] uppercase">Message</span>
                   <p className="text-[#141413] line-clamp-1 italic">
-                    "{session.commitContext.summary.message}"
+                    "{session.commitContext.message ||
+                      session.commitContext.summary?.message ||
+                      "Latest commit on main"}"
                   </p>
                 </div>
               </div>
 
-              {session.commitContext.files?.length > 0 && (
+              {session.commitContext.files && session.commitContext.files.length > 0 && (
                 <div className="space-y-1">
                   <span className="text-[10px] font-semibold text-[#6B6A64] uppercase tracking-wider block">
                     Files In Commit ({session.commitContext.files.length})
@@ -425,8 +433,12 @@ export function FixWorkflowView() {
                         key={idx}
                         className="px-2 py-1 rounded bg-[#FAF9F5] border border-[#E3DACC] font-mono text-[10px] flex items-center justify-between"
                       >
-                        <span className="truncate max-w-[220px] text-[#141413]">{f.filename}</span>
-                        <span className="text-[#5E8C61]">+{f.additions}</span>
+                        <span className="truncate max-w-[220px] text-[#141413]">
+                          {f.filename || f.path || "Modified file"}
+                        </span>
+                        <span className="text-[#5E8C61]">
+                          +{f.additions ?? 1}
+                        </span>
                       </div>
                     ))}
                   </div>
