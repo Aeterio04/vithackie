@@ -7,6 +7,8 @@ import logging
 import os
 from typing import Optional, Tuple
 
+from argon2 import PasswordHasher
+from argon2.exceptions import InvalidHashError, VerificationError, VerifyMismatchError
 from cryptography.fernet import Fernet
 
 from kawach.core.config import settings
@@ -22,7 +24,7 @@ class SecretStore:
         if not raw_key:
             # For development & testing convenience, derive stable key from JWT_SECRET
             salt = b"kawach_secret_salt_2026"
-            derived = hashlib.pbkdf2_hmac("sha256", settings.JWT_SECRET.encode(), salt, 100_000)
+            derived = hashlib.pbkdf2_hmac("sha256", settings.secret_store_basis.encode(), salt, 100_000)
             self._fernet = Fernet(base64.urlsafe_b64encode(derived[:32]))
             if settings.ENV == "production":
                 logger.error("CRITICAL: SECRET_ENCRYPTION_KEY not set in production!")
@@ -32,7 +34,7 @@ class SecretStore:
             except Exception as e:
                 logger.error(f"Invalid SECRET_ENCRYPTION_KEY: {e}. Falling back to derived key.")
                 salt = b"kawach_secret_salt_2026"
-                derived = hashlib.pbkdf2_hmac("sha256", settings.JWT_SECRET.encode(), salt, 100_000)
+                derived = hashlib.pbkdf2_hmac("sha256", settings.secret_store_basis.encode(), salt, 100_000)
                 self._fernet = Fernet(base64.urlsafe_b64encode(derived[:32]))
 
     def encrypt(self, plaintext: str) -> str:
@@ -74,22 +76,39 @@ def constant_time_compare(val1: str, val2: str) -> bool:
     return hmac.compare_digest(val1.encode("utf-8"), val2.encode("utf-8"))
 
 
+_ph = PasswordHasher()  # argon2id with the library's recommended parameters
+MIN_PASSWORD_LENGTH = 8
+
+
 def hash_password(password: str) -> str:
-    """Secure password hashing using PBKDF2-HMAC-SHA256 with random salt."""
-    salt = os.urandom(16)
-    key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, 100_000)
-    return f"{salt.hex()}:{key.hex()}"
+    """Hash a password with argon2id (random salt, self-describing parameters)."""
+    return _ph.hash(password)
 
 
 def verify_password(password: str, hashed: str) -> bool:
-    """Verify password against stored salt:hash string using constant-time comparison."""
-    if not hashed or ":" not in hashed:
+    """Verify a password. Understands argon2 hashes and the legacy PBKDF2 `salt:key` format."""
+    if not hashed:
         return False
+    if hashed.startswith("$argon2"):
+        try:
+            return _ph.verify(hashed, password)
+        except (VerifyMismatchError, InvalidHashError, VerificationError):
+            return False
+    if ":" in hashed:  # legacy PBKDF2-HMAC-SHA256, kept so existing accounts can still log in
+        try:
+            salt_hex, key_hex = hashed.split(":", 1)
+            candidate = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), bytes.fromhex(salt_hex), 100_000)
+            return hmac.compare_digest(bytes.fromhex(key_hex), candidate)
+        except Exception:
+            return False
+    return False
+
+
+def password_needs_rehash(hashed: str) -> bool:
+    """True for legacy hashes or argon2 hashes with outdated parameters (upgrade on next login)."""
+    if not hashed or not hashed.startswith("$argon2"):
+        return True
     try:
-        salt_hex, key_hex = hashed.split(":", 1)
-        salt = bytes.fromhex(salt_hex)
-        expected_key = bytes.fromhex(key_hex)
-        candidate_key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, 100_000)
-        return hmac.compare_digest(expected_key, candidate_key)
+        return _ph.check_needs_rehash(hashed)
     except Exception:
-        return False
+        return True

@@ -17,6 +17,8 @@ dependencies = [
     "python-dotenv",
     "httpx",
     "python-multipart",
+    "argon2-cffi",
+    "pyjwt",
     "import-linter",
 ]
 

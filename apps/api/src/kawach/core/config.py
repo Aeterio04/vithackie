@@ -3,14 +3,24 @@
 Grouped settings management powered by pydantic-settings.
 """
 
+import logging
+import os
+import secrets
 from pathlib import Path
 from typing import List, Optional, Union
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Root of the repository is 6 directories above apps/api/src/kawach/core/config.py
 REPO_ROOT = Path(__file__).resolve().parents[5]
+
+# The historical default JWT secret. It is NOT accepted as a signing secret any more; it is kept only so the
+# credential vault can still decrypt secrets that were encrypted with the key derived from it (dev installs
+# that never set JWT_SECRET / SECRET_ENCRYPTION_KEY).
+LEGACY_DEV_SECRET = "dev-secret-change-in-production-must-be-32-chars-long"
+DEV_ENVS = ("dev", "development", "test", "testing", "local")
+_log = logging.getLogger("kawach.config")
 
 
 class Settings(BaseSettings):
@@ -35,11 +45,14 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///data/kawach.db"
 
     # 3. Authentication & Sessions
-    JWT_SECRET: str = "dev-secret-change-in-production-must-be-32-chars-long"
+    JWT_SECRET: str = ""  # required outside dev; in dev an unset value is generated and persisted
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     ALLOW_SIGNUP: bool = True
-    ALLOW_SYSTEM_USER_FALLBACK: bool = False
+    ALLOW_SYSTEM_USER_FALLBACK: bool = False  # DEPRECATED and ignored: unauthenticated requests are always 401
+    LOGIN_MAX_FAILURES: int = 5
+    LOGIN_WINDOW_SECONDS: int = 60
+    COOKIE_SECURE: Optional[bool] = None  # default: secure cookies outside dev
 
     # 4. Storage & Persistence
     RUNS_DIR: str = "runs"
@@ -106,6 +119,45 @@ class Settings(BaseSettings):
             return [p.strip() for p in val.split(",") if p.strip()]
         return val
 
+    @model_validator(mode="after")
+    def _ensure_jwt_secret(self) -> "Settings":
+        """Never sign tokens with a well-known secret. Refuse to start outside dev; generate one in dev."""
+        self._secret_was_explicit = bool(self.JWT_SECRET) and self.JWT_SECRET != LEGACY_DEV_SECRET
+        if self._secret_was_explicit:
+            if len(self.JWT_SECRET) < 32 and self.ENV.lower() not in DEV_ENVS:
+                raise ValueError("JWT_SECRET must be at least 32 characters outside dev.")
+            return self
+        if self.ENV.lower() not in DEV_ENVS:
+            raise ValueError("JWT_SECRET is required when ENV is not a dev environment. "
+                             "Generate one with: python -c \"import secrets; print(secrets.token_urlsafe(48))\"")
+        # dev: persist a generated secret so tokens survive restarts (file is under the git-ignored data/ dir)
+        path = REPO_ROOT / "data" / ".jwt_secret"
+        try:
+            if path.exists() and len(path.read_text().strip()) >= 32:
+                self.JWT_SECRET = path.read_text().strip()
+            else:
+                self.JWT_SECRET = secrets.token_urlsafe(48)
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(self.JWT_SECRET)
+                try:
+                    os.chmod(path, 0o600)
+                except OSError:
+                    pass
+        except OSError:
+            self.JWT_SECRET = secrets.token_urlsafe(48)
+        _log.warning("JWT_SECRET is not set; using a generated development secret (set JWT_SECRET in .env for stable deployments).")
+        return self
+
+    @property
+    def secret_store_basis(self) -> str:
+        """Key material for the credential vault when SECRET_ENCRYPTION_KEY is unset (keeps old secrets readable)."""
+        return self.JWT_SECRET if self._secret_was_explicit else LEGACY_DEV_SECRET
+
+    @property
+    def cookie_secure(self) -> bool:
+        return self.COOKIE_SECURE if self.COOKIE_SECURE is not None else self.ENV.lower() not in DEV_ENVS
+
+    _secret_was_explicit: bool = False
     _repo_root: Optional[Path] = None
     _runs_dir: Optional[Path] = None
     _artifacts_dir: Optional[Path] = None

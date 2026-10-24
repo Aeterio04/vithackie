@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 from kawach.api.deps import get_db, get_owned_project, require_scope
 from kawach.db.models.identity import User
 from kawach.db.models.project import Project
+from kawach.repositories.base import Scope
+from kawach.repositories.run_repo import RunRepository
 from kawach.schemas.saved_tests import SavedTestCreate, SavedTestRead
 from kawach.services.saved_test_service import SavedTestService
 
@@ -38,6 +40,8 @@ def save_test(
     db: Session = Depends(get_db),
 ):
     """Save an executed test case to the project's regression library."""
+    if not RunRepository(db).get_run(Scope.user(user.id), payload.run_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Run not found")
     svc = SavedTestService(db)
     try:
         return svc.save_test(project_id=project_id, payload=payload, user_id=user.id)

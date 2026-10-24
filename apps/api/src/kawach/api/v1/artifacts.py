@@ -199,10 +199,9 @@ def get_file_by_path(
     if clean_rel.startswith("storage/"):
         clean_rel = clean_rel[len("storage/"):]
     parts = clean_rel.split("/")
-    if len(parts) >= 2 and parts[0] == "users":
-        path_user_id = parts[1]
-        if current_user.email != "system@kawach.local" and path_user_id != current_user.id:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
+    # Only the caller's own folder is reachable; anything else (other users, shared roots) is a 404.
+    if len(parts) < 2 or parts[0] != "users" or parts[1] != current_user.id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
 
     ext = target_file.suffix.lower()
     media_map = {

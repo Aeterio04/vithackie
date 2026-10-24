@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "kawach": {
+      "command": "D:/Soham/Vit Hackathon/vithackie/mcp_server/.venv/Scripts/python.exe",
+      "args": [
+        "-m",
+        "kawach_mcp"
+      ],
+      "env": {
+        "KAWACH_BASE_URL": "http://localhost:8000",
+        "KAWACH_EMAIL": "soham0809@gmail.com",
+        "KAWACH_PASSWORD": "soham0809",
+        "KAWACH_DOWNLOAD_DIR": "D:/Soham/Vit Hackathon/vithackie/mcp_server/kawach_downloads"
+      }
+    }
+  }
+}

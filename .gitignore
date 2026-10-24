@@ -70,3 +70,7 @@ yarn-error.log*
 next-env.d.ts
 .import_linter_cache/
 
+
+# UI verification screenshots
+kawach_ui_screenshots/
+mcp_server/kawach_downloads/

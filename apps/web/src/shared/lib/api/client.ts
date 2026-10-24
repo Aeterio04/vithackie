@@ -80,19 +80,21 @@ export async function apiClient<TResponse = unknown>(
 
     clearTimeout(timeoutId);
 
-    // Handle 401 Unauthorized
-    if (res.status === 401) {
+    // A 401 from login/register means "wrong credentials", not "session expired": fall through so the form can
+    // show the backend's own message ("Invalid email or password").
+    const isAuthAttempt = /\/auth\/(login|register|refresh)(\?|$)/.test(endpoint);
+    if (res.status === 401 && !isAuthAttempt) {
       if (typeof window !== "undefined") {
         const currentPath = window.location.pathname;
-        if (!currentPath.startsWith("/login")) {
+        if (!currentPath.startsWith("/login") && !currentPath.startsWith("/register")) {
           const returnUrl = encodeURIComponent(
             window.location.pathname + window.location.search
           );
-          window.location.href = `/login?returnUrl=${returnUrl}`;
+          window.location.href = `/login?reason=expired&returnUrl=${returnUrl}`;
         }
       }
       throw new ApiError({
-        message: "Session expired or unauthorized. Please log in.",
+        message: "Your session has expired. Please sign in again.",
         code: "UNAUTHORIZED",
         status: 401,
       });
@@ -140,7 +142,8 @@ export async function apiClient<TResponse = unknown>(
         res.headers.get("x-request-id") ||
         undefined;
 
-      if (typeof window !== "undefined") {
+      // Login/register failures are shown inline by their forms; do not also raise a global error toast.
+      if (typeof window !== "undefined" && !isAuthAttempt) {
         window.dispatchEvent(
           new CustomEvent("kawach:api-error", {
             detail: {
@@ -227,7 +230,7 @@ export function uploadWithProgress<TResponse = unknown>(params: {
       const status = xhr.status;
       if (status === 401) {
         if (typeof window !== "undefined") {
-          window.location.href = `/login?returnUrl=${encodeURIComponent(
+          window.location.href = `/login?reason=expired&returnUrl=${encodeURIComponent(
             window.location.pathname
           )}`;
         }

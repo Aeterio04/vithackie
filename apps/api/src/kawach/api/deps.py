@@ -38,9 +38,11 @@ bearer_scheme = HTTPBearer(auto_error=False)
 def get_token_from_request(
     request: Request,
     auth_header: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
-    query_token: Optional[str] = Query(None, alias="token"),
 ) -> Optional[str]:
-    """Extract bearer or cookie token from HTTP request or SSE query param."""
+    """Extract the token from `Authorization: Bearer` or the httpOnly session cookie.
+
+    A `?token=` query parameter is deliberately NOT accepted: URLs end up in logs and browser history.
+    Browsers' EventSource sends the cookie, and non-browser clients can set the Bearer header."""
     if auth_header and auth_header.credentials:
         return auth_header.credentials
 
@@ -49,10 +51,6 @@ def get_token_from_request(
         val = request.cookies.get(cookie_name)
         if val:
             return val
-
-    # SSE EventSource browser fallback query parameter
-    if query_token:
-        return query_token
 
     return None
 
@@ -90,7 +88,7 @@ def get_current_user(
     token: Optional[str] = Depends(get_token_from_request),
     db: Session = Depends(get_db),
 ) -> User:
-    """Resolve current user from token, falling back to system demo user if unauthenticated."""
+    """Resolve the authenticated user from a Bearer token or session cookie; 401 otherwise."""
     auth_service = AuthService(db)
 
     if token:
@@ -140,33 +138,12 @@ def get_current_user(
         )
         return user
 
-    # Gated fallback to system demo user: default OFF; ON only when ALLOW_SYSTEM_USER_FALLBACK is True and ENV=dev
-    is_dev = settings.ENV.lower() in ("dev", "development")
-    if not (settings.ALLOW_SYSTEM_USER_FALLBACK and is_dev):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication required",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    # Fallback to system demo user for local test suite and unauthenticated CLI requests
-    system_user = db.scalar(select(User).where(User.email == "system@kawach.local"))
-    if not system_user:
-        user_repo = UserRepository(db)
-        system_user = user_repo.create_user(
-            email="system@kawach.local",
-            password_hash="system_demo_hash",
-            display_name="KAWACH System",
-        )
-
-    request.state.auth_context = AuthContext(
-        user=system_user,
-        client_type="web",
-        scopes={"*", *ALL_SCOPES},
-        is_session=True,
-        token_id=None,
+    # No credentials: never fall back to a shared/default account.
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Authentication required",
+        headers={"WWW-Authenticate": "Bearer"},
     )
-    return system_user
 
 
 def get_current_user_required(
@@ -259,8 +236,9 @@ def get_user_scope(
     current_user: User = Depends(get_current_user),
 ) -> Scope:
     """Generate multi-tenant repository Scope from current authenticated user."""
-    is_system = (current_user.email == "system@kawach.local")
-    return Scope(user_id=current_user.id, is_system=is_system)
+    # Request scopes are ALWAYS per-user. Cross-tenant "system" scope exists only for internal background code
+    # (Scope.system()) and can never be obtained through an email address or a token.
+    return Scope(user_id=current_user.id, is_system=False)
 
 
 def get_owned_project(
@@ -293,37 +271,8 @@ def get_owned_run(
     if run:
         return run
 
-    # If run is in database but owned by someone else, return 404
-    foreign_run = db.get(Run, run_id)
-    if foreign_run:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Run not found")
-
-    # If run is a legacy flat-file run not yet in DB, allow access
-    from kawach.storage import artifacts as storage
-    rdir = storage.run_dir(run_id)
-    if (rdir / "run.json").exists():
-        if scope.is_system:
-            return Run(id=run_id, project_id="legacy-demo", created_by="system")
-        if scope.user_id:
-            from kawach.repositories.project_repo import ProjectRepository
-            proj_repo = ProjectRepository(db)
-            user_projects = proj_repo.list_projects(scope)
-            if user_projects:
-                proj = user_projects[0]
-            else:
-                proj = proj_repo.create_project(
-                    scope=scope,
-                    name="Default Project",
-                    target_url="http://localhost:3000",
-                )
-            new_db_run = repo.create_run(
-                scope=scope,
-                run_id=run_id,
-                project_id=proj.id,
-            )
-            db.commit()
-            return new_db_run
-
+    # Not owned by this user (foreign, unknown, or an unclaimed pre-accounts run): 404, never auto-claimed.
+    # Unclaimed legacy runs are assigned to a real account with scripts/claim_legacy_data.py.
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Run not found")
 
 

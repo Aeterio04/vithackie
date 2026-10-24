@@ -1,9 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+/**
+ * Route guard (Next 16 "proxy", formerly middleware). It only checks that a session cookie is PRESENT so signed-out
+ * visitors are sent to /login quickly; the backend is what actually validates the JWT, and any 401 from the API
+ * sends the user back to /login with a "session expired" notice. There is no bypass: no mock or demo mode.
+ */
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Public paths that do not require auth check
   const isPublicPath =
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
@@ -12,33 +16,25 @@ export function middleware(request: NextRequest) {
     pathname.includes(".") || // static assets e.g. favicon.ico
     pathname === "/favicon.ico";
 
-
   if (isPublicPath) {
     return NextResponse.next();
   }
 
-  // Check for common auth cookies set by backend session
+  // httpOnly cookies set by the backend on login/register
   const sessionCookie =
-    request.cookies.get("session") ||
-    request.cookies.get("access_token") ||
     request.cookies.get("auth_token") ||
+    request.cookies.get("access_token") ||
     request.cookies.get("token") ||
+    request.cookies.get("session") ||
     request.cookies.get("kawach_session");
 
-  // Allow bypass in dev mock mode if configured
-  const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === "true";
-
-  // Redirect root path to /projects
-  if (pathname === "/") {
-    if (!sessionCookie && !useMocks) {
-      return NextResponse.redirect(new URL("/login?returnUrl=%2Fprojects", request.url));
-    }
-    return NextResponse.redirect(new URL("/projects", request.url));
+  if (!sessionCookie) {
+    const returnUrl = pathname === "/" ? "/projects" : pathname + request.nextUrl.search;
+    return NextResponse.redirect(new URL(`/login?returnUrl=${encodeURIComponent(returnUrl)}`, request.url));
   }
 
-  if (!sessionCookie && !useMocks) {
-    const returnUrl = encodeURIComponent(pathname + request.nextUrl.search);
-    return NextResponse.redirect(new URL(`/login?returnUrl=${returnUrl}`, request.url));
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/projects", request.url));
   }
 
   return NextResponse.next();

@@ -1,7 +1,13 @@
 """Health and system statistics endpoints."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
+from kawach.api.deps import get_current_user
+from kawach.db.models.identity import User
+from kawach.db.session import get_db
+from kawach.repositories.base import Scope
+from kawach.repositories.run_repo import RunRepository
 from kawach.schemas import BugsFile
 from kawach.storage import artifacts as storage
 
@@ -21,9 +27,10 @@ def get_health():
 
 
 @router.get("/stats")
-def get_stats():
-    """Aggregate statistics across all stored runs."""
-    runs = storage.list_runs()
+def get_stats(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Aggregate statistics across the caller's own runs."""
+    owned = {r.id for r in RunRepository(db).list_runs(Scope.user(user.id))}
+    runs = [r for r in storage.list_runs() if r.runId in owned]
     confirmed_bugs = 0
     flaky_bugs = 0
     pending_reviews = 0
