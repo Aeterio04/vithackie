@@ -209,15 +209,18 @@ export function CatalogView() {
         test_ids: selectedTestIds,
         decision: "approved",
         reason: "Bulk approved from catalog",
+        // the hand-picked tests are exactly what should run; do not filter them by a priority tier
+        ...(alignment ? { priority_tier: "all" as const } : {}),
       },
       {
         onSuccess: () => {
           toast({
             type: "success",
             title: "Tests approved",
-            message: `${selectedTestIds.length} tests approved`,
+            message: `${selectedTestIds.length} tests approved. Execution starting.`,
           });
           setSelectedTestIds([]);
+          router.push(`/execution/${runId}`);
         },
       }
     );
