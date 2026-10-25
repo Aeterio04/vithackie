@@ -51,36 +51,19 @@ def get_config_defaults():
 
 @router.post("/targets/check")
 def check_target(payload: TargetCheckPayload, _user: User = Depends(get_current_user)):
-    """Check target reachability and domain authorization against ALLOWED_HOSTS."""
-    url = payload.target_url.strip()
-    parsed = urllib.parse.urlparse(url)
-    if not (parsed.scheme in ("http", "https") and parsed.netloc):
-        return {
-            "reachable": False,
-            "allowed": False,
-            "reason": "Invalid URL scheme. Must include http:// or https://",
-            "tls_valid": None,
-            "status_code": None,
-        }
+    """Check target reachability and domain authorization against SSRF policy and shared target fetch rules."""
+    from kawach.core.target_fetch import check_target_reachability
 
-    host = parsed.hostname or ""
-    allowed = host in settings.ALLOWED_HOSTS or host in ("localhost", "127.0.0.1", "0.0.0.0")
-
-    if not allowed:
-        return {
-            "reachable": True,
-            "allowed": False,
-            "reason": f"Host '{host}' is not in ALLOWED_HOSTS. Only authorized staging/local domains are permitted.",
-            "tls_valid": parsed.scheme == "https",
-            "status_code": 403,
-        }
-
+    res = check_target_reachability(payload.target_url)
     return {
-        "reachable": True,
-        "allowed": True,
-        "reason": None,
-        "tls_valid": parsed.scheme == "https",
-        "status_code": 200,
+        "reachable": res.reachable,
+        "allowed": res.allowed,
+        "reason": res.reason,
+        "tls_valid": res.tls_valid,
+        "status_code": res.status_code,
+        "final_url": res.final_url,
+        "server": res.server,
+        "origin": res.origin,
     }
 
 
@@ -109,8 +92,9 @@ async def upload_spec(
             raw_content = spec_path.read_text(encoding="utf-8")
             filename = "default_spec.md"
 
-    items = re.findall(r"^S\d+:", raw_content, re.MULTILINE)
-    item_count = len(items) if items else 1
+    from kawach.services.spec_parser import parse_spec_raw
+    parsed_items = parse_spec_raw(raw_content)
+    item_count = len(parsed_items) if parsed_items else 1
 
     spec_id = f"spec_{uuid.uuid4().hex[:8]}"
     UPLOADED_SPECS[spec_id] = {

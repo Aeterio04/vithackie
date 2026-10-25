@@ -13,7 +13,7 @@ import time
 from typing import List, Optional
 import urllib.parse
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict
 
@@ -75,10 +75,20 @@ def _owned_run_ids(db: Session, user: User) -> set:
 def _attach_run_to_user(db: Session, user: User, run_id: str, target_url: str, mode: str) -> None:
     scope = Scope.user(user.id)
     projects = ProjectRepository(db)
-    project = next((p for p in projects.list_projects(scope) if p.target_url == target_url), None)
+    norm_target = ProjectRepository.normalize_url(target_url)
+    project = next(
+        (p for p in projects.list_projects(scope, include_archived=True)
+         if ProjectRepository.normalize_url(p.target_url) == norm_target),
+        None,
+    )
     if project is None:
-        host = urllib.parse.urlparse(target_url).hostname or "Target"
+        parsed = urllib.parse.urlparse(target_url)
+        port_str = f":{parsed.port}" if parsed.port else ""
+        host = f"{parsed.hostname or 'Target'}{port_str}"
         project = projects.create_project(scope=scope, name=f"{host} App", target_url=target_url, default_mode=mode)
+    elif project.archived_at is not None:
+        project.archived_at = None
+        db.flush()
     RunRepository(db).create_run(scope=scope, run_id=run_id, project_id=project.id, mode=mode)
     db.commit()
 
@@ -202,14 +212,21 @@ def start_run(
     errors: List[dict] = []
 
     # 1. Target URL validation
-    raw_url = payload.targetUrl or payload.target_url or ""
+    raw_url = (payload.targetUrl or payload.target_url or "").strip()
+    if raw_url and not raw_url.startswith("http://") and not raw_url.startswith("https://"):
+        if raw_url.startswith("localhost") or raw_url.startswith("127.0.0.1"):
+            raw_url = f"http://{raw_url}"
+        else:
+            raw_url = f"https://{raw_url}"
+
     parsed_url = urllib.parse.urlparse(raw_url)
     if not (parsed_url.scheme in ("http", "https") and parsed_url.netloc):
         errors.append({"field": "targetUrl", "message": "Invalid URL scheme or missing host"})
     else:
-        host = parsed_url.hostname or ""
-        allowed = getattr(settings, "allowed_hosts", getattr(settings, "ALLOWED_HOSTS", ["localhost", "127.0.0.1"]))
-        if host not in allowed:
+        host = (parsed_url.hostname or "").lower()
+        allowed = getattr(settings, "allowed_hosts", getattr(settings, "ALLOWED_HOSTS", ["*"]))
+        is_allowed = "*" in allowed or host in allowed or host in ("localhost", "127.0.0.1", "0.0.0.0")
+        if not is_allowed:
             errors.append(
                 {
                     "field": "targetUrl",
@@ -381,6 +398,14 @@ def update_catalog(run_id: str, payload: UpdateCatalogRequest, _run: DbRun = Dep
     return updated_cat
 
 
+@router.get("/runs/{run_id}/tests")
+def get_legacy_tests(run_id: str, _run: DbRun = Depends(get_owned_run)):
+    """Retrieve list of executed tests with statuses (legacy route)."""
+    from kawach.api.v1.mappers import build_execution_state
+    state = build_execution_state(run_id)
+    return state["tests"]
+
+
 @router.post("/runs/{run_id}/tests")
 def add_test(run_id: str, payload: AddTestRequest, _run: DbRun = Depends(get_owned_run)) -> TestCase:
     """Generate and append a new test case to the catalog from prompt."""
@@ -466,8 +491,8 @@ def get_report(run_id: str, _run: DbRun = Depends(get_owned_run)) -> str:
 
 
 @router.get("/runs/{run_id}/files/{path:path}")
-def get_run_file(run_id: str, path: str, _run: DbRun = Depends(get_owned_run)):
-    """Retrieve an artifact file from the run directory."""
+def get_run_file(run_id: str, path: str, request: Request, _run: DbRun = Depends(get_owned_run)):
+    """Retrieve an artifact file from the run directory with HTTP range support."""
     rdir = storage.run_dir(run_id).resolve()
     target_file = (rdir / path).resolve()
 
@@ -486,13 +511,15 @@ def get_run_file(run_id: str, path: str, _run: DbRun = Depends(get_owned_run)):
     media_map = {
         ".png": "image/png",
         ".webm": "video/webm",
+        ".mp4": "video/mp4",
         ".zip": "application/zip",
         ".json": "application/json",
         ".ts": "text/plain",
         ".md": "text/markdown",
     }
     media_type = media_map.get(ext, "application/octet-stream")
-    return FileResponse(target_file, media_type=media_type)
+    headers = {"Accept-Ranges": "bytes"}
+    return FileResponse(target_file, media_type=media_type, headers=headers)
 
 
 @router.get("/runs/{run_id}/export")

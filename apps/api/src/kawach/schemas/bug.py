@@ -1,6 +1,6 @@
 """Pydantic schemas for bugs and bug triage evidence."""
 
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from kawach.domain.enums import Category, Severity
@@ -45,6 +45,7 @@ class Bug(BaseModel):
     failingPath: List[str] = Field(default_factory=list)
     checkpoint: Optional[str] = None
     reproductionScript: Optional[str] = None
+    provenance: Optional[Dict[str, Any]] = None
 
 
 class BugsFile(BaseModel):

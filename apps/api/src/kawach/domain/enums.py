@@ -13,13 +13,27 @@ Stage = Literal[
     "verifying",
     "reporting",
     "done",
+    "done_with_environment_issue",
+    "script_generation_failed",
     "failed",
     "cancelled",
 ]
 
 Mode = Literal["manual", "autonomous"]
 
-Outcome = Literal["passed", "assertion_failure", "test_error"]
+Outcome = Literal[
+    "passed",
+    "passed_with_issues",
+    "failed",
+    "assertion_failure",
+    "test_error",
+    "script_error",
+    "setup_error",
+    "environment_error",
+    "flaky",
+    "inconclusive",
+    "not_run",
+]
 
 Category = Literal[
     "validation",
@@ -50,6 +64,7 @@ STAGES_ORDER: List[Stage] = [
     "verifying",
     "reporting",
     "done",
+    "done_with_environment_issue",
     "failed",
     "cancelled",
 ]

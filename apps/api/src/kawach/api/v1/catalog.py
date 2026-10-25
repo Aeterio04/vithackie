@@ -35,6 +35,7 @@ class ReviewSubmission(BaseModel):
     test_ids: List[str]
     decision: str  # "approved" | "rejected"
     reason: Optional[str] = ""
+    priority_tier: Optional[str] = None  # "P0" | "P0+P1" | "all" | "smoke"
 
 
 @router.get("/runs/{run_id}/catalog")
@@ -109,18 +110,25 @@ def submit_review(
     approved_count = sum(1 for t in cat.tests if getattr(t, "status", "") == "approved") if cat else 0
 
     run = storage.get_run(run_id)
-    
-    # Auto-start execution after approval
-    if approved_count > 0:
+
+    # Start execution once every test has a decision. Non-blocking, idempotent (a repeated review
+    # submission while a run is already executing is ignored by resume_run).
+    started = False
+    if approved_count > 0 and remaining_pending == 0:
+        from kawach.services.run_service import SpecAlignmentError, resume_run
         try:
-            from kawach.workflows import run_execute
-            run_execute(run_id)
-        except Exception as e:
-            pass  # Execution queued in background
+            resume_run(run_id, tier=payload.priority_tier)
+            started = True
+        except SpecAlignmentError as e:
+            raise HTTPException(status_code=409, detail=f"Cannot start execution: {e}")
+        except ValueError as e:
+            raise HTTPException(status_code=422, detail=str(e))
+        run = storage.get_run(run_id)
 
     return {
         "applied_count": len(payload.test_ids),
         "run_status": map_stage_to_status(run.stage),
+        "execution_started": started,
     }
 
 

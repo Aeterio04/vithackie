@@ -11,6 +11,7 @@ import {
   useUpdateCatalogTest,
 } from "@/lib/api/hooks";
 import { useRunStream } from "@/hooks/useRunStream";
+import { useAlignment, AlignmentBanner } from "@/features/catalog/components/AlignmentBanner";
 import { useUiStore } from "@/lib/store/uiStore";
 import { useToast } from "@/components/ui/Toast";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
@@ -67,6 +68,7 @@ export function CatalogView() {
 
   const { data: run, isLoading: isRunLoading } = useRun(runId);
   const { data: catalog, isLoading: isCatalogLoading } = useCatalog(runId);
+  const { data: alignment } = useAlignment(runId);
   const { data: appMap, isLoading: isAppMapLoading } = useAppMap(runId);
   const { data: reviewLog, isLoading: isReviewLogLoading } = useReviewLog(runId);
 
@@ -87,6 +89,8 @@ export function CatalogView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  // spec-driven runs: first run on a new spec defaults to P0 only
+  const [tier, setTier] = useState<"P0" | "P0+P1" | "all" | "smoke">("P0");
   const [selectedTestIds, setSelectedTestIds] = useState<string[]>([]);
   const [editingTest, setEditingTest] = useState<CatalogTest | null>(null);
 
@@ -238,6 +242,7 @@ export function CatalogView() {
         test_ids: allPending,
         decision: "approved",
         reason: "All pending tests approved. Advancing to execution.",
+        ...(alignment ? { priority_tier: tier } : {}),
       },
       {
         onSuccess: () => {
@@ -320,6 +325,8 @@ export function CatalogView() {
           </Button>
         </div>
       </div>
+
+      {alignment && <AlignmentBanner alignment={alignment} />}
 
       {/* When run is still exploring or planning, show live progress card instead of empty catalog */}
       {isExploringOrPlanning ? (
@@ -634,10 +641,25 @@ export function CatalogView() {
               Approve selected ({selectedTestIds.length})
             </Button>
 
+            {alignment && (
+              <select
+                aria-label="Run only priority"
+                value={tier}
+                onChange={(e) => setTier(e.target.value as typeof tier)}
+                className="h-8 rounded-md border border-[#E3DACC] bg-white px-2 text-xs"
+              >
+                <option value="P0">P0 only (first run)</option>
+                <option value="P0+P1">P0 + P1</option>
+                <option value="all">All priorities</option>
+                <option value="smoke">Smoke (1 P0 per area)</option>
+              </select>
+            )}
+
             <Button
               variant="primary"
               size="sm"
-              disabled={isReviewPending}
+              disabled={isReviewPending || (alignment ? !alignment.canStartExecution : false)}
+              title={alignment && !alignment.canStartExecution ? alignment.blockReason ?? "Catalog does not match the spec" : undefined}
               onClick={handleApproveAllAndRun}
               className="gap-1.5"
             >

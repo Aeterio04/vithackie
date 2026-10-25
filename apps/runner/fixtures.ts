@@ -3,6 +3,9 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 export { expect };
+import { inspectPageForError } from './qa_helpers';
+export * from './qa_helpers';
+
 
 export const credentials = {
   username: process.env.TEST_USERNAME ?? '',
@@ -36,7 +39,7 @@ export const test = base.extend<{ evidence: void }>({
       const visitedUrls: string[] = [];
 
       // Parse allowed hosts
-      const allowedHostsRaw = process.env.ALLOWED_HOSTS ?? 'localhost,127.0.0.1';
+      const allowedHostsRaw = process.env.ALLOWED_HOSTS ?? '*';
       const allowedHosts = new Set(
         allowedHostsRaw.split(',').map((h) => h.trim().toLowerCase()).filter(Boolean)
       );
@@ -65,18 +68,24 @@ export const test = base.extend<{ evidence: void }>({
         const protocol = reqUrl.protocol;
         const hostname = reqUrl.hostname.toLowerCase();
 
-        // Allowed protocols or allowed hostnames
+        // Allowed protocols, allowed hostnames, or subresources (stylesheets, scripts, fonts, images)
+        const isNavigation = req.isNavigationRequest();
+        const resourceType = req.resourceType();
+        const isSafeSubresource = ['stylesheet', 'script', 'image', 'font', 'media', 'fetch', 'xhr'].includes(resourceType);
+
         if (
+          allowedHosts.has('*') ||
           protocol === 'data:' ||
           protocol === 'blob:' ||
           protocol === 'about:' ||
-          allowedHosts.has(hostname)
+          allowedHosts.has(hostname) ||
+          (!isNavigation && isSafeSubresource)
         ) {
           await route.continue();
           return;
         }
 
-        // Abort off-domain requests
+        // Abort off-domain top-level navigation requests
         await route.abort('blockedbyclient');
 
         // Log to BLOCKED_LOG if set
@@ -101,30 +110,34 @@ export const test = base.extend<{ evidence: void }>({
         }
       });
 
+      const testStart = Date.now();
+
       // Page listener setup for multi-page support
       const setupPageListeners = (p: typeof page) => {
         p.on('console', (msg) => {
           if (msg.type() === 'error') {
-            consoleErrors.push(msg.text());
+            const relMs = Date.now() - testStart;
+            consoleErrors.push(`[+${relMs}ms] ${msg.text()}`);
           }
         });
 
         p.on('pageerror', (err) => {
-          consoleErrors.push(`Uncaught: ${err.message || String(err)}`);
+          const relMs = Date.now() - testStart;
+          consoleErrors.push(`[+${relMs}ms] Uncaught: ${err.message || String(err)}`);
         });
 
         p.on('requestfailed', (req) => {
           const failureText = req.failure()?.errorText || 'Unknown failure';
-          // Skip if aborted by our client allowlist
           if (
             failureText.includes('ERR_BLOCKED_BY_CLIENT') ||
             failureText.includes('blockedbyclient')
           ) {
             return;
           }
+          const relMs = Date.now() - testStart;
           failedRequests.push({
             url: req.url(),
-            failure: failureText,
+            failure: `[+${relMs}ms] ${failureText}`,
           });
         });
 
@@ -133,15 +146,26 @@ export const test = base.extend<{ evidence: void }>({
             const resUrl = res.url();
             if (resUrl.includes('/favicon.ico')) return;
             if (res.status() >= 400) {
+              const relMs = Date.now() - testStart;
               badResponses.push({
                 url: resUrl,
                 status: res.status(),
                 method: res.request().method(),
-              });
+                rel_time_ms: relMs,
+              } as any);
             }
           } catch {
             // response might be disposed
           }
+        });
+
+        p.on('dialog', async (dialog) => {
+          const msg = dialog.message();
+          consoleErrors.push(`[+${Date.now() - testStart}ms] Dialog (${dialog.type()}): ${msg}`);
+          try {
+            await p.evaluate((m) => { (window as any).__lastDialogMessage = m; }, msg).catch(() => {});
+            await dialog.accept().catch(() => {});
+          } catch {}
         });
 
         const liveDir = process.env.LIVE_DIR;
@@ -196,11 +220,62 @@ export const test = base.extend<{ evidence: void }>({
       }
 
       try {
+        // Visual indicator for video evidence: pointer cursor dot and click ripple overlay
+        await context.addInitScript(() => {
+          if (typeof window === 'undefined' || window !== window.top) return;
+          const initOverlay = () => {
+            if (document.getElementById('__kawach_cursor')) return;
+            const cursor = document.createElement('div');
+            cursor.id = '__kawach_cursor';
+            cursor.style.cssText =
+              'position:fixed;width:18px;height:18px;border-radius:50%;background:rgba(239,68,68,0.7);border:2px solid #ffffff;pointer-events:none;z-index:999999999;transform:translate(-50%,-50%);box-shadow:0 0 6px rgba(0,0,0,0.5);display:none;';
+            document.documentElement.appendChild(cursor);
+
+            window.addEventListener(
+              'mousemove',
+              (e) => {
+                cursor.style.display = 'block';
+                cursor.style.left = `${e.clientX}px`;
+                cursor.style.top = `${e.clientY}px`;
+              },
+              { passive: true }
+            );
+
+            window.addEventListener(
+              'click',
+              (e) => {
+                const ripple = document.createElement('div');
+                ripple.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:12px;height:12px;border-radius:50%;background:rgba(239,68,68,0.85);pointer-events:none;z-index:999999998;transform:translate(-50%,-50%) scale(1);transition:transform 0.35s ease-out, opacity 0.35s ease-out;box-shadow:0 0 10px rgba(239,68,68,0.9);`;
+                document.documentElement.appendChild(ripple);
+                requestAnimationFrame(() => {
+                  ripple.style.transform = 'translate(-50%,-50%) scale(4)';
+                  ripple.style.opacity = '0';
+                });
+                setTimeout(() => ripple.remove(), 400);
+              },
+              { passive: true }
+            );
+          };
+          if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', initOverlay);
+          } else {
+            initOverlay();
+          }
+        }).catch(() => {});
+
         // Ensure shared test data / state reset between workers
         await context.clearCookies().catch(() => {});
         await context.clearPermissions().catch(() => {});
+        try {
+          await page.evaluate(() => {
+            try { localStorage.clear(); } catch {}
+            try { sessionStorage.clear(); } catch {}
+          }).catch(() => {});
+        } catch {}
         await use();
       } finally {
+        // Phase 2 settle delay: allow final state / toasts to be recorded in video
+        await page.waitForTimeout(1000).catch(() => {});
         if (liveDir && testId) {
           try {
             if (!fs.existsSync(liveDir)) {
@@ -256,6 +331,19 @@ export const test = base.extend<{ evidence: void }>({
           body: Buffer.from(JSON.stringify(networkPayload, null, 2), 'utf-8'),
           contentType: 'application/json',
         });
+
+        // Second-opinion control check: if test failed, inspect whether the page actually contains error feedback
+        if (testInfo.status !== 'passed') {
+          try {
+            const controlCheck = await inspectPageForError(page);
+            await testInfo.attach('control_check.json', {
+              body: Buffer.from(JSON.stringify(controlCheck, null, 2), 'utf-8'),
+              contentType: 'application/json',
+            });
+          } catch {
+            // ignore inspection error
+          }
+        }
 
         // Write VISITED_DIR/<testId>.json if VISITED_DIR is set and testId is present
         const visitedDir = process.env.VISITED_DIR;

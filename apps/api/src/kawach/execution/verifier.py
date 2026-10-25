@@ -1,13 +1,15 @@
 """Bug verification module that performs 3 deterministic replays per candidate."""
 
+import base64
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+import json
 import os
 from pathlib import Path
 import re
 import shutil
 import threading
-from typing import List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 import uuid
 
 from kawach.core.config import settings
@@ -21,7 +23,13 @@ from kawach.schemas import (
     Verification,
     VerificationAttempt,
 )
-from kawach.execution.runner import clean_error_message, is_assertion_failure, parse_report, run_playwright
+from kawach.execution.runner import (
+    clean_error_message,
+    is_assertion_failure,
+    parse_report,
+    post_process_video,
+    run_playwright,
+)
 from kawach.execution.triage import signature
 from kawach.storage import artifacts as storage
 from kawach.storage.secrets import write_secret_password
@@ -271,6 +279,14 @@ def verify_bug(run_id: str, bug_id: str) -> Verification:
         err_msg: Optional[str] = None
         duration_ms = int(raw_run.duration_s * 1000)
 
+        trial_dir = r_dir / "verification" / target_bug.id / f"trial_{attempt_num}"
+        trial_dir.mkdir(parents=True, exist_ok=True)
+
+        video_path_rel: Optional[str] = None
+        video_dur: float = 0.0
+        ev_quality: str = "good"
+        control_check: Dict[str, Any] = {}
+
         if raw_run.report_path:
             records = parse_report(raw_run.report_path)
             matching = [
@@ -285,15 +301,70 @@ def verify_bug(run_id: str, bug_id: str) -> Verification:
                 duration_ms = rec.get("durationMs", duration_ms)
                 err_msg = rec_err[:500] if rec_err else None
 
+                # Extract attachments to trial_dir
+                for att in rec.get("attachments", []):
+                    aname = att.get("name", "")
+                    apath = att.get("path")
+                    abody = att.get("body")
+                    if aname == "control_check.json":
+                        if abody:
+                            try:
+                                control_check = json.loads(base64.b64decode(abody).decode("utf-8"))
+                            except Exception:
+                                pass
+                        elif apath and Path(apath).exists():
+                            try:
+                                control_check = json.loads(Path(apath).read_text(encoding="utf-8"))
+                            except Exception:
+                                pass
+                    elif aname == "video" or (apath and Path(apath).suffix == ".webm"):
+                        v_dest = trial_dir / "video.webm"
+                        v_src = Path(apath) if (apath and Path(apath).exists()) else None
+                        if v_src:
+                            video_dur, ev_quality, _ = post_process_video(v_src, v_dest)
+                            video_path_rel = f"verification/{target_bug.id}/trial_{attempt_num}/video.webm"
+                    elif aname == "screenshot" or (apath and Path(apath).suffix == ".png"):
+                        s_dest = trial_dir / "screenshot.png"
+                        if apath and Path(apath).exists():
+                            shutil.copy2(Path(apath), s_dest)
+
                 if status == "passed":
-                    outcome = "passed"
-                    reproduced = False
-                elif is_assertion_failure(rec_err):
-                    outcome = "assertion_failure"
-                    rec_sig = signature(rec_err)
-                    sig_match = rec_sig == target_bug.signature
-                    first_line_match = _first_line(rec_err) == _first_line(target_bug.errorMessage)
-                    reproduced = sig_match or first_line_match
+                    has_matching_issue = False
+                    for att in rec.get("attachments", []):
+                        aname = att.get("name", "")
+                        abody = att.get("body")
+                        apath = att.get("path")
+                        if aname == "console.json" or (apath and Path(apath).name == "console.json"):
+                            try:
+                                c_data = json.loads(base64.b64decode(abody).decode("utf-8")) if abody else json.loads(Path(apath).read_text("utf-8"))
+                                if c_data:
+                                    has_matching_issue = True
+                            except Exception:
+                                pass
+                        elif aname == "network.json" or (apath and Path(apath).name == "network.json"):
+                            try:
+                                n_data = json.loads(base64.b64decode(abody).decode("utf-8")) if abody else json.loads(Path(apath).read_text("utf-8"))
+                                if n_data.get("badResponses") or n_data.get("failedRequests"):
+                                    has_matching_issue = True
+                            except Exception:
+                                pass
+                    if target_bug.category in ("console", "network") and has_matching_issue:
+                        outcome = "passed_with_issues"
+                        reproduced = True
+                    else:
+                        outcome = "passed"
+                        reproduced = False
+                elif is_assertion_failure(rec_err) or (target_bug.category in ("console", "network") and rec_err):
+                    outcome = "assertion_failure" if is_assertion_failure(rec_err) else "passed_with_issues"
+                    # Control Check: If page showed valid error feedback, reject reproduction!
+                    if control_check.get("found") is True:
+                        reproduced = False
+                        err_msg = f"Control check passed: Page exhibited expected feedback ({control_check.get('reason')}). Defect rejected."
+                    else:
+                        rec_sig = signature(rec_err)
+                        sig_match = rec_sig == target_bug.signature
+                        first_line_match = _first_line(rec_err) == _first_line(target_bug.errorMessage)
+                        reproduced = sig_match or first_line_match or (target_bug.category in ("console", "network"))
                 else:
                     outcome = "test_error"
                     reproduced = False
@@ -309,6 +380,9 @@ def verify_bug(run_id: str, bug_id: str) -> Verification:
                 outcome=outcome,
                 errorMessage=err_msg,
                 durationMs=duration_ms,
+                videoPath=video_path_rel,
+                videoDuration=video_dur,
+                evidenceQuality=ev_quality,
             )
         )
 
@@ -340,6 +414,17 @@ def verify_bug(run_id: str, bug_id: str) -> Verification:
                 if b.id == target_bug.id:
                     b.status = status
                     b.replay = BugReplay(reproduced=reproduced_count, attempts=3)
+                    if status == "confirmed":
+                        run_inp = storage.load_model(run_id, "input.json", RunInput)
+                        b.provenance = {
+                            "runId": run_id,
+                            "bugId": b.id,
+                            "testId": b.testId,
+                            "targetUrl": run_inp.targetUrl if run_inp else "",
+                            "verifiedAt": now_iso,
+                            "reproducedAttempts": "3/3",
+                            "trials": [f"verification/{b.id}/trial_{i}" for i in range(1, 4)],
+                        }
                     break
             storage.save_model(run_id, "bugs.json", latest_bugs)
 

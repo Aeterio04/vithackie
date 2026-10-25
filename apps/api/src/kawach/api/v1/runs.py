@@ -21,6 +21,7 @@ from kawach.services.idempotency import IdempotencyService
 from kawach.services.run_service import cancel_run as cancel_run_service
 from kawach.services.run_service import create_run as create_run_service
 from kawach.services.run_service import delete_run as delete_run_service
+from kawach.services.run_service import SpecAlignmentError, compute_alignment
 from kawach.services.run_service import resume_run as resume_run_service
 from kawach.storage import artifacts as storage
 
@@ -126,11 +127,9 @@ def create_run(
     elif payload.spec_text and payload.spec_text.strip():
         spec_raw = payload.spec_text.strip()
     else:
-        spec_file = settings.repo_root / "examples" / "target-app" / "spec.md"
-        if not spec_file.exists():
-            spec_file = settings.repo_root / "target-app" / "spec.md"
-        if spec_file.exists():
-            spec_raw = spec_file.read_text(encoding="utf-8")
+        # Never inject alien spec files from other demo projects.
+        # If no spec is provided, exploratory testing runs against universal web rules.
+        spec_raw = ""
 
     creds = payload.credentials or {}
     username = creds.get("username", "")
@@ -144,22 +143,29 @@ def create_run(
         testTimeoutMs=b_dict.get("test_timeout_ms", settings.TEST_TIMEOUT_MS),
     )
 
-    # Determine project association
+    # Determine project association strictly matching the target URL
     proj_repo = ProjectRepository(db)
     user_scope = Scope.user(current_user.id)
     proj_id = payload.project_id
     if proj_id and not proj_repo.get_project(user_scope, proj_id):
         raise HTTPException(status_code=404, detail="Project not found")
     if not proj_id:
-        user_projects = proj_repo.list_projects(user_scope)
-        matching = next((p for p in user_projects if p.target_url == payload.target_url), None)
+        user_projects = proj_repo.list_projects(user_scope, include_archived=True)
+        norm_target = ProjectRepository.normalize_url(payload.target_url)
+        matching = next(
+            (p for p in user_projects if ProjectRepository.normalize_url(p.target_url) == norm_target),
+            None,
+        )
         if matching:
             proj_id = matching.id
-        elif user_projects:
-            proj_id = user_projects[0].id
+            if matching.archived_at is not None:
+                matching.archived_at = None
+                db.flush()
         else:
             import urllib.parse
-            parsed_host = urllib.parse.urlparse(payload.target_url).hostname or "Target"
+            parsed = urllib.parse.urlparse(payload.target_url)
+            port_str = f":{parsed.port}" if parsed.port else ""
+            parsed_host = f"{parsed.hostname or 'Target'}{port_str}"
             new_proj = proj_repo.create_project(
                 scope=user_scope,
                 name=f"{parsed_host} App",
@@ -222,6 +228,7 @@ def get_single_run(
 @router.post("/runs/{run_id}/start")
 def start_run_pipeline(
     run_id: str,
+    tier: Optional[str] = None,
     _user: User = Depends(require_scope("runs:write")),
     _run: DbRun = Depends(get_owned_run),
 ):
@@ -229,20 +236,90 @@ def start_run_pipeline(
     run = storage.load_model(run_id, "run.json", storage.Run)
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
-    resume_run_service(run_id)
+    try:
+        resume_run_service(run_id, tier=tier)
+    except SpecAlignmentError as e:
+        raise HTTPException(status_code=409, detail=f"Cannot start execution: {e}")
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     return transform_run_to_frontend(run_id)
+
+
+@router.get("/runs/{run_id}/alignment")
+def get_run_alignment(
+    run_id: str,
+    _user: User = Depends(require_scope("runs:read")),
+    _run: DbRun = Depends(get_owned_run),
+):
+    """Spec vs catalog alignment (spec_driven runs only)."""
+    report = compute_alignment(run_id)
+    if report is None:
+        raise HTTPException(status_code=404, detail="Run is not spec-driven")
+    return report
+
+
+@router.get("/runs/{run_id}/budgets")
+def get_run_budgets(
+    run_id: str,
+    tier: Optional[str] = None,
+    _user: User = Depends(require_scope("runs:read")),
+    _run: DbRun = Depends(get_owned_run),
+):
+    """Used vs needed time/pages per stage, suggested from the spec (spec-driven runs)."""
+    from datetime import datetime
+
+    from kawach.schemas import AppMap, RunInput
+    from kawach.services.spec_budgets import estimate
+    from kawach.services.spec_structured import has_test_case_blocks
+
+    ri = storage.load_model(run_id, "input.json", RunInput)
+    run = storage.load_model(run_id, "run.json", storage.Run)
+    if not ri or not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+    if not has_test_case_blocks(ri.specRaw or ""):
+        raise HTTPException(status_code=404, detail="Run is not spec-driven")
+    est = estimate(ri.specRaw, tier or ri.priorityTier)
+    used = {}
+    for name, st in run.stageTimes.items():
+        try:
+            a = datetime.fromisoformat(st.startedAt.replace("Z", "+00:00"))
+            b = datetime.fromisoformat((st.endedAt or run.updatedAt).replace("Z", "+00:00"))
+            used[name] = round((b - a).total_seconds(), 1)
+        except Exception:
+            pass
+    need = est["stageSeconds"]
+    stage_map = {"exploring": "explore", "planning": "plan", "scripting": "scripting", "running": "running", "reporting": "report"}
+    stages = [
+        {"stage": label, "usedSeconds": used.get(k), "neededSeconds": need[label],
+         "overBudget": used.get(k) is not None and used[k] > need[label] * 1.25}
+        for k, label in stage_map.items()
+    ]
+    app_map = storage.load_model(run_id, "app_map.json", AppMap)
+    warnings = []
+    if ri.budgets.maxPages < est["pagesNeeded"]:
+        warnings.append(f"page budget {ri.budgets.maxPages} is lower than the {est['pagesNeeded']} URLs the spec needs; suggested {est['pagesBudget']}")
+    return {
+        "tier": est["tier"], "testsInTier": est["testsInTier"],
+        "pages": {"used": len(app_map.pages) if app_map else 0, "needed": est["pagesNeeded"], "budget": ri.budgets.maxPages, "suggested": est["pagesBudget"]},
+        "stages": stages, "suggestedTotalSeconds": est["totalSeconds"], "warnings": warnings,
+    }
 
 
 @router.post("/runs/{run_id}/resume")
 def resume_run_endpoint(
     run_id: str,
+    tier: Optional[str] = None,
     _user: User = Depends(require_scope("runs:write")),
     _run: DbRun = Depends(get_owned_run),
 ):
     """Resume execution of an approved test catalog."""
     try:
-        resume_run_service(run_id)
+        resume_run_service(run_id, tier=tier)
         return transform_run_to_frontend(run_id)
+    except SpecAlignmentError as e:
+        raise HTTPException(status_code=409, detail=f"Cannot start execution: {e}")
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Run not found")
 
@@ -271,7 +348,7 @@ def retry_run(
     run = storage.load_model(run_id, "run.json", storage.Run)
     if not run:
         raise HTTPException(status_code=404, detail="Run not found")
-    resume_run_service(run_id)
+    resume_run_service(run_id, retry=True)
     return transform_run_to_frontend(run_id)
 
 

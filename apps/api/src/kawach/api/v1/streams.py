@@ -98,10 +98,16 @@ async def stream_run_sse(
             yield f"data: {json.dumps(log_event)}\n\n"
         last_log_idx = len(existing_logs)
 
-        for _ in range(1200):
+        # Stream until the run reaches a terminal stage (previously capped at 1200 x 0.5 s = 10 min,
+        # after which the stream ended WITHOUT a run.done event and the UI stayed on "running").
+        idle_ticks = 0
+        while True:
             r = storage.load_model(run_id, "run.json", Run)
             if not r:
                 break
+            idle_ticks += 1
+            if idle_ticks % 30 == 0:
+                yield ": heartbeat\n\n"
 
             current_status = map_stage_to_status(r.stage)
             progress_val = compute_progress_percentage(r)
@@ -288,7 +294,7 @@ async def stream_run_sse(
                 record_event(run_id, budget_event)
                 yield f"data: {json.dumps(budget_event)}\n\n"
 
-            if r.stage in ("done", "failed", "cancelled"):
+            if r.stage in storage.TERMINAL_STAGES:
                 run_done_event = {
                     "type": "run.done",
                     "run": transform_run_to_frontend(run_id),

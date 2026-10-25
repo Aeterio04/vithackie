@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import re
 from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
 from kawach.execution.edge_library import EDGE_LIBRARY, compute_risk_score
 from kawach.core.config import settings
@@ -73,10 +74,21 @@ def emit_minimal_repro_script(
         lower_step = s.lower()
         if "navigate" in lower_step or "go to" in lower_step or "/" in s:
             target_path = "/"
-            match = re.search(r"(/[a-zA-Z0-9_\-\./]*)", s)
-            if match:
-                target_path = match.group(1)
-            step_code_lines.append(f"  // Step {idx}: Navigate\n  await page.goto('{base_url}{target_path}', {{ waitUntil: 'domcontentloaded' }});")
+            url_match = re.search(r"https?://[^\s'\"]+", s)
+            if url_match:
+                parsed = urlparse(url_match.group(0))
+                target_path = parsed.path or "/"
+                if parsed.query:
+                    target_path += f"?{parsed.query}"
+            else:
+                match = re.search(r"(/[a-zA-Z0-9_\-\./]*)", s)
+                if match:
+                    target_path = match.group(1)
+                    if target_path.startswith("//"):
+                        target_path = "/" + target_path.lstrip("/")
+            if not target_path.startswith("/"):
+                target_path = "/" + target_path
+            step_code_lines.append(f"  // Step {idx}: Navigate\n  await page.goto('{target_path}', {{ waitUntil: 'domcontentloaded' }});")
         elif "click" in lower_step:
             loc = "button, [role='button'], a"
             match = re.search(r"\[(.*?)\]", s)
@@ -274,9 +286,20 @@ class ExploratoryTester:
 
                 if "navigate" in act_lower or "go to" in act_lower or "/" in st.action:
                     target_path = "/"
-                    match = re.search(r"(/[a-zA-Z0-9_\-\./]*)", st.action)
-                    if match:
-                        target_path = match.group(1)
+                    url_match = re.search(r"https?://[^\s'\"]+", st.action)
+                    if url_match:
+                        parsed = urlparse(url_match.group(0))
+                        target_path = parsed.path or "/"
+                        if parsed.query:
+                            target_path += f"?{parsed.query}"
+                    else:
+                        match = re.search(r"(/[a-zA-Z0-9_\-\./]*)", st.action)
+                        if match:
+                            target_path = match.group(1)
+                            if target_path.startswith("//"):
+                                target_path = "/" + target_path.lstrip("/")
+                    if not target_path.startswith("/"):
+                        target_path = "/" + target_path
                     step_code_lines.append(f"  // Step {idx}: Navigate ({st.checkpoint or 'navigate'})\n  await page.goto('{target_path}', {{ waitUntil: 'domcontentloaded' }});")
                 elif "click" in act_lower:
                     loc = "button, [role='button'], a"
@@ -299,7 +322,7 @@ class ExploratoryTester:
                     clean_assert = st.assertion.replace("'", "\\'")
                     step_code_lines.append(f"  // Step {idx} Assertion: {clean_assert}\n  await expect(page.locator('body')).not.toContainText('500');")
 
-            code = f"""import {{ test, expect, credentials, unique }} from '../../../apps/runner/fixtures';
+            code = f"""import {{ test, expect, credentials, unique, expectErrorFeedback, expectNoErrorFeedback, expectSuccessFeedback, uniqueData, uniqueEmail, inspectPageForError }} from '../../../apps/runner/fixtures';
 
 test.describe('{tc.id}: Exploratory Mutation', () => {{
   test('{tc.id}: {tc.title}', async ({{ page }}) => {{

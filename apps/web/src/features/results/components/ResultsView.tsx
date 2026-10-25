@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useRun, useBugs, useTests } from "@/lib/api/hooks";
+import { useRun, useBugs, useTests, useExecution } from "@/lib/api/hooks";
 import { useUiStore } from "@/lib/store/uiStore";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
 import { Chip } from "@/components/ui/Chip";
@@ -13,6 +13,7 @@ import { Drawer } from "@/components/ui/Drawer";
 import { ReplayPips } from "@/components/ui/ReplayPips";
 import { type Bug } from "@/types";
 import { extractHostname, formatDuration } from "@/lib/utils";
+import { API_ENDPOINTS } from "@/lib/api/config";
 import {
   Bug as BugIcon,
   CheckCircle2,
@@ -41,6 +42,24 @@ export function ResultsView() {
   const { data: run } = useRun(runId);
   const { data: bugs, isLoading: isBugsLoading } = useBugs(runId);
   const { data: tests, isLoading: isTestsLoading } = useTests(runId);
+  const { data: execution, isLoading: isExecutionLoading } = useExecution(runId);
+
+  const allTests = useMemo(() => {
+    if (tests && tests.length > 0) return tests;
+    if (execution?.tests && execution.tests.length > 0) return execution.tests;
+    return tests || [];
+  }, [tests, execution]);
+
+  const areTestsLoading = isTestsLoading && (!execution || isExecutionLoading);
+
+  const [activeTab, setActiveTab] = useState<string>("bugs");
+  const [hasUserSwitchedTab, setHasUserSwitchedTab] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!hasUserSwitchedTab && bugs && bugs.length === 0 && allTests.length > 0) {
+      setActiveTab("tests");
+    }
+  }, [bugs, allTests.length, hasUserSwitchedTab]);
 
   // States
   const [searchQuery, setSearchQuery] = useState("");
@@ -141,19 +160,36 @@ export function ResultsView() {
             Live Execution
           </Button>
           <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open(API_ENDPOINTS.RUN_REPORT_PDF(runId), "_blank")}
+            className="gap-1.5"
+            title="Download PDF Report"
+          >
+            <Download className="w-3.5 h-3.5 text-rose-600" />
+            <span>Download PDF</span>
+          </Button>
+          <Button
             variant="primary"
             size="sm"
             onClick={() => router.push(`/reports/${runId}`)}
             className="gap-1.5"
           >
             <FileBarChart2 className="w-3.5 h-3.5" />
-            <span>Generate Report</span>
+            <span>Full QA Report</span>
           </Button>
         </div>
       </div>
 
       {/* Tabs: Bugs & Tests */}
-      <Tabs defaultValue="bugs" className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={(val) => {
+          setHasUserSwitchedTab(true);
+          setActiveTab(val);
+        }}
+        className="w-full"
+      >
         <TabsList className="mb-4">
           <TabsTrigger value="bugs" className="gap-1.5">
             <BugIcon className="w-4 h-4" />
@@ -161,7 +197,7 @@ export function ResultsView() {
           </TabsTrigger>
           <TabsTrigger value="tests" className="gap-1.5">
             <CheckCircle2 className="w-4 h-4" />
-            <span>All Tests ({tests?.length ?? 0})</span>
+            <span>All Tests ({allTests.length})</span>
           </TabsTrigger>
         </TabsList>
 
@@ -377,13 +413,13 @@ export function ResultsView() {
         {/* TAB 2: TESTS */}
         <TabsContent value="tests">
           <div className="bg-white border border-[#E3DACC] rounded-[16px] overflow-hidden shadow-xs">
-            {isTestsLoading ? (
+            {areTestsLoading ? (
               <div className="p-4 space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <Skeleton key={i} className="h-12 w-full" />
                 ))}
               </div>
-            ) : !tests || tests.length === 0 ? (
+            ) : allTests.length === 0 ? (
               <EmptyState
                 icon={CheckCircle2}
                 title="No tests recorded"
@@ -403,10 +439,15 @@ export function ResultsView() {
                 </thead>
 
                 <tbody className="divide-y divide-[#E3DACC]/60">
-                  {tests.map((t) => (
+                  {allTests.map((t) => (
                     <tr key={t.id} className="hover:bg-[#FAF9F5] transition-colors">
                       <td className="py-3 px-4 font-medium text-[#141413]">
-                        {t.title}
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[11px] font-semibold text-[#8A887F] bg-[#F0EEE6] px-1.5 py-0.5 rounded">
+                            {t.id}
+                          </span>
+                          <span>{t.title || `Test ${t.id}`}</span>
+                        </div>
                       </td>
 
                       <td className="py-3 px-4">
@@ -423,7 +464,7 @@ export function ResultsView() {
                         {t.worker_id || "-"}
                       </td>
 
-                      <td className="py-3 px-4 font-mono text-[#C4473A] max-w-xs truncate">
+                      <td className="py-3 px-4 font-mono text-[#C4473A] max-w-xs truncate" title={t.error_message || undefined}>
                         {t.error_message || "-"}
                       </td>
                     </tr>

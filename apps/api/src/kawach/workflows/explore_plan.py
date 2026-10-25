@@ -20,7 +20,7 @@ def _safe_wrapper(node_name: str, fn):
         run_id = state.get("runId", "")
         try:
             run = storage.get_run(run_id)
-            if run.stage == "failed":
+            if run.stage in storage.TERMINAL_STAGES:
                 return state
             fn(run_id)
             return state
@@ -40,9 +40,27 @@ def _safe_wrapper(node_name: str, fn):
 def node_explore(run_id: str) -> None:
     if settings.STUB_MODE:
         stubs.stub_explore(run_id)
-    else:
-        from kawach.agents.explorer import run_explorer
-        run_explorer(run_id)
+        return
+
+    from kawach.schemas import RunInput
+    run_input = storage.load_model(run_id, "input.json", RunInput)
+    target_url = run_input.targetUrl if run_input else "http://localhost:4000"
+
+    # Circuit breaker: execute pre-suite gate check
+    from kawach.execution.circuit_breaker import run_gate_check
+    finding = run_gate_check(run_id, target_url)
+    if finding:
+        return
+
+    if run_input and run_input.specRaw:
+        from kawach.services.spec_structured import has_test_case_blocks
+        if has_test_case_blocks(run_input.specRaw):
+            from kawach.agents.explorer.spec_explorer import run_spec_explorer
+            run_spec_explorer(run_id)
+            return
+
+    from kawach.agents.explorer import run_explorer
+    run_explorer(run_id)
 
 
 def node_plan(run_id: str) -> None:
@@ -96,7 +114,7 @@ def should_continue(state: ExplorePlanState) -> str:
     run_id = state.get("runId", "")
     try:
         run = storage.get_run(run_id)
-        if run.stage == "failed":
+        if run.stage in storage.TERMINAL_STAGES:
             return "failed"
     except Exception:
         return "failed"

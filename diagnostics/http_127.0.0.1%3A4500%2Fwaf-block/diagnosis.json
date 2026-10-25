@@ -1,0 +1,157 @@
+{
+  "target_url": "http://127.0.0.1:4500/waf-block",
+  "hostname": "127.0.0.1",
+  "timestamp": "2026-10-25T03:26:05.646383+00:00",
+  "probe_a_dns_tcp_tls": {
+    "ipv4": [
+      "127.0.0.1"
+    ],
+    "ipv6": [],
+    "dns_time_ms": 0.68,
+    "tcp_connect_ms": 0.79,
+    "tls_handshake_ms": null,
+    "tls_version": null,
+    "cipher": null,
+    "cert_subject": null,
+    "cert_issuer": null,
+    "cert_expiry": null,
+    "san": [],
+    "error": null
+  },
+  "probe_b_http_legacy": {
+    "head": {
+      "method": "HEAD",
+      "status": 200,
+      "final_url": "http://127.0.0.1:4500/waf-block",
+      "redirect_chain": [],
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "cookies": [],
+      "body_snippet": "",
+      "body_len": 0,
+      "duration_ms": 48.8,
+      "error": null
+    },
+    "get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "http://127.0.0.1:4500/waf-block",
+      "redirect_chain": [],
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "cookies": [],
+      "body_snippet": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>KAWACH Deployed Sites Simulator</title>\n  <style>\n    body { font-family: sans-serif; padding: 40px; line-height: 1.6; max-width: 800px; margin: auto; }\n    h1 { color: #1e293b; }\n    li { margin-bottom: 12px; }\n    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 14px; }\n  </style>\n</head>\n<body>\n  <h1>KAWACH Deployed-Site Simulator</h1>\n  <p>Mock server exercising edge cases found in deployed ",
+      "body_len": 1360,
+      "duration_ms": 20.41,
+      "error": null
+    },
+    "class_head": "empty_page",
+    "class_get": "ok"
+  },
+  "probe_c_http_chrome": {
+    "get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "http://127.0.0.1:4500/waf-block",
+      "redirect_chain": [],
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "cookies": [],
+      "body_snippet": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>KAWACH Deployed Sites Simulator</title>\n  <style>\n    body { font-family: sans-serif; padding: 40px; line-height: 1.6; max-width: 800px; margin: auto; }\n    h1 { color: #1e293b; }\n    li { margin-bottom: 12px; }\n    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 14px; }\n  </style>\n</head>\n<body>\n  <h1>KAWACH Deployed-Site Simulator</h1>\n  <p>Mock server exercising edge cases found in deployed ",
+      "body_len": 1360,
+      "duration_ms": 7.73,
+      "error": null
+    },
+    "class": "ok"
+  },
+  "probe_d_playwright": {
+    "current": {
+      "profile": "current",
+      "url": "http://127.0.0.1:4500/waf-block",
+      "finalUrl": "http://127.0.0.1:4500/waf-block",
+      "title": "KAWACH Deployed Sites Simulator",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 656,
+      "visibleElements": 8,
+      "consoleErrors": [],
+      "failedRequests": [],
+      "httpErrors": [],
+      "domContentLoadedMs": 12,
+      "loadMs": 26,
+      "networkIdleReached": true,
+      "networkIdleMs": 491,
+      "screenshotPath": "diagnostics\\http_127.0.0.1%3A4500%2Fwaf-block\\screenshot_current.png",
+      "error": null
+    },
+    "new_standard": {
+      "profile": "new_standard",
+      "url": "http://127.0.0.1:4500/waf-block",
+      "finalUrl": "http://127.0.0.1:4500/waf-block",
+      "title": "KAWACH Deployed Sites Simulator",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 656,
+      "visibleElements": 8,
+      "consoleErrors": [],
+      "failedRequests": [],
+      "httpErrors": [],
+      "domContentLoadedMs": 10,
+      "loadMs": 24,
+      "networkIdleReached": true,
+      "networkIdleMs": 490,
+      "screenshotPath": "diagnostics\\http_127.0.0.1%3A4500%2Fwaf-block\\screenshot_new_standard.png",
+      "error": null
+    },
+    "headed": {
+      "profile": "headed",
+      "url": "http://127.0.0.1:4500/waf-block",
+      "finalUrl": "http://127.0.0.1:4500/waf-block",
+      "title": "KAWACH Deployed Sites Simulator",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 656,
+      "visibleElements": 8,
+      "consoleErrors": [],
+      "failedRequests": [],
+      "httpErrors": [],
+      "domContentLoadedMs": 70,
+      "loadMs": 77,
+      "networkIdleReached": true,
+      "networkIdleMs": 495,
+      "screenshotPath": "diagnostics\\http_127.0.0.1%3A4500%2Fwaf-block\\screenshot_headed.png",
+      "error": null
+    },
+    "class_current": "ok",
+    "class_new_standard": "ok"
+  },
+  "probe_e_proxy": {
+    "env": {
+      "HTTP_PROXY": null,
+      "HTTPS_PROXY": null,
+      "ALL_PROXY": null,
+      "NO_PROXY": null
+    },
+    "direct_get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "http://127.0.0.1:4500/waf-block",
+      "redirect_chain": [],
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "cookies": [],
+      "body_snippet": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>KAWACH Deployed Sites Simulator</title>\n  <style>\n    body { font-family: sans-serif; padding: 40px; line-height: 1.6; max-width: 800px; margin: auto; }\n    h1 { color: #1e293b; }\n    li { margin-bottom: 12px; }\n    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 14px; }\n  </style>\n</head>\n<body>\n  <h1>KAWACH Deployed-Site Simulator</h1>\n  <p>Mock server exercising edge cases found in deployed ",
+      "body_len": 1360,
+      "duration_ms": 17.73,
+      "error": null
+    }
+  },
+  "probe_g_verdict": {
+    "responsible_layer": "ok",
+    "evidence": "Target is accessible and renders interactive DOM content."
+  }
+}

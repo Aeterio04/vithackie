@@ -1,6 +1,13 @@
 """LLM package re-exporting client, cache, usage, and prompt loading utilities."""
 
 from kawach.llm.client import LLM, LLMError, get_llm
+from kawach.llm.key_pool import (
+    KeyEntry,
+    KeyPool,
+    LLMRateLimitError,
+    complete_with_pool,
+    get_key_pool,
+)
 from kawach.llm.groq_handler import (
     GroqHandler,
     GroqRateLimiter,
@@ -13,6 +20,11 @@ from kawach.llm.usage import record_usage, usage
 __all__ = [
     "LLM",
     "LLMError",
+    "LLMRateLimitError",
+    "KeyEntry",
+    "KeyPool",
+    "get_key_pool",
+    "complete_with_pool",
     "get_llm",
     "GroqHandler",
     "GroqRateLimiter",

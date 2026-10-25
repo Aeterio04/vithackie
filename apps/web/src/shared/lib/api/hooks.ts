@@ -369,6 +369,7 @@ export interface ReviewDecisionSubmission {
   test_ids: string[];
   decision: "approved" | "rejected";
   reason?: string;
+  priority_tier?: "P0" | "P0+P1" | "all" | "smoke";
 }
 
 export function useSubmitReview(runId: string) {

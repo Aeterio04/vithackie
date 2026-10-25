@@ -13,6 +13,9 @@ class VerificationAttempt(BaseModel):
     outcome: Outcome
     errorMessage: Optional[str] = None
     durationMs: int
+    videoPath: Optional[str] = None
+    videoDuration: Optional[float] = None
+    evidenceQuality: Optional[str] = None
 
 
 class Verification(BaseModel):

@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-10-25T02:41:18Z",
+  "probe_accuracy_pct": 100.0,
+  "clean_false_positives": 0,
+  "buggy_recall_pct": 0.0,
+  "buggy_precision_pct": 0.0,
+  "silent_passes": 0,
+  "videos_total": 0,
+  "videos_valid": 0,
+  "video_valid_pct": 0.0,
+  "total_runtime_s": 668.3,
+  "gate_failures": []
+}

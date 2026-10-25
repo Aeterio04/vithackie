@@ -1,0 +1,210 @@
+{
+  "target_url": "https://the-internet.herokuapp.com",
+  "hostname": "the-internet.herokuapp.com",
+  "timestamp": "2026-10-25T02:50:29.267628+00:00",
+  "probe_a_dns_tcp_tls": {
+    "ipv4": [
+      "13.248.162.64",
+      "99.83.176.110",
+      "166.117.94.78",
+      "35.71.177.79"
+    ],
+    "ipv6": [],
+    "dns_time_ms": 14.35,
+    "tcp_connect_ms": 242.26,
+    "tls_handshake_ms": 235.71,
+    "tls_version": "TLSv1.3",
+    "cipher": "TLS_AES_128_GCM_SHA256",
+    "cert_subject": {
+      "commonName": "*.herokuapp.com"
+    },
+    "cert_issuer": {
+      "countryName": "US",
+      "organizationName": "Amazon",
+      "commonName": "Amazon RSA 2048 M01"
+    },
+    "cert_expiry": "Mar  3 23:59:59 2027 GMT",
+    "san": [
+      "*.herokuapp.com"
+    ],
+    "error": null
+  },
+  "probe_b_http_legacy": {
+    "head": {
+      "method": "HEAD",
+      "status": 200,
+      "final_url": "https://the-internet.herokuapp.com",
+      "redirect_chain": [],
+      "headers": {
+        "server": "Heroku",
+        "via": "1.1 heroku-router",
+        "content-type": "text/html;charset=utf-8",
+        "content-length": "4601"
+      },
+      "cookies": [
+        "rack.session"
+      ],
+      "body_snippet": "",
+      "body_len": 0,
+      "duration_ms": 710.58,
+      "error": null
+    },
+    "get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://the-internet.herokuapp.com",
+      "redirect_chain": [],
+      "headers": {
+        "server": "Heroku",
+        "via": "1.1 heroku-router",
+        "content-type": "text/html;charset=utf-8",
+        "content-length": "4601"
+      },
+      "cookies": [
+        "rack.session"
+      ],
+      "body_snippet": "<!DOCTYPE html>\n<!--[if IE 8]>         <html class=\"no-js lt-ie9\" lang=\"en\" > <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en\" > <!--<![endif]-->\n\n<html>\n  <head>\n    <script src=\"/js/vendor/298279967.js\"></script>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width\" />\n    <title>The Internet</title>\n    <link href=\"/css/app.css\" rel=\"stylesheet\">\n    <link href=\"/css/font-awesome.css\" rel=\"stylesheet\">\n    <link href=\"/css/sauce.css\" rel=\"stylesh",
+      "body_len": 4601,
+      "duration_ms": 680.22,
+      "error": null
+    },
+    "class_head": "empty_page",
+    "class_get": "ok"
+  },
+  "probe_c_http_chrome": {
+    "get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://the-internet.herokuapp.com",
+      "redirect_chain": [],
+      "headers": {
+        "server": "Heroku",
+        "via": "1.1 heroku-router",
+        "content-type": "text/html;charset=utf-8",
+        "content-length": "4601"
+      },
+      "cookies": [
+        "rack.session"
+      ],
+      "body_snippet": "<!DOCTYPE html>\n<!--[if IE 8]>         <html class=\"no-js lt-ie9\" lang=\"en\" > <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en\" > <!--<![endif]-->\n\n<html>\n  <head>\n    <script src=\"/js/vendor/298279967.js\"></script>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width\" />\n    <title>The Internet</title>\n    <link href=\"/css/app.css\" rel=\"stylesheet\">\n    <link href=\"/css/font-awesome.css\" rel=\"stylesheet\">\n    <link href=\"/css/sauce.css\" rel=\"stylesh",
+      "body_len": 4601,
+      "duration_ms": 672.43,
+      "error": null
+    },
+    "class": "ok"
+  },
+  "probe_d_playwright": {
+    "current": {
+      "profile": "current",
+      "url": "https://the-internet.herokuapp.com",
+      "finalUrl": "https://the-internet.herokuapp.com/",
+      "title": "The Internet",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 941,
+      "visibleElements": 55,
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ],
+      "failedRequests": [
+        {
+          "url": "https://298279967.log.optimizely.com/event?a=298279967&d=298279967&y=false&n=https%3A%2F%2Fthe-internet.herokuapp.com%2F&u=oeu1792896620321r0.5264406894861184&wxhr=true&t=1792896620323&f=298349752,318",
+          "failure": "net::ERR_BLOCKED_BY_CLIENT.Inspector"
+        }
+      ],
+      "httpErrors": [],
+      "domContentLoadedMs": 2093,
+      "loadMs": 2332,
+      "networkIdleReached": true,
+      "networkIdleMs": 502,
+      "screenshotPath": "diagnostics\\the_internet\\screenshot_current.png",
+      "error": null
+    },
+    "new_standard": {
+      "profile": "new_standard",
+      "url": "https://the-internet.herokuapp.com",
+      "finalUrl": "https://the-internet.herokuapp.com/",
+      "title": "The Internet",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 941,
+      "visibleElements": 55,
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+      ],
+      "failedRequests": [
+        {
+          "url": "https://298279967.log.optimizely.com/event?a=298279967&d=298279967&y=false&n=https%3A%2F%2Fthe-internet.herokuapp.com%2F&u=oeu1792896623974r0.8550217201251735&wxhr=true&t=1792896623976&f=298349752,318",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "httpErrors": [],
+      "domContentLoadedMs": 2302,
+      "loadMs": 2536,
+      "networkIdleReached": true,
+      "networkIdleMs": 503,
+      "screenshotPath": "diagnostics\\the_internet\\screenshot_new_standard.png",
+      "error": null
+    },
+    "headed": {
+      "profile": "headed",
+      "url": "https://the-internet.herokuapp.com",
+      "finalUrl": "https://the-internet.herokuapp.com/",
+      "title": "The Internet",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 941,
+      "visibleElements": 55,
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "failedRequests": [
+        {
+          "url": "https://298279967.log.optimizely.com/event?a=298279967&d=298279967&y=false&n=https%3A%2F%2Fthe-internet.herokuapp.com%2F&u=oeu1792896627586r0.9120515003670588&wxhr=true&t=1792896627589&f=298349752,318",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "httpErrors": [],
+      "domContentLoadedMs": 2117,
+      "loadMs": 2351,
+      "networkIdleReached": true,
+      "networkIdleMs": 505,
+      "screenshotPath": "diagnostics\\the_internet\\screenshot_headed.png",
+      "error": null
+    },
+    "class_current": "ok",
+    "class_new_standard": "ok"
+  },
+  "probe_e_proxy": {
+    "env": {
+      "HTTP_PROXY": null,
+      "HTTPS_PROXY": null,
+      "ALL_PROXY": null,
+      "NO_PROXY": null
+    },
+    "direct_get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://the-internet.herokuapp.com",
+      "redirect_chain": [],
+      "headers": {
+        "server": "Heroku",
+        "via": "1.1 heroku-router",
+        "content-type": "text/html;charset=utf-8",
+        "content-length": "4601"
+      },
+      "cookies": [
+        "rack.session"
+      ],
+      "body_snippet": "<!DOCTYPE html>\n<!--[if IE 8]>         <html class=\"no-js lt-ie9\" lang=\"en\" > <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en\" > <!--<![endif]-->\n\n<html>\n  <head>\n    <script src=\"/js/vendor/298279967.js\"></script>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width\" />\n    <title>The Internet</title>\n    <link href=\"/css/app.css\" rel=\"stylesheet\">\n    <link href=\"/css/font-awesome.css\" rel=\"stylesheet\">\n    <link href=\"/css/sauce.css\" rel=\"stylesh",
+      "body_len": 4601,
+      "duration_ms": 690.86,
+      "error": null
+    }
+  },
+  "probe_g_verdict": {
+    "responsible_layer": "ok",
+    "evidence": "Target is accessible and renders interactive DOM content."
+  }
+}

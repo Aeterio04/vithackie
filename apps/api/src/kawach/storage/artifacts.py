@@ -157,6 +157,20 @@ def update_run(run_id: str, **fields: Any) -> Run:
         return updated_run
 
 
+TERMINAL_STAGES = ("done", "failed", "cancelled", "done_with_environment_issue", "script_generation_failed")
+
+
+def reopen_run(run_id: str) -> Run:
+    """Explicitly leave a terminal state (retry). The only way out of a terminal stage."""
+    with _lock:
+        run = get_run(run_id)
+        run.stage = "awaiting_review"  # type: ignore
+        run.error = None
+        run.updatedAt = now_iso()
+        save_model(run_id, "run.json", run)
+        return run
+
+
 def set_stage(
     run_id: str,
     stage: Stage,
@@ -168,6 +182,10 @@ def set_stage(
     with _lock:
         run = get_run(run_id)
         now = now_iso()
+
+        # A finished run never goes back to an active stage because of a late/stale worker thread.
+        if run.stage in TERMINAL_STAGES and stage not in TERMINAL_STAGES:
+            return run
 
         # Update previous stage endedAt if it was active
         prev_stage = run.stage
@@ -183,12 +201,12 @@ def set_stage(
             curr_start = run.stageTimes[stage].startedAt or now
             run.stageTimes[stage] = StageTime(
                 startedAt=curr_start,
-                endedAt=now if stage in ("done", "failed") else None,
+                endedAt=now if stage in TERMINAL_STAGES else None,
             )
         else:
             run.stageTimes[stage] = StageTime(
                 startedAt=now,
-                endedAt=now if stage in ("done", "failed") else None,
+                endedAt=now if stage in TERMINAL_STAGES else None,
             )
 
         run.stage = stage
@@ -220,7 +238,7 @@ def set_stage(
                         db_run.progress = prog
                     if stage == "exploring" and not db_run.started_at:
                         db_run.started_at = utc_now()
-                    elif stage in ("done", "failed", "cancelled"):
+                    elif stage in TERMINAL_STAGES:
                         db_run.ended_at = utc_now()
                     db.commit()
         except Exception:
@@ -229,13 +247,38 @@ def set_stage(
         return run
 
 
-def fail_run(run_id: str, message: str) -> Run:
-    """Mark a run as failed, record the error message, and update stageTimes."""
+def fail_run(run_id: str, message: str, stage: str = "failed") -> Run:
+    """Mark a run as failed (or another failure stage), record the error message, and update stageTimes."""
     with _lock:
-        run = set_stage(run_id, "failed")
+        run = set_stage(run_id, stage, step=message[:200])  # type: ignore
         run.error = message
         run.updatedAt = now_iso()
         save_model(run_id, "run.json", run)
+        return run
+
+
+def set_report_status(run_id: str, status: str, error: Optional[str] = None) -> Run:
+    """Update report_status and report_error on the run record."""
+    with _lock:
+        run = get_run(run_id)
+        run.report_status = status
+        run.report_error = error
+        run.updatedAt = now_iso()
+        save_model(run_id, "run.json", run)
+
+        try:
+            from kawach.db.session import SessionLocal
+            from kawach.db.models.runs import Run as DbRun
+            with SessionLocal() as db:
+                db_run = db.query(DbRun).filter(DbRun.id == run_id).first()
+                if db_run and hasattr(db_run, "report_status"):
+                    db_run.report_status = status
+                    if hasattr(db_run, "report_error"):
+                        db_run.report_error = error
+                    db.commit()
+        except Exception:
+            pass
+
         return run
 
 

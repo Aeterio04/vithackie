@@ -45,20 +45,11 @@ class LLM:
 
     def _get_groq_client(self):
         if self._groq_client is None:
-            try:
-                import openai
-            except ImportError:
-                raise LLMError("openai package is required for groq provider. Install openai>=1.0.0")
-
-            api_key = (
-                os.getenv("GROQ_API_KEY")
-                or getattr(settings, "GROQ_API_KEY", "")
-                or os.getenv("OPENAI_API_KEY")
-                or settings.OPENAI_API_KEY
-            )
-            if not api_key:
+            from kawach.llm.key_pool import get_key_pool
+            pool = get_key_pool()
+            if pool.size() == 0:
                 raise LLMError("Missing or invalid API key for provider groq (GROQ_API_KEY not set)")
-            self._groq_client = openai.OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
+            self._groq_client = pool.keys[0].client
         return self._groq_client
 
     def _get_openai_client(self):
@@ -258,41 +249,22 @@ class LLM:
         max_attempts = 5
         last_err: Optional[Exception] = None
 
+        if provider == "groq":
+            from kawach.llm.key_pool import complete_with_pool
+            return complete_with_pool(
+                system=system,
+                prompt=prompt,
+                model=model,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                is_json=is_json,
+                schema_name=schema_name,
+                run_id=run_id,
+            )
+
         for attempt in range(max_attempts):
             try:
-                if provider == "groq":
-                    # Proactive rate-budgeting / pacing for Groq free-tier
-                    global _groq_last_call_time
-                    with _groq_pace_lock:
-                        now = time.time()
-                        elapsed_since_last = now - _groq_last_call_time
-                        if elapsed_since_last < 1.8:
-                            time.sleep(1.8 - elapsed_since_last)
-                        _groq_last_call_time = time.time()
-
-                    client = self._get_groq_client()
-                    active_model = model or getattr(settings, "GROQ_DEFAULT_MODEL", "llama-3.3-70b-versatile")
-                    if "qwen" in active_model.lower() or "claude" in active_model.lower() or "gpt" in active_model.lower():
-                        active_model = "llama-3.3-70b-versatile"
-                    kwargs = {
-                        "model": active_model,
-                        "messages": [
-                            {"role": "system", "content": system},
-                            {"role": "user", "content": prompt},
-                        ],
-                        "temperature": temperature,
-                        "max_tokens": max_tokens,
-                    }
-                    if is_json:
-                        kwargs["response_format"] = {"type": "json_object"}
-
-                    resp = client.chat.completions.create(**kwargs)
-                    text = resp.choices[0].message.content or ""
-                    in_tok = resp.usage.prompt_tokens if resp.usage else len(prompt) // 4
-                    out_tok = resp.usage.completion_tokens if resp.usage else len(text) // 4
-                    return (text, in_tok, out_tok)
-
-                elif provider == "openai":
+                if provider == "openai":
                     client = self._get_openai_client()
                     kwargs = {
                         "model": model or "gpt-4o",

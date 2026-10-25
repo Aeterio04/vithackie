@@ -1,0 +1,162 @@
+{
+  "target_url": "https://motionpremios.com",
+  "hostname": "motionpremios.com",
+  "timestamp": "2026-10-25T03:25:51.041268+00:00",
+  "probe_a_dns_tcp_tls": {
+    "ipv4": [],
+    "ipv6": [],
+    "dns_time_ms": null,
+    "tcp_connect_ms": null,
+    "tls_handshake_ms": null,
+    "tls_version": null,
+    "cipher": null,
+    "cert_subject": null,
+    "cert_issuer": null,
+    "cert_expiry": null,
+    "san": [],
+    "error": "DNS resolution failed: [Errno 11001] getaddrinfo failed"
+  },
+  "probe_b_http_legacy": {
+    "head": {
+      "method": "HEAD",
+      "status": null,
+      "final_url": null,
+      "redirect_chain": [],
+      "headers": {},
+      "cookies": [],
+      "body_snippet": "",
+      "body_len": 0,
+      "duration_ms": 30.19,
+      "error": "[Errno 11001] getaddrinfo failed"
+    },
+    "get": {
+      "method": "GET",
+      "status": null,
+      "final_url": null,
+      "redirect_chain": [],
+      "headers": {},
+      "cookies": [],
+      "body_snippet": "",
+      "body_len": 0,
+      "duration_ms": 5.91,
+      "error": "[Errno 11001] getaddrinfo failed"
+    },
+    "class_head": "dns_error",
+    "class_get": "dns_error"
+  },
+  "probe_c_http_chrome": {
+    "get": {
+      "method": "GET",
+      "status": null,
+      "final_url": null,
+      "redirect_chain": [],
+      "headers": {},
+      "cookies": [],
+      "body_snippet": "",
+      "body_len": 0,
+      "duration_ms": 5.85,
+      "error": "[Errno 11001] getaddrinfo failed"
+    },
+    "class": "dns_error"
+  },
+  "probe_d_playwright": {
+    "current": {
+      "profile": "current",
+      "url": "https://motionpremios.com",
+      "finalUrl": "about:blank",
+      "title": "",
+      "status": null,
+      "hasContent": false,
+      "textLength": 0,
+      "visibleElements": 0,
+      "consoleErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://motionpremios.com/",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "httpErrors": [],
+      "domContentLoadedMs": null,
+      "loadMs": 50,
+      "networkIdleReached": true,
+      "networkIdleMs": 506,
+      "screenshotPath": "diagnostics\\https_motionpremios.com\\screenshot_current.png",
+      "error": "Navigation error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://motionpremios.com/\nCall log:\n\u001b[2m  - navigating to \"https://motionpremios.com/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    "new_standard": {
+      "profile": "new_standard",
+      "url": "https://motionpremios.com",
+      "finalUrl": "about:blank",
+      "title": "",
+      "status": null,
+      "hasContent": false,
+      "textLength": 0,
+      "visibleElements": 0,
+      "consoleErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://motionpremios.com/",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "httpErrors": [],
+      "domContentLoadedMs": null,
+      "loadMs": 37,
+      "networkIdleReached": true,
+      "networkIdleMs": 507,
+      "screenshotPath": "diagnostics\\https_motionpremios.com\\screenshot_new_standard.png",
+      "error": "Navigation error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://motionpremios.com/\nCall log:\n\u001b[2m  - navigating to \"https://motionpremios.com/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    "headed": {
+      "profile": "headed",
+      "url": "https://motionpremios.com",
+      "finalUrl": "about:blank",
+      "title": "",
+      "status": null,
+      "hasContent": true,
+      "textLength": 175,
+      "visibleElements": 4,
+      "consoleErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://motionpremios.com/",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "httpErrors": [],
+      "domContentLoadedMs": null,
+      "loadMs": 55,
+      "networkIdleReached": true,
+      "networkIdleMs": 514,
+      "screenshotPath": "diagnostics\\https_motionpremios.com\\screenshot_headed.png",
+      "error": "Navigation error: page.goto: net::ERR_NAME_NOT_RESOLVED at https://motionpremios.com/\nCall log:\n\u001b[2m  - navigating to \"https://motionpremios.com/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    "class_current": "ok",
+    "class_new_standard": "ok"
+  },
+  "probe_e_proxy": {
+    "env": {
+      "HTTP_PROXY": null,
+      "HTTPS_PROXY": null,
+      "ALL_PROXY": null,
+      "NO_PROXY": null
+    },
+    "direct_get": {
+      "method": "GET",
+      "status": null,
+      "final_url": null,
+      "redirect_chain": [],
+      "headers": {},
+      "cookies": [],
+      "body_snippet": "",
+      "body_len": 0,
+      "duration_ms": 5.64,
+      "error": "[Errno 11001] getaddrinfo failed"
+    }
+  },
+  "probe_g_verdict": {
+    "responsible_layer": "network/dns",
+    "evidence": "DNS resolution failed: [Errno 11001] getaddrinfo failed"
+  }
+}

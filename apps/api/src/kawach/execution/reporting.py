@@ -98,9 +98,9 @@ def build_metrics(run_id: str) -> Metrics:
         for t in results.tests:
             if t.outcome == "passed":
                 passed_count += 1
-            elif t.outcome == "assertion_failure":
+            elif t.outcome in ("assertion_failure", "failed"):
                 failed_count += 1
-            elif t.outcome == "test_error":
+            elif t.outcome in ("test_error", "script_error", "setup_error", "environment_error"):
                 errored_count += 1
 
     tests_metrics = MetricsTests(
@@ -211,7 +211,16 @@ def build_metrics(run_id: str) -> Metrics:
 
 
 def build_report(run_id: str) -> str:
-    """Generate Markdown summary report, persist report.md, and return report text."""
+    """Generate comprehensive report (report.md, report.html, report.pdf) and return markdown."""
+    from kawach.execution.report_generator import generate_all_reports
+    res = generate_all_reports(run_id)
+    if res.get("status") == "ready" and res.get("markdown"):
+        return res["markdown"]
+    return _legacy_build_report(run_id)
+
+
+def _legacy_build_report(run_id: str) -> str:
+    """Fallback legacy markdown report builder."""
     run = storage.load_model(run_id, "run.json", Run)
     run_input = storage.load_model(run_id, "input.json", RunInput)
     catalog = storage.load_model(run_id, "catalog.json", Catalog)

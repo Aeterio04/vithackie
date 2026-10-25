@@ -32,6 +32,7 @@ class RunInput(BaseModel):
     username: str = ""
     mode: Mode = "manual"
     budgets: Budgets = Field(default_factory=Budgets)
+    priorityTier: Optional[str] = None  # "P0" | "P0+P1" | "all" | "smoke"; None = everything approved
 
 
 class Progress(BaseModel):
@@ -60,6 +61,8 @@ class Run(BaseModel):
     stageTimes: Dict[str, StageTime] = Field(default_factory=dict)
     golden: bool = False
     projectId: Optional[str] = None
+    report_status: str = "pending"
+    report_error: Optional[str] = None
 
 
 class RunListItemCounts(BaseModel):

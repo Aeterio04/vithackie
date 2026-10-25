@@ -295,6 +295,7 @@ class GroqHandler:
     ):
         self.client_getter = client_getter
         self.rate_limiter = rate_limiter or get_groq_rate_limiter()
+        self._custom_client = True
 
     def complete(
         self,
@@ -309,106 +310,21 @@ class GroqHandler:
         run_id: Optional[str] = None,
         max_attempts: int = 5,
     ) -> Tuple[str, int, int]:
-        active_model = model or getattr(settings, "GROQ_DEFAULT_MODEL", "qwen/qwen3.8-27b")
-        # Guard against leftover model names from other providers (e.g., claude, gpt)
-        if (
-            not active_model
-            or "claude" in active_model.lower()
-            or "gpt" in active_model.lower()
-            or "llama-3" in active_model.lower()
-        ):
-            active_model = getattr(settings, "GROQ_DEFAULT_MODEL", "qwen/qwen3.8-27b")
+        from kawach.llm.key_pool import KeyPool, complete_with_pool, get_key_pool
+        pool = get_key_pool()
+        if pool.size() == 0 and self.client_getter is not None:
+            pool = KeyPool(keys=["mock-key"], client_factory=lambda k: self.client_getter())
+        elif self.client_getter is not None and getattr(self, "_custom_client", False):
+            pool = KeyPool(keys=["mock-key"], client_factory=lambda k: self.client_getter())
 
-        fallback_model = getattr(settings, "GROQ_FALLBACK_MODEL", "qwen/qwen3.8-27b")
-
-        est_prompt_tokens = len(system + prompt) // 4
-        current_max_tokens = max_tokens
-        last_exception: Optional[Exception] = None
-
-        for attempt in range(max_attempts):
-            # 1. Proactive rate limiting and token clamping
-            clamped_max_tokens, _ = self.rate_limiter.acquire(
-                est_prompt_tokens=est_prompt_tokens,
-                max_tokens=current_max_tokens,
-                schema_name=schema_name,
-            )
-
-            client = self.client_getter()
-            kwargs: Dict[str, Any] = {
-                "model": active_model,
-                "messages": [
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": prompt},
-                ],
-                "temperature": temperature,
-                "max_tokens": clamped_max_tokens,
-            }
-            if is_json:
-                kwargs["response_format"] = {"type": "json_object"}
-
-            try:
-                # Execute completion via OpenAI-compatible Groq API
-                resp = client.chat.completions.create(**kwargs)
-
-                # Extract response text and usage
-                text = resp.choices[0].message.content or ""
-                in_tok = resp.usage.prompt_tokens if resp.usage else est_prompt_tokens
-                out_tok = resp.usage.completion_tokens if resp.usage else (len(text) // 4)
-
-                # Update rate limiter with actual usage and headers if accessible
-                self.rate_limiter.record_actual_usage(in_tok, out_tok)
-                if hasattr(resp, "_raw_response") and hasattr(resp._raw_response, "headers"):
-                    self.rate_limiter.update_from_headers(resp._raw_response.headers)
-
-                return text, in_tok, out_tok
-
-            except Exception as exc:
-                last_exception = exc
-                err_msg = str(exc).lower()
-
-                # Critical auth / bad request errors should fail immediately
-                if (
-                    "authentication" in err_msg
-                    or "invalid api key" in err_msg
-                    or "unauthorized" in err_msg
-                    or "401" in err_msg
-                ):
-                    from kawach.llm.client import LLMError
-                    raise LLMError(f"Groq API authentication failed: {exc}")
-
-                is_rate_limit = (
-                    "429" in err_msg
-                    or "rate limit" in err_msg
-                    or "tpm" in err_msg
-                    or "tokens per minute" in err_msg
-                    or "too many requests" in err_msg
-                )
-
-                if is_rate_limit and attempt < max_attempts - 1:
-                    wait_s, suggested_tokens = parse_429_error(exc, est_prompt_tokens)
-                    if suggested_tokens:
-                        current_max_tokens = suggested_tokens
-
-                    # If model is 70B and repeated rate limits occur, fall back to high-throughput 8B model
-                    if attempt >= 1 and active_model != fallback_model and fallback_model:
-                        logger.warning(
-                            f"Persistent Groq 429 on {active_model}. Falling back to high-capacity model {fallback_model}."
-                        )
-                        active_model = fallback_model
-
-                    logger.warning(
-                        f"Groq 429 Rate Limit hit (attempt {attempt + 1}/{max_attempts}). "
-                        f"Waiting {wait_s:.2f}s before retry..."
-                    )
-                    time.sleep(wait_s)
-                    continue
-
-                if attempt < max_attempts - 1:
-                    backoff = [1.0, 2.5, 5.0, 10.0][min(attempt, 3)]
-                    time.sleep(backoff)
-                    continue
-
-                break
-
-        from kawach.llm.client import LLMError
-        raise LLMError(f"Groq provider failed after {max_attempts} attempts: {last_exception}")
+        return complete_with_pool(
+            system=system,
+            prompt=prompt,
+            model=model,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            is_json=is_json,
+            schema_name=schema_name,
+            run_id=run_id,
+            pool=pool,
+        )

@@ -1,0 +1,126 @@
+{
+  "defects": [
+    {
+      "id": "B1",
+      "name": "login-no-error",
+      "path": "/login",
+      "severity": "high",
+      "expected_status": "confirmed",
+      "keywords": ["login", "credential", "password", "no error", "message shown", "feedback"],
+      "description": "Wrong password submission fails authentication but displays no error feedback to the user."
+    },
+    {
+      "id": "B2",
+      "name": "cart-total-wrong",
+      "path": "/cart",
+      "severity": "high",
+      "expected_status": "confirmed",
+      "keywords": ["cart", "total", "subtotal", "quantity", "price", "calculate"],
+      "description": "Cart subtotal ignores item quantity when quantity > 1, computing price * 1 instead."
+    },
+    {
+      "id": "B3",
+      "name": "signup-accepts-invalid-email",
+      "path": "/signup",
+      "severity": "medium",
+      "expected_status": "confirmed",
+      "keywords": ["signup", "email", "invalid", "malformed", "format", "validation"],
+      "description": "Server and client accept malformed email address on account creation."
+    },
+    {
+      "id": "B4",
+      "name": "checkout-500",
+      "path": "/checkout",
+      "severity": "critical",
+      "expected_status": "confirmed",
+      "keywords": ["checkout", "500", "server error", "payment", "silent", "nothing"],
+      "description": "Submitting checkout returns HTTP 500 error and the UI displays no feedback to the user."
+    },
+    {
+      "id": "B5",
+      "name": "silent-console-error",
+      "path": "/products/1",
+      "severity": "medium",
+      "expected_status": "passed_with_issues",
+      "keywords": ["console", "uncaught", "telemetry", "typeerror", "exception", "silent"],
+      "description": "Product detail page executes normally visually but throws an uncaught JavaScript exception in console."
+    },
+    {
+      "id": "B6",
+      "name": "broken-image",
+      "path": "/",
+      "severity": "low",
+      "expected_status": "confirmed",
+      "keywords": ["image", "404", "asset", "broken", "product-2"],
+      "description": "Product image for product 2 fails to load with HTTP 404 Not Found."
+    },
+    {
+      "id": "B7",
+      "name": "flaky-random",
+      "path": "/",
+      "severity": "medium",
+      "expected_status": "flaky",
+      "keywords": ["flaky", "random", "add to cart", "button missing", "intermittent"],
+      "description": "Add to cart button for product 1 is intermittently omitted on 1 out of every 3 page loads."
+    },
+    {
+      "id": "B8",
+      "name": "price-format",
+      "path": "/",
+      "severity": "medium",
+      "expected_status": "confirmed",
+      "keywords": ["price", "NaN", "format", "product-3", "currency"],
+      "description": "Price for product 3 renders as $NaN instead of a valid numeric price."
+    }
+  ],
+  "must_not_flag": [
+    {
+      "id": "K1",
+      "name": "login-wording-variance",
+      "path": "/login",
+      "description": "Wrong password displays 'Incorrect email or password' instead of the exact spec wording 'Invalid credentials'."
+    },
+    {
+      "id": "K2",
+      "name": "delayed-error-toast",
+      "path": "/login",
+      "description": "Authentication error toast appears with a 1.5-second animation/debounce delay."
+    },
+    {
+      "id": "K3",
+      "name": "native-html5-email-validation",
+      "path": "/signup",
+      "description": "Malformed email uses native browser HTML5 validation (:invalid/validationMessage), not a custom DOM error element."
+    },
+    {
+      "id": "K4",
+      "name": "shadow-dom-and-iframe-elements",
+      "path": "/cart",
+      "description": "Discount promo feedback renders inside an open shadow root and support widget renders in an iframe."
+    },
+    {
+      "id": "K5",
+      "name": "cart-calculations-and-empty-block",
+      "path": "/cart",
+      "description": "Cart computes 10% tax accurately and empty-cart checkout is correctly rejected with a descriptive message."
+    },
+    {
+      "id": "K6",
+      "name": "harmless-third-party-noise",
+      "path": "/",
+      "description": "Favicon 404 response and benign third-party analytics console.info logging."
+    },
+    {
+      "id": "K7",
+      "name": "slow-initial-page-load",
+      "path": "/?slow=1",
+      "description": "Initial cold page load takes 2-3 seconds simulating dev server warm-up."
+    },
+    {
+      "id": "K8",
+      "name": "duplicate-account-rejection",
+      "path": "/signup",
+      "description": "Submitting an existing email (seed.user@example.com) produces an expected 'Email address already registered' conflict."
+    }
+  ]
+}

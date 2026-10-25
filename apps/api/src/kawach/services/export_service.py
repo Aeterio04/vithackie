@@ -131,5 +131,11 @@ export default defineConfig({{
 """
         zf.writestr("README.md", readme_content)
 
+        # 6. Add QA verification report files (PDF, Markdown, HTML)
+        for report_name in ["report.md", "report.html", "report.pdf"]:
+            report_file = run_dir / report_name
+            if report_file.exists():
+                zf.write(report_file, arcname=f"reports/{report_name}")
+
     zip_buffer.seek(0)
     return zip_buffer

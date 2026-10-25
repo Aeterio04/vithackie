@@ -156,7 +156,9 @@ function hashString(str: string): string {
 function normalizeUrl(rawUrl: string, baseOrigin: string): { url: string; path: string } | null {
   try {
     const parsed = new URL(rawUrl, baseOrigin);
-    if (parsed.origin !== baseOrigin) {
+    const parsedHost = parsed.hostname.replace(/^www\./, '').toLowerCase();
+    const baseHost = new URL(baseOrigin).hostname.replace(/^www\./, '').toLowerCase();
+    if (parsedHost !== baseHost) {
       return null;
     }
     parsed.hash = '';
@@ -347,7 +349,13 @@ async function extractDomAndUiState(page: Page, baseOrigin: string) {
       document.querySelectorAll('button, input[type="button"], input[type="submit"], [role="button"]')
     );
     for (const btn of buttonEls) {
-      const text = (btn.textContent || (btn as HTMLInputElement).value || '').trim().slice(0, 40);
+      const text = (
+        btn.textContent ||
+        (btn as HTMLInputElement).value ||
+        btn.getAttribute('aria-label') ||
+        btn.getAttribute('title') ||
+        ''
+      ).trim().slice(0, 40);
       if (text) {
         interactiveElements.push({
           action: 'click',
@@ -454,7 +462,7 @@ async function main() {
   const maxDepth = parseInt(process.env.MAX_DEPTH || '4', 10);
   const maxTransitions = parseInt(process.env.MAX_TRANSITIONS || '50', 10);
   const maxPerDepth = parseInt(process.env.MAX_PER_DEPTH || '20', 10);
-  const allowedHostsRaw = process.env.ALLOWED_HOSTS || 'localhost,127.0.0.1';
+  const allowedHostsRaw = process.env.ALLOWED_HOSTS || '*';
   const outFile = process.env.OUT_FILE || path.join(process.cwd(), 'explore_raw.json');
 
   let baseOrigin: string;
@@ -494,21 +502,47 @@ async function main() {
   let currentFailedRequests: Array<{ url: string; failure?: string }> = [];
 
   try {
-    browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext();
+    browser = await chromium.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const context = await browser.newContext({
+      viewport: { width: 1366, height: 768 },
+      ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      extraHTTPHeaders: {
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        ...(process.env.X_QA_TOKEN ? { 'X-QA-Token': process.env.X_QA_TOKEN } : {}),
+      },
+    });
     const page = await context.newPage();
 
-    // 1. Off-domain request blocking & network telemetry
+    // 1. Off-domain request blocking & network telemetry (permits safe subresources like CDNs, fonts, styles)
     await page.route('**/*', (route) => {
       try {
-        const reqUrl = new URL(route.request().url());
-        if (!allowedHosts.includes(reqUrl.hostname.toLowerCase())) {
-          return route.abort('blockedbyclient');
+        const req = route.request();
+        const reqUrl = new URL(req.url());
+        const isNav = req.isNavigationRequest();
+        const rType = req.resourceType();
+        const isSub = ['stylesheet', 'script', 'image', 'font', 'media', 'fetch', 'xhr'].includes(rType);
+        const proto = reqUrl.protocol;
+
+        if (
+          allowedHosts.includes('*') ||
+          proto === 'data:' ||
+          proto === 'blob:' ||
+          proto === 'about:' ||
+          allowedHosts.includes(reqUrl.hostname.toLowerCase()) ||
+          (!isNav && isSub)
+        ) {
+          return route.continue();
         }
+        return route.abort('blockedbyclient');
       } catch {
         return route.abort();
       }
-      return route.continue();
     });
 
     // 2. Telemetry event listeners
@@ -574,9 +608,15 @@ async function main() {
       }
 
       const buttons: ButtonInfo[] = await page
-        .$$eval('button, input[type="button"], input[type="submit"]', (elements) =>
-          elements.slice(0, 20).map((el) => ({
-            text: ((el as HTMLElement).textContent || (el as HTMLInputElement).value || '').trim().slice(0, 50),
+        .$$eval('button, input[type="button"], input[type="submit"], [role="button"]', (elements) =>
+          elements.slice(0, 30).map((el) => ({
+            text: (
+              (el as HTMLElement).textContent ||
+              (el as HTMLInputElement).value ||
+              el.getAttribute('aria-label') ||
+              el.getAttribute('title') ||
+              ''
+            ).trim().slice(0, 50),
           }))
         )
         .catch(() => []);
@@ -697,8 +737,20 @@ async function main() {
 
     // 3. Step 1: Authentication Phase
     try {
-      const initResp = await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 10000 });
+      const initResp = await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 20000 });
       const initStatus = initResp ? initResp.status() : 200;
+
+      // Adapt baseOrigin if baseUrl redirected to e.g. https or www
+      try {
+        const actualParsed = new URL(page.url());
+        if (actualParsed.origin !== baseOrigin) {
+          baseOrigin = actualParsed.origin;
+          baseHostname = actualParsed.hostname;
+          if (!allowedHosts.includes(baseHostname.toLowerCase())) {
+            allowedHosts.push(baseHostname.toLowerCase());
+          }
+        }
+      } catch {}
 
       let hasPasswordField = (await page.$('input[type="password"]')) !== null;
       let loginUrl = baseUrl;
@@ -1059,7 +1111,11 @@ async function main() {
     console.log(`Extracted ${result.journeys.length} deep journeys (depth >= 3).`);
 
     // 9. Post-crawl requiresAuth verification
-    const anonContext = await browser.newContext();
+    const anonContext = await browser.newContext({
+      ignoreHTTPSErrors: true,
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    });
     for (const pageItem of result.pages) {
       if (pageItem.path === '/login' || pageItem.path === '/signin' || pageItem.path === '/signup') {
         pageItem.requiresAuth = false;

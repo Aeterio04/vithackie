@@ -1,6 +1,8 @@
 """Script writer agent that generates Playwright test scripts."""
 
 import json
+import threading
+from concurrent.futures import ThreadPoolExecutor
 import os
 import re
 import subprocess
@@ -19,17 +21,18 @@ from kawach.llm import get_llm, guard, load_prompt, untrusted
 from kawach.schemas import AppMap, Catalog, RunInput, Step, TestCase
 from kawach.storage import artifacts as storage
 
-CANONICAL_EXAMPLE = """import { test, expect, credentials, unique } from '../../../apps/runner/fixtures';
+CANONICAL_EXAMPLE = """import { test, expect, credentials, unique, expectErrorFeedback, expectNoErrorFeedback } from '../../../apps/runner/fixtures';
 
 test('T02: Signup rejects an invalid email address', async ({ page }) => {
   await page.goto('/signup');
   await page.getByLabel('Email').fill('not-an-email');
   await page.getByLabel('Password').fill('Passw0rd!23');
-  await page.getByRole('button', { name: 'Sign up' }).click();
   // S2
-  const isInvalid = await page.getByLabel('Email').evaluate((el: HTMLInputElement) => !el.checkValidity() || Boolean(el.validationMessage)).catch(() => false);
-  const hasAlert = await page.getByRole('alert').isVisible().catch(() => false) || await page.getByText(/valid email/i).isVisible().catch(() => false);
-  expect(isInvalid || hasAlert).toBe(true);
+  await expectErrorFeedback(page, {
+    trigger: async () => {
+      await page.getByRole('button', { name: 'Sign up' }).click();
+    },
+  });
   await expect(page).toHaveURL(/\\/signup$/);
 });"""
 
@@ -46,8 +49,12 @@ def _list_tests_fallback(run_id: str, rel_file: str) -> ListResult:
     if os.name == "nt":
         cmd = ["cmd", "/c", "npx", "playwright", "test", str(script_abs), "--list"]
 
+    run_input = storage.load_model(run_id, "input.json", RunInput)
+    target_url = run_input.targetUrl if run_input else "http://localhost:4000"
+
     env = os.environ.copy()
-    env["BASE_URL"] = "http://localhost:4000"
+    env["BASE_URL"] = target_url
+    env["ALLOWED_HOSTS"] = ",".join(settings.ALLOWED_HOSTS)
     env["SPEC_DIR"] = str((storage.run_dir(run_id) / "scripts").resolve())
     env["TEST_USERNAME"] = "qa.tester@example.com"
     env["TEST_PASSWORD"] = "Passw0rd!23"
@@ -78,6 +85,9 @@ def validate_script_loadable(run_id: str, rel_file: str) -> ListResult:
         return _list_tests_fallback(run_id, rel_file)
     except Exception as e:
         return ListResult(ok=False, error=str(e))
+
+
+_save_lock = threading.Lock()
 
 
 def write_scripts(run_id: str) -> Catalog:
@@ -134,7 +144,7 @@ def write_scripts(run_id: str) -> Catalog:
 
     _log(f"Starting test script generation for {total_approved} approved test cases...", source="script_writer")
 
-    for idx, test_case in enumerate(approved_tests):
+    def _write_one(idx: int, test_case) -> None:
         test_id = test_case.id
         test_title = test_case.title
         storage.set_stage(
@@ -180,7 +190,7 @@ def write_scripts(run_id: str) -> Catalog:
                 prompt=prompt_text,
                 schema_name="script_writer",
                 run_id=run_id,
-                max_tokens=500,
+                max_tokens=1500,
                 temperature=0.1,
             )
             sanitized_script = clean_and_sanitize_script(raw_script, test_id, test_title)
@@ -212,7 +222,7 @@ def write_scripts(run_id: str) -> Catalog:
                     prompt=repair_prompt,
                     schema_name="script_writer",
                     run_id=run_id,
-                    max_tokens=500,
+                    max_tokens=1500,
                     temperature=0.1,
                 )
                 repaired_sanitized = clean_and_sanitize_script(repair_reply, test_id, test_title)
@@ -221,18 +231,44 @@ def write_scripts(run_id: str) -> Catalog:
             except Exception as repair_fail:
                 list_res = ListResult(ok=False, error=str(repair_fail))
 
-        test_case.script = rel_path
         if list_res.ok:
+            test_case.script = rel_path
             test_case.scriptStatus = "ok"
             test_case.scriptError = None
         else:
+            try:
+                broken_file = script_abs.with_name(f"{script_abs.name}.broken")
+                if script_abs.exists():
+                    script_abs.rename(broken_file)
+            except Exception:
+                pass
+            test_case.script = None
             test_case.scriptStatus = "error"
             test_case.scriptError = (list_res.error or "Validation failed")[:500]
 
-        catalog.generatedAt = now_iso()
-        storage.save_model(run_id, "catalog.json", catalog)
+        with _save_lock:
+            catalog.generatedAt = now_iso()
+            storage.save_model(run_id, "catalog.json", catalog)
 
-        time.sleep(1.2)
+
+    # Bounded concurrency = number of LLM keys in the pool (the fixed 1.2 s sleep per test was a single-key leftover).
+    try:
+        from kawach.llm.key_pool import get_key_pool as get_pool
+        n_keys = max(1, int(get_pool().size()))
+    except Exception:
+        n_keys = 2
+    n_workers = max(1, min(n_keys, total_approved, 8))
+    with ThreadPoolExecutor(max_workers=n_workers) as pool:
+        futures = {pool.submit(_write_one, i, t): t for i, t in enumerate(approved_tests)}
+        for fut, t in futures.items():
+            try:
+                fut.result(timeout=90 * 3)  # generation + one repair, hard cap per test
+            except Exception as exc:  # timeout or crash: mark this test, keep going with the others
+                t.script, t.scriptStatus = None, "error"
+                t.scriptError = f"script generation timed out or crashed: {exc}"[:500]
+                _log(f"Script generation for {t.id} failed: {exc}", level="error", source="script_writer")
+    with _save_lock:
+        storage.save_model(run_id, "catalog.json", catalog)
 
     storage.set_stage(run_id, "scripting", step="All scripts written", done=total_approved, total=total_approved)
     _log(f"Completed script generation for {total_approved} tests.", source="script_writer")

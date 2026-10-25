@@ -83,49 +83,20 @@ class ResilientLLMChain(LLMClient):
         model: Optional[str] = None,
         max_tokens: int = 1000,
     ) -> str:
-        await self._throttle_groq()
-        url = "https://api.groq.com/openai/v1/chat/completions"
-        target_model = model or self.groq_model
-        headers = {
-            "Authorization": f"Bearer {self.groq_key}",
-            "Content-Type": "application/json",
-        }
-        # CRITICAL: Always budget max_tokens so Groq doesn't reserve 4k+ tokens against 6k TPM ceiling
-        payload = {
-            "model": target_model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "response_format": {"type": "json_object"},
-        }
-
-        async with httpx.AsyncClient(timeout=self.timeout_sec) as client:
-            res = await client.post(url, headers=headers, json=payload)
-            if res.status_code == 404:
-                raise LLMClientError(f"GROQ_MODEL_404: {res.text}")
-            if res.status_code == 429:
-                # Extract wait duration from retry-after header or body text
-                wait_time = 4.0
-                retry_header = res.headers.get("retry-after")
-                if retry_header:
-                    try:
-                        wait_time = float(retry_header)
-                    except ValueError:
-                        pass
-                else:
-                    match = re.search(r"try again in (\d+\.?\d*)s", res.text)
-                    if match:
-                        wait_time = float(match.group(1)) + 0.5
-                raise LLMClientError(f"GROQ_RATE_LIMIT_429: wait={wait_time} body={res.text}")
-
-            if res.is_error:
-                raise LLMClientError(f"Groq error ({res.status_code}): {res.text}")
-
-            data = res.json()
-            return data["choices"][0]["message"]["content"]
+        try:
+            from kawach.llm.key_pool import complete_with_pool
+            text, _, _ = complete_with_pool(
+                system=system_prompt,
+                prompt=user_prompt,
+                model=model or self.groq_model,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                is_json=True,
+                schema_name="demo",
+            )
+            return text
+        except Exception as e:
+            raise LLMClientError(f"Groq error: {e}")
 
     async def _call_gemini(self, system_prompt: str, user_prompt: str, temperature: float) -> str:
         url = (

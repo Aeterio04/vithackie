@@ -40,6 +40,8 @@ runner/test-results/
 runner/playwright-report/
 apps/runner/test-results/
 apps/runner/playwright-report/
+apps/runner/.rate/
+.rate/
 
 # Frontend builds
 frontend/dist/

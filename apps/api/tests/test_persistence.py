@@ -164,3 +164,30 @@ def test_scoped_repositories(db_session):
     # User A and System can see Run A
     assert run_repo.get_run(scope_a, "run-alpha-1") is not None
     assert run_repo.get_run(scope_sys, "run-alpha-1") is not None
+
+
+def test_project_slug_deduplication_and_url_normalization(db_session):
+    """Test that creating projects with identical names or colliding slugs auto-disambiguates cleanly."""
+    user_repo = UserRepository(db_session)
+    proj_repo = ProjectRepository(db_session)
+
+    user = user_repo.create_user("owner@example.com", "hash", "Owner")
+    scope = Scope(user_id=user.id)
+
+    # First project with default name 'localhost App'
+    p1 = proj_repo.create_project(scope=scope, name="localhost App", target_url="http://localhost:4000")
+    assert p1.slug == "localhost-app"
+
+    # Second project with identical name 'localhost App' (different port or target)
+    p2 = proj_repo.create_project(scope=scope, name="localhost App", target_url="http://localhost:5173")
+    assert p2.slug == "localhost-app-2"
+    assert p2.id != p1.id
+
+    # Third project with identical name 'localhost App'
+    p3 = proj_repo.create_project(scope=scope, name="localhost App", target_url="http://localhost:8080")
+    assert p3.slug == "localhost-app-3"
+
+    # Test URL normalization
+    assert ProjectRepository.normalize_url("http://localhost:5173/") == "http://localhost:5173"
+    assert ProjectRepository.normalize_url("HTTP://LOCALHOST:5173///") == "http://localhost:5173"
+

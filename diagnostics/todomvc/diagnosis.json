@@ -1,0 +1,210 @@
+{
+  "target_url": "https://demo.playwright.dev/todomvc",
+  "hostname": "demo.playwright.dev",
+  "timestamp": "2026-10-25T02:51:19.517958+00:00",
+  "probe_a_dns_tcp_tls": {
+    "ipv4": [
+      "185.199.111.153",
+      "185.199.110.153",
+      "185.199.109.153",
+      "185.199.108.153"
+    ],
+    "ipv6": [],
+    "dns_time_ms": 25.11,
+    "tcp_connect_ms": 31.32,
+    "tls_handshake_ms": 40.14,
+    "tls_version": "TLSv1.3",
+    "cipher": "TLS_AES_128_GCM_SHA256",
+    "cert_subject": {
+      "commonName": "demo.playwright.dev"
+    },
+    "cert_issuer": {
+      "countryName": "US",
+      "organizationName": "Let's Encrypt",
+      "commonName": "YR2"
+    },
+    "cert_expiry": "Nov 27 16:17:17 2026 GMT",
+    "san": [
+      "demo.playwright.dev"
+    ],
+    "error": null
+  },
+  "probe_b_http_legacy": {
+    "head": {
+      "method": "HEAD",
+      "status": 200,
+      "final_url": "https://demo.playwright.dev/todomvc/",
+      "redirect_chain": [
+        {
+          "status": 301,
+          "url": "https://demo.playwright.dev/todomvc",
+          "location": "https://demo.playwright.dev/todomvc/"
+        }
+      ],
+      "headers": {
+        "server": "GitHub.com",
+        "via": "1.1 varnish",
+        "x-cache": "MISS",
+        "content-type": "text/html; charset=utf-8",
+        "content-length": "496"
+      },
+      "cookies": [],
+      "body_snippet": "",
+      "body_len": 0,
+      "duration_ms": 576.3,
+      "error": null
+    },
+    "get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://demo.playwright.dev/todomvc/",
+      "redirect_chain": [
+        {
+          "status": 301,
+          "url": "https://demo.playwright.dev/todomvc",
+          "location": "https://demo.playwright.dev/todomvc/"
+        }
+      ],
+      "headers": {
+        "server": "GitHub.com",
+        "via": "1.1 varnish",
+        "x-cache": "HIT",
+        "content-type": "text/html; charset=utf-8",
+        "content-length": "496"
+      },
+      "cookies": [],
+      "body_snippet": "<!doctype html>\n<html lang=\"en\" data-framework=\"typescript\">\n\t<head>\n\t\t<meta charset=\"utf-8\">\n\t\t<title>React \u2022 TodoMVC</title>\n\t\t<link rel=\"stylesheet\" href=\"base.css\">\n\t\t<link rel=\"stylesheet\" href=\"index.css\">\n\t</head>\n\t<body>\n\t\t<div style=\"background-color: #ffee5b; color: #444; padding: 0.75rem 1rem; text-align: center; border-bottom: 1px solid #cc0;\">This is just a demo of TodoMVC for testing, not the <a href=\"https://todomvc.com/\">real TodoMVC app.</a></div>\n\t\t<section class=\"todoapp\"></se",
+      "body_len": 865,
+      "duration_ms": 152.93,
+      "error": null
+    },
+    "class_head": "empty_page",
+    "class_get": "ok"
+  },
+  "probe_c_http_chrome": {
+    "get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://demo.playwright.dev/todomvc/",
+      "redirect_chain": [
+        {
+          "status": 301,
+          "url": "https://demo.playwright.dev/todomvc",
+          "location": "https://demo.playwright.dev/todomvc/"
+        }
+      ],
+      "headers": {
+        "server": "GitHub.com",
+        "via": "1.1 varnish",
+        "x-cache": "HIT",
+        "content-type": "text/html; charset=utf-8",
+        "content-length": "496"
+      },
+      "cookies": [],
+      "body_snippet": "<!doctype html>\n<html lang=\"en\" data-framework=\"typescript\">\n\t<head>\n\t\t<meta charset=\"utf-8\">\n\t\t<title>React \u2022 TodoMVC</title>\n\t\t<link rel=\"stylesheet\" href=\"base.css\">\n\t\t<link rel=\"stylesheet\" href=\"index.css\">\n\t</head>\n\t<body>\n\t\t<div style=\"background-color: #ffee5b; color: #444; padding: 0.75rem 1rem; text-align: center; border-bottom: 1px solid #cc0;\">This is just a demo of TodoMVC for testing, not the <a href=\"https://todomvc.com/\">real TodoMVC app.</a></div>\n\t\t<section class=\"todoapp\"></se",
+      "body_len": 865,
+      "duration_ms": 125.4,
+      "error": null
+    },
+    "class": "ok"
+  },
+  "probe_d_playwright": {
+    "current": {
+      "profile": "current",
+      "url": "https://demo.playwright.dev/todomvc",
+      "finalUrl": "https://demo.playwright.dev/todomvc/#/",
+      "title": "React \u00e2\u20ac\u00a2 TodoMVC",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 148,
+      "visibleElements": 8,
+      "consoleErrors": [],
+      "failedRequests": [],
+      "httpErrors": [],
+      "domContentLoadedMs": 497,
+      "loadMs": 501,
+      "networkIdleReached": true,
+      "networkIdleMs": 451,
+      "screenshotPath": "diagnostics\\todomvc\\screenshot_current.png",
+      "error": null
+    },
+    "new_standard": {
+      "profile": "new_standard",
+      "url": "https://demo.playwright.dev/todomvc",
+      "finalUrl": "https://demo.playwright.dev/todomvc/#/",
+      "title": "React \u00e2\u20ac\u00a2 TodoMVC",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 148,
+      "visibleElements": 8,
+      "consoleErrors": [],
+      "failedRequests": [],
+      "httpErrors": [],
+      "domContentLoadedMs": 237,
+      "loadMs": 240,
+      "networkIdleReached": true,
+      "networkIdleMs": 473,
+      "screenshotPath": "diagnostics\\todomvc\\screenshot_new_standard.png",
+      "error": null
+    },
+    "headed": {
+      "profile": "headed",
+      "url": "https://demo.playwright.dev/todomvc",
+      "finalUrl": "https://demo.playwright.dev/todomvc/#/",
+      "title": "React \u00e2\u20ac\u00a2 TodoMVC",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 148,
+      "visibleElements": 8,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "failedRequests": [],
+      "httpErrors": [],
+      "domContentLoadedMs": 264,
+      "loadMs": 267,
+      "networkIdleReached": true,
+      "networkIdleMs": 458,
+      "screenshotPath": "diagnostics\\todomvc\\screenshot_headed.png",
+      "error": null
+    },
+    "class_current": "ok",
+    "class_new_standard": "ok"
+  },
+  "probe_e_proxy": {
+    "env": {
+      "HTTP_PROXY": null,
+      "HTTPS_PROXY": null,
+      "ALL_PROXY": null,
+      "NO_PROXY": null
+    },
+    "direct_get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://demo.playwright.dev/todomvc/",
+      "redirect_chain": [
+        {
+          "status": 301,
+          "url": "https://demo.playwright.dev/todomvc",
+          "location": "https://demo.playwright.dev/todomvc/"
+        }
+      ],
+      "headers": {
+        "server": "GitHub.com",
+        "via": "1.1 varnish",
+        "x-cache": "HIT",
+        "content-type": "text/html; charset=utf-8",
+        "content-length": "496"
+      },
+      "cookies": [],
+      "body_snippet": "<!doctype html>\n<html lang=\"en\" data-framework=\"typescript\">\n\t<head>\n\t\t<meta charset=\"utf-8\">\n\t\t<title>React \u2022 TodoMVC</title>\n\t\t<link rel=\"stylesheet\" href=\"base.css\">\n\t\t<link rel=\"stylesheet\" href=\"index.css\">\n\t</head>\n\t<body>\n\t\t<div style=\"background-color: #ffee5b; color: #444; padding: 0.75rem 1rem; text-align: center; border-bottom: 1px solid #cc0;\">This is just a demo of TodoMVC for testing, not the <a href=\"https://todomvc.com/\">real TodoMVC app.</a></div>\n\t\t<section class=\"todoapp\"></se",
+      "body_len": 865,
+      "duration_ms": 116.96,
+      "error": null
+    }
+  },
+  "probe_g_verdict": {
+    "responsible_layer": "ok",
+    "evidence": "Target is accessible and renders interactive DOM content."
+  }
+}

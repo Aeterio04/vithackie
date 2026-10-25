@@ -24,6 +24,8 @@ def map_stage_to_status(stage: str) -> str:
         "reporting": "reporting",
         "done": "completed",
         "failed": "failed",
+        "script_generation_failed": "failed",
+        "done_with_environment_issue": "completed",
         "cancelled": "cancelled",
     }
     return mapping.get(stage, "created")
@@ -45,7 +47,7 @@ def compute_progress_percentage(run: Run) -> int:
         "cancelled": (100, 100),
     }
     low, high = stage_weights.get(run.stage, (0, 0))
-    if run.stage in ("done", "failed", "cancelled", "awaiting_review"):
+    if run.stage in ("done", "failed", "cancelled", "awaiting_review", "script_generation_failed", "done_with_environment_issue"):
         return high
 
     if run.progress and run.progress.total and run.progress.total > 0:
@@ -138,7 +140,7 @@ def transform_run_to_frontend(run_id: str) -> dict:
     frontend_status = map_stage_to_status(run.stage)
 
     finished_at = None
-    if run.stage in ("done", "failed", "cancelled"):
+    if run.stage in ("done", "failed", "cancelled", "script_generation_failed", "done_with_environment_issue"):
         finished_at = run.updatedAt
 
     app_map = storage.load_model(run_id, "app_map.json", AppMap)
@@ -152,7 +154,7 @@ def transform_run_to_frontend(run_id: str) -> dict:
         try:
             created_dt = datetime.fromisoformat(run.createdAt.replace("Z", "+00:00"))
             end_dt = datetime.now(timezone.utc)
-            if run.stage in ("done", "failed", "cancelled") and hasattr(run, "updatedAt") and run.updatedAt:
+            if run.stage in ("done", "failed", "cancelled", "script_generation_failed", "done_with_environment_issue") and hasattr(run, "updatedAt") and run.updatedAt:
                 try:
                     end_dt = datetime.fromisoformat(run.updatedAt.replace("Z", "+00:00"))
                 except Exception:
@@ -321,6 +323,24 @@ def build_execution_state(run_id: str) -> dict:
 
     tests_list = []
     completed_count = 0
+    seen_ids = set()
+
+    def _map_test_outcome(out: Optional[str]) -> str:
+        if not out:
+            return "queued"
+        o = str(out).lower()
+        if o in ("passed", "passed_with_issues"):
+            return "passed"
+        if o == "environment_error":
+            return "error"
+        if o in ("not_run", "skipped"):
+            return "skipped"
+        if o == "running":
+            return "running"
+        if o in ("failed", "assertion_failure", "test_error", "script_error", "setup_error"):
+            return "failed"
+        return "failed"
+
     if cat and cat.tests:
         for t in cat.tests:
             outcome = "queued"
@@ -329,9 +349,9 @@ def build_execution_state(run_id: str) -> dict:
             err_msg = None
 
             if res and res.tests:
-                match = next((rt for rt in res.tests if rt.testId == t.id), None)
+                match = next((rt for rt in res.tests if rt.testId == t.id or rt.testId.lower() == t.id.lower()), None)
                 if match:
-                    outcome = "passed" if match.outcome == "passed" else "failed"
+                    outcome = _map_test_outcome(match.outcome)
                     duration = match.durationMs
                     err_msg = match.errorMessage
 
@@ -340,16 +360,14 @@ def build_execution_state(run_id: str) -> dict:
                 worker_id = ldata.get("worker_id") or worker_id
                 if outcome == "queued":
                     st = ldata.get("status")
-                    if st == "running":
-                        outcome = "running"
-                    elif st in ("passed", "failed"):
-                        outcome = st
+                    outcome = _map_test_outcome(st)
                     duration = ldata.get("duration_ms")
                     err_msg = ldata.get("error_message")
 
-            if outcome in ("passed", "failed"):
+            if outcome in ("passed", "failed", "error"):
                 completed_count += 1
 
+            seen_ids.add(t.id)
             tests_list.append({
                 "id": t.id,
                 "test_id": t.id,
@@ -361,12 +379,54 @@ def build_execution_state(run_id: str) -> dict:
                 "worker_id": worker_id,
             })
 
+    # Also incorporate tests from results.json (in case catalog.json is missing or had fewer tests)
+    if res and res.tests:
+        for rt in res.tests:
+            if rt.testId not in seen_ids:
+                seen_ids.add(rt.testId)
+                outcome = _map_test_outcome(rt.outcome)
+                worker_id = "w1"
+                if rt.testId in live_data:
+                    ldata = live_data[rt.testId]
+                    worker_id = ldata.get("worker_id") or worker_id
+
+                if outcome in ("passed", "failed", "error"):
+                    completed_count += 1
+
+                tests_list.append({
+                    "id": rt.testId,
+                    "test_id": rt.testId,
+                    "run_id": run_id,
+                    "title": rt.title or f"Test {rt.testId}",
+                    "status": outcome,
+                    "duration_ms": rt.durationMs,
+                    "error_message": rt.errorMessage,
+                    "worker_id": worker_id,
+                })
+
+    # Also incorporate live_data if tests are actively running and not yet recorded
+    for tid, ldata in live_data.items():
+        if tid not in seen_ids:
+            seen_ids.add(tid)
+            st = ldata.get("status", "running")
+            outcome = _map_test_outcome(st)
+            tests_list.append({
+                "id": tid,
+                "test_id": tid,
+                "run_id": run_id,
+                "title": ldata.get("title") or f"Test {tid}",
+                "status": outcome,
+                "duration_ms": ldata.get("duration_ms"),
+                "error_message": ldata.get("error_message"),
+                "worker_id": ldata.get("worker_id", "w1"),
+            })
+
     elapsed_minutes = 0.1
     if run and run.createdAt:
         try:
             created_dt = datetime.fromisoformat(run.createdAt.replace("Z", "+00:00"))
             now_dt = datetime.now(timezone.utc)
-            if run.stage in ("done", "failed", "cancelled") and hasattr(run, "updatedAt") and run.updatedAt:
+            if run.stage in ("done", "failed", "cancelled", "script_generation_failed", "done_with_environment_issue") and hasattr(run, "updatedAt") and run.updatedAt:
                 try:
                     now_dt = datetime.fromisoformat(run.updatedAt.replace("Z", "+00:00"))
                 except Exception:

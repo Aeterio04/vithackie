@@ -40,6 +40,23 @@ class TestCase(BaseModel):
     script: Optional[str] = None
     scriptStatus: Literal["pending", "ok", "error"] = "pending"
     scriptError: Optional[str] = None
+    # Spec-driven fields (populated when the spec has explicit TC blocks)
+    expectedResults: List[str] = Field(default_factory=list)
+    tcType: Literal["functional", "informational"] = "functional"
+    confidence: Optional[str] = None
+    viewport: Optional[str] = None
+    viewports: List[Dict[str, Any]] = Field(default_factory=list)
+    calibrationNotes: List[str] = Field(default_factory=list)
+    suggested: bool = False
+    lint: Optional[Dict[str, Any]] = None
+
+
+class CatalogMeta(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    mode: Literal["spec_driven", "exploratory"] = "exploratory"
+    specHash: Optional[str] = None
+    catalogVersion: Optional[str] = None
+    tcCount: int = 0
 
 
 class CoverageMatrix(BaseModel):
@@ -56,3 +73,4 @@ class Catalog(BaseModel):
     generatedAt: str
     tests: List[TestCase] = Field(default_factory=list)
     coverageMatrix: Optional[CoverageMatrix] = None
+    meta: Optional[CatalogMeta] = None

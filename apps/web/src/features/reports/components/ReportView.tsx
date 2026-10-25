@@ -22,6 +22,8 @@ import {
   FileBarChart2,
   Download,
   FileCode,
+  FileText,
+  RefreshCw,
   ShieldCheck,
   CheckCircle2,
   AlertTriangle,
@@ -50,8 +52,25 @@ export function ReportView() {
     if (runId) setSelectedRunId(runId);
   }, [runId, setSelectedRunId]);
 
-  const { data: report, isLoading } = useReport(runId);
+  const { data: report, isLoading, refetch } = useReport(runId);
   const [isNotReproOpen, setIsNotReproOpen] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
+
+  const handleRegenerate = async () => {
+    if (!runId) return;
+    setRegenerating(true);
+    try {
+      await fetch(API_ENDPOINTS.RUN_REPORT_REGENERATE(runId), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (refetch) await refetch();
+    } catch (err) {
+      console.error("Failed to regenerate report:", err);
+    } finally {
+      setRegenerating(false);
+    }
+  };
 
   // Fix pipeline states
   const [isFixModalOpen, setIsFixModalOpen] = useState(false);
@@ -169,6 +188,33 @@ export function ReportView() {
             <Chip variant={run.status} size="sm">
               {run.status}
             </Chip>
+            <span
+              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                (report as any)?.report_status === "ready"
+                  ? "bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]"
+                  : (report as any)?.report_status === "failed"
+                  ? "bg-[#FCE8E6] text-[#C5221F] border border-[#FAD2CF]"
+                  : "bg-[#FEF7E0] text-[#B06000] border border-[#FEEFC3]"
+              }`}
+              title={(report as any)?.report_error || undefined}
+            >
+              {(report as any)?.report_status === "generating" || regenerating ? (
+                <>
+                  <RefreshCw className="w-3 h-3 animate-spin" />
+                  <span>Report Generating...</span>
+                </>
+              ) : (report as any)?.report_status === "ready" ? (
+                <>
+                  <CheckCircle2 className="w-3 h-3 text-[#137333]" />
+                  <span>Report Ready</span>
+                </>
+              ) : (
+                <>
+                  <AlertTriangle className="w-3 h-3 text-[#B06000]" />
+                  <span>Report: {(report as any)?.report_status || "Pending"}</span>
+                </>
+              )}
+            </span>
             <span className="text-xs font-mono text-[#8A887F]">
               Mode: {run.review_mode}
             </span>
@@ -196,31 +242,41 @@ export function ReportView() {
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2.5 shrink-0">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <Download className="w-3.5 h-3.5" />
-                <span>Export Report</span>
-                <ChevronDown className="w-3 h-3 text-[#8A887F]" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => handleExport("html")}>
-                HTML Executive Summary
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport("pdf")}>
-                PDF Report Archive
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport("json")}>
-                Machine-Readable JSON
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport("csv")}>
-                CSV Test Breakdown
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* Action Buttons: PDF, MD, Regenerate, Export */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open(API_ENDPOINTS.RUN_REPORT_PDF(runId), "_blank")}
+            className="gap-1.5"
+            title="Download complete QA verification report as PDF"
+          >
+            <Download className="w-3.5 h-3.5 text-rose-600" />
+            <span>Download PDF</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open(API_ENDPOINTS.RUN_REPORT_MD(runId), "_blank")}
+            className="gap-1.5"
+            title="Download complete QA verification report as Markdown"
+          >
+            <FileText className="w-3.5 h-3.5 text-blue-600" />
+            <span>Download Markdown</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRegenerate}
+            disabled={regenerating}
+            className="gap-1.5"
+            title="Rebuild all report formats from stored run artifacts"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-[#8A887F] ${regenerating ? "animate-spin" : ""}`} />
+            <span>{regenerating ? "Regenerating..." : "Regenerate Report"}</span>
+          </Button>
 
           <Button
             variant="primary"
@@ -229,7 +285,7 @@ export function ReportView() {
             className="gap-1.5"
           >
             <FileCode className="w-4 h-4" />
-            <span>Download Reusable Tests (.zip)</span>
+            <span>Export Tests (.zip)</span>
           </Button>
         </div>
       </div>

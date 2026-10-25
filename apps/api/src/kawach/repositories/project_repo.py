@@ -15,6 +15,13 @@ from kawach.repositories.base import BaseRepository, Scope
 class ProjectRepository(BaseRepository):
     """Data access methods for projects, specs, and credentials."""
 
+    @staticmethod
+    def normalize_url(url: Optional[str]) -> str:
+        """Normalize URL for consistent comparison (strip trailing slashes, whitespace, lowercase)."""
+        if not url:
+            return ""
+        return url.strip().rstrip("/").lower()
+
     def create_project(
         self,
         scope: Scope,
@@ -33,6 +40,16 @@ class ProjectRepository(BaseRepository):
         import re
         owner_id = scope.user_id or "system"
         clean_slug = slug or re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-") or "project"
+
+        # Ensure slug is strictly unique for this owner_id across all projects (active and archived)
+        base_slug = clean_slug
+        counter = 2
+        while self.db.scalars(
+            select(Project.id).where(Project.owner_id == owner_id, Project.slug == clean_slug)
+        ).first() is not None:
+            clean_slug = f"{base_slug}-{counter}"
+            counter += 1
+
         project = Project(
             owner_id=owner_id,
             workspace_id=workspace_id,

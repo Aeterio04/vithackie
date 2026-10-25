@@ -1,0 +1,869 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\node_modules\\@playwright\\test\\cli.js",
+      "test"
+    ],
+    "configFile": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\playwright.config.ts",
+    "rootDir": "D:/Soham/Vit Hackathon/vithackie/qa_benchmark/probes",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 4
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Soham/Vit Hackathon/vithackie/apps/runner/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "D:/Soham/Vit Hackathon/vithackie/qa_benchmark/probes",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "name": "chromium",
+        "testDir": "D:\\Soham\\Vit Hackathon\\vithackie\\qa_benchmark\\probes",
+        "snapshotDir": "D:\\Soham\\Vit Hackathon\\vithackie\\qa_benchmark\\probes",
+        "testIgnore": [],
+        "testMatch": "**/*.spec.ts",
+        "timeout": 45000,
+        "use": {
+          "baseURL": "http://localhost:3100",
+          "headless": true,
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "locale": "en-US",
+          "timezoneId": "UTC",
+          "actionTimeout": 15000,
+          "navigationTimeout": 30000,
+          "trace": "on",
+          "screenshot": "on",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1280,
+              "height": 720
+            }
+          },
+          "launchOptions": {
+            "slowMo": 0
+          },
+          "ignoreHTTPSErrors": true,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json",
+        {
+          "outputFile": "D:\\Soham\\Vit Hackathon\\vithackie\\test-results\\probes_clean.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "probes.spec.ts",
+      "file": "probes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "QA Benchmark Probes",
+          "file": "probes.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "P01 login invalid password shows error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4632,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:45.567Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-1f6e1-nvalid-password-shows-error-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "WwogICJbKzE1MzBtc10gRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDAxIChVbmF1dGhvcml6ZWQpIgpd"
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbCiAgICB7CiAgICAgICJ1cmwiOiAiaHR0cDovL2xvY2FsaG9zdDozMTAwL2FwaS9sb2dpbiIsCiAgICAgICJzdGF0dXMiOiA0MDEsCiAgICAgICJtZXRob2QiOiAiUE9TVCIsCiAgICAgICJyZWxfdGltZV9tcyI6IDE1MzAKICAgIH0KICBdCn0="
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-1f6e1-nvalid-password-shows-error-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-1f6e1-nvalid-password-shows-error-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-276c3dbac36b05a8b09c",
+              "file": "probes.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "P02 login error toast delayed appearance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4563,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:45.567Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-57334-or-toast-delayed-appearance-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "WwogICJbKzE0ODdtc10gRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDAxIChVbmF1dGhvcml6ZWQpIgpd"
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbCiAgICB7CiAgICAgICJ1cmwiOiAiaHR0cDovL2xvY2FsaG9zdDozMTAwL2FwaS9sb2dpbiIsCiAgICAgICJzdGF0dXMiOiA0MDEsCiAgICAgICJtZXRob2QiOiAiUE9TVCIsCiAgICAgICJyZWxfdGltZV9tcyI6IDE0ODcKICAgIH0KICBdCn0="
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-57334-or-toast-delayed-appearance-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-57334-or-toast-delayed-appearance-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-7b5ca7be4bf8e21e876b",
+              "file": "probes.spec.ts",
+              "line": 30,
+              "column": 7
+            },
+            {
+              "title": "P03 signup malformed email native validation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 3279,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:45.557Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-a41e2-med-email-native-validation-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "W10="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbXQp9"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-a41e2-med-email-native-validation-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-a41e2-med-email-native-validation-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-ea2b4876ab4ba4c824e0",
+              "file": "probes.spec.ts",
+              "line": 45,
+              "column": 7
+            },
+            {
+              "title": "P04 shadow root promo code error feedback",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 2751,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:45.567Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-0e27d-t-promo-code-error-feedback-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "W10="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbXQp9"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-0e27d-t-promo-code-error-feedback-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-0e27d-t-promo-code-error-feedback-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-b0e5d6567489503f44d0",
+              "file": "probes.spec.ts",
+              "line": 63,
+              "column": 7
+            },
+            {
+              "title": "P05 iframe support desk offline message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1312,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:48.454Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-ce706-upport-desk-offline-message-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "W10="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbXQp9"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-ce706-upport-desk-offline-message-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-ce706-upport-desk-offline-message-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-a233b978fb0d83589605",
+              "file": "probes.spec.ts",
+              "line": 78,
+              "column": 7
+            },
+            {
+              "title": "P06 empty cart checkout correctly blocked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1281,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:49.011Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-7c7fb--checkout-correctly-blocked-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "WwogICJbKzExMm1zXSBGYWlsZWQgdG8gbG9hZCByZXNvdXJjZTogdGhlIHNlcnZlciByZXNwb25kZWQgd2l0aCBhIHN0YXR1cyBvZiA0MDAgKEJhZCBSZXF1ZXN0KSIKXQ=="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbCiAgICB7CiAgICAgICJ1cmwiOiAiaHR0cDovL2xvY2FsaG9zdDozMTAwL2FwaS9jaGVja291dCIsCiAgICAgICJzdGF0dXMiOiA0MDAsCiAgICAgICJtZXRob2QiOiAiUE9TVCIsCiAgICAgICJyZWxfdGltZV9tcyI6IDExMgogICAgfQogIF0KfQ=="
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-7c7fb--checkout-correctly-blocked-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-7c7fb--checkout-correctly-blocked-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-9aef2a77210967176134",
+              "file": "probes.spec.ts",
+              "line": 91,
+              "column": 7
+            },
+            {
+              "title": "P07 cart subtotal multi quantity calculation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1250,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:49.787Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-c0e10--multi-quantity-calculation-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "W10="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbXQp9"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-c0e10--multi-quantity-calculation-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-c0e10--multi-quantity-calculation-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-79da88518c871209e450",
+              "file": "probes.spec.ts",
+              "line": 105,
+              "column": 7
+            },
+            {
+              "title": "P08 cart tax calculation accuracy",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1292,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:50.251Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-P08-cart-tax-calculation-accuracy-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "W10="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbXQp9"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-P08-cart-tax-calculation-accuracy-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-P08-cart-tax-calculation-accuracy-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-466b95b4816adb4369db",
+              "file": "probes.spec.ts",
+              "line": 123,
+              "column": 7
+            },
+            {
+              "title": "P09 checkout order placement with items",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1375,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:50.321Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-9e0de--order-placement-with-items-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "W10="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbXQp9"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-9e0de--order-placement-with-items-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-9e0de--order-placement-with-items-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-c0e7fe8febeaea5e2378",
+              "file": "probes.spec.ts",
+              "line": 141,
+              "column": 7
+            },
+            {
+              "title": "P10 product page clean console telemetry",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1725,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:50.324Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-819ce-age-clean-console-telemetry-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "W10="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbXQp9"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-819ce-age-clean-console-telemetry-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-819ce-age-clean-console-telemetry-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-10924f0b9ff7b5455fde",
+              "file": "probes.spec.ts",
+              "line": 170,
+              "column": 7
+            },
+            {
+              "title": "P11 catalog prices valid formatting",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1225,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:51.064Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-ab84e-log-prices-valid-formatting-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "W10="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbXQp9"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-ab84e-log-prices-valid-formatting-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-ab84e-log-prices-valid-formatting-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-5990f9617fbf13575bfc",
+              "file": "probes.spec.ts",
+              "line": 183,
+              "column": 7
+            },
+            {
+              "title": "P12 catalog image integrity",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1719,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-24T22:05:51.568Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-P12-catalog-image-integrity-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "console.json",
+                          "contentType": "application/json",
+                          "body": "W10="
+                        },
+                        {
+                          "name": "network.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJiYWRSZXNwb25zZXMiOiBbXQp9"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-P12-catalog-image-integrity-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\test-results\\probes-QA-Benchmark-Probes-P12-catalog-image-integrity-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b0fac6ee778142831391-09dc814dbe9067492234",
+              "file": "probes.spec.ts",
+              "line": 196,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-24T22:05:45.155Z",
+    "duration": 8182.333,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

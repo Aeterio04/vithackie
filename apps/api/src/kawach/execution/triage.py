@@ -18,15 +18,53 @@ def clean_error_message(msg: Optional[str]) -> str:
 
 
 def is_assertion_failure(error_message: str) -> bool:
-    r"""Return True if the error matches expect() assertion pattern and is not a timeout.
-
-    Follows CONTRACTS.md Section 9:
-    Matches r"expect\(.*?\)\.(not\.)?to\w+" and does NOT begin with "Test timeout of".
-    """
+    r"""Return True if the error matches an assertion failure and is not a script, locator, or timeout error."""
+    if not error_message:
+        return False
     cleaned = clean_error_message(error_message)
     if cleaned.startswith("Test timeout of"):
         return False
-    return bool(re.search(r"expect\(.*?\)\.(not\.)?to\w+", cleaned, re.DOTALL))
+
+    cleaned_lower = cleaned.lower()
+
+    # Script / locator action errors are NOT assertion failures (Phase 3 requirements)
+    script_error_markers = [
+        "strict mode violation",
+        "timeouterror: locator.",
+        "locator.click: timeout",
+        "locator.fill: timeout",
+        "locator.selectoption: timeout",
+        "locator.hover: timeout",
+        "locator.check: timeout",
+        "locator.waitfor: timeout",
+        "locator.press: timeout",
+        "target page, context or browser has been closed",
+    ]
+    if any(marker in cleaned_lower for marker in script_error_markers):
+        return False
+
+    # Extract header lines before any code frame snippets (which start with '12 |' or '> 12 |')
+    lines = cleaned.split("\n")
+    header_lines = []
+    for line in lines:
+        if re.match(r"^\s*>?\s*\d+\s*\|", line):
+            break
+        header_lines.append(line)
+    header = "\n".join(header_lines)
+
+    # Check for expect/assertion patterns in the header error
+    if re.search(r"expect(\.poll)?\(.*?\)\.(not\.)?to\w+", header, re.DOTALL):
+        return True
+    if "assertionerror" in header.lower():
+        return True
+    if re.search(r"error:\s*expect\(", header, re.IGNORECASE):
+        return True
+    if re.search(r"timed out \d+ms waiting for expect\(", header, re.IGNORECASE):
+        return True
+    if "expected error feedback" in header.lower() or "expected success feedback" in header.lower():
+        return True
+
+    return False
 
 
 def signature(error_message: str) -> str:
@@ -56,7 +94,7 @@ def triage(run_id: str) -> List[Bug]:
     r_dir = storage.run_dir(run_id)
     candidate_failures = [
         t for t in (results_obj.tests if results_obj else [])
-        if t.outcome == "assertion_failure"
+        if t.outcome in ("assertion_failure", "failed", "passed_with_issues")
     ]
 
     candidate_bugs: List[Bug] = []
@@ -106,6 +144,22 @@ def triage(run_id: str) -> List[Bug]:
             network=f"evidence/{t.testId}/network.json" if (ev_dir / "network.json").exists() else None,
         )
 
+        category: str = "other"
+        severity: str = "medium"
+        if t.outcome == "passed_with_issues":
+            if getattr(t, "failureType", None) == "server_error_5xx":
+                category = "network"
+                severity = "high"
+            else:
+                category = "console"
+                severity = "medium"
+        elif any(k in title.lower() for k in ("login", "auth", "credential", "password", "signup")):
+            category = "auth"
+            severity = "high"
+        elif any(k in title.lower() for k in ("cart", "checkout", "total", "price", "order")):
+            category = "data"
+            severity = "high"
+
         # Minimal path shrinking
         shrunk_path = shrink_failing_path(steps, t.failedStep)
 
@@ -117,11 +171,11 @@ def triage(run_id: str) -> List[Bug]:
                 title=title,
                 grep=f"{t.testId}:",
                 file=f"scripts/{t.testId}.spec.ts",
-                category="other",
-                severity="medium",
+                category=category,  # type: ignore
+                severity=severity,  # type: ignore
                 specRef=spec_ref,
                 steps=steps,
-                expected=expected,
+                expected=expected or "Operation completes successfully without errors",
                 actual=first_line,
                 errorMessage=cleaned_err[:3000],
                 signature=f"{failing_state}::{err_sig}",
@@ -132,6 +186,13 @@ def triage(run_id: str) -> List[Bug]:
                 depth=depth,
                 failingPath=shrunk_path,
                 checkpoint=checkpoint,
+                provenance={
+                    "runId": run_id,
+                    "testId": t.testId,
+                    "targetUrl": base_url,
+                    "outcome": t.outcome,
+                    "failureType": getattr(t, "failureType", None),
+                },
             )
         )
 

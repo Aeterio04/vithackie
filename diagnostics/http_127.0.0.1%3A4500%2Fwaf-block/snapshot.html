@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KAWACH Deployed Sites Simulator</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; line-height: 1.6; max-width: 800px; margin: auto; }
+    h1 { color: #1e293b; }
+    li { margin-bottom: 12px; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>KAWACH Deployed-Site Simulator</h1>
+  <p>Mock server exercising edge cases found in deployed web environments:</p>
+  <ul>
+    <li><a href="/waf-blocked">/waf-blocked</a> - Simulates Cloudflare/AWS WAF challenge against headless bots; passes on desktop Chrome UA or <code>X-QA-Token: test-qa-token-123</code>.</li>
+    <li><a href="/api/head-405">/api/head-405</a> - Returns 405 Method Not Allowed on HEAD, 200 on GET (tests GET range fallback).</li>
+    <li><a href="/api/flaky-gateway">/api/flaky-gateway</a> - Returns 502 Bad Gateway on first hit, recovers to 200 OK on retry.</li>
+    <li><a href="/consent-banner">/consent-banner</a> - Cookie consent banner overlay blocking underlying actions.</li>
+    <li><a href="/theme-test">/theme-test</a> - Dark/light mode theme toggle button with SVG icon, aria-label, CSS custom properties, and localStorage.</li>
+    <li><a href="/spa">/spa</a> - Client-side hash routing SPA.</li>
+  </ul>
+</body>
+</html>

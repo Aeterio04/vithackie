@@ -19,11 +19,8 @@ def _get_spec_items(run_input: Optional[RunInput]) -> Tuple[List[SpecItem], Set[
 
     spec_items = list(run_input.spec)
     if not spec_items and run_input.specRaw:
-        for line in run_input.specRaw.splitlines():
-            line_str = line.strip()
-            match = re.match(r"^(S\d+):\s*(.*)$", line_str)
-            if match:
-                spec_items.append(SpecItem(id=match.group(1), text=match.group(2).strip()))
+        from kawach.services.spec_parser import parse_spec_raw
+        spec_items = parse_spec_raw(run_input.specRaw)
 
     all_ids = {s.id for s in spec_items}
     spec_lines = [f"{s.id}: {s.text}" for s in spec_items]
@@ -131,12 +128,55 @@ def _build_coverage_matrix(tests: List[TestCase], all_spec_ids: Set[str]) -> Cov
     )
 
 
+def _plan_spec_driven(run_id: str, run_input: RunInput) -> Catalog:
+    """One catalog test per spec TC, built deterministically (no LLM may add/drop/rewrite)."""
+    from kawach.services.spec_driven import alignment, build_spec_driven_catalog
+    from kawach.services.spec_structured import parse_structured_spec
+
+    spec = parse_structured_spec(run_input.specRaw)
+    storage.write_json(run_id, "spec_structured.json", spec.model_dump(mode="json"))
+    if spec.errors:
+        msg = "; ".join(f"line {e.line} {e.tcId or ''}: {e.message}" for e in spec.errors)
+        storage.fail_run(run_id, f"Spec has malformed test case blocks: {msg}")
+        raise ValueError(f"Malformed spec: {msg}")
+
+    from kawach.services.spec_preset import build_preset, derive_urls
+
+    storage.write_json(run_id, "preset.json", build_preset(spec))
+    storage.write_json(run_id, "url_plan.json", {"cap": 40, "urls": derive_urls(spec, 40)})
+    catalog = build_spec_driven_catalog(run_id, spec)
+    storage.save_model(run_id, "catalog.json", catalog)
+    report = alignment(spec, catalog)
+    lint_fail = {t.id: t.lint["issues"] for t in catalog.tests if t.lint and not t.lint["ok"]}
+    report["lintFailures"] = lint_fail
+    if lint_fail:
+        report["canStartExecution"] = False
+        report["blockReason"] = f"{len(lint_fail)} test(s) failed the quality lint"
+    storage.write_json(run_id, "alignment.json", report)
+    try:
+        from kawach.storage.artifacts import log_pipeline
+        log_pipeline(
+            run_id,
+            f"Spec-driven catalog: {len(catalog.tests)} tests from {len(spec.testCases)} spec TCs, "
+            f"alignment {report['alignmentPercent']}%, lint failures {len(lint_fail)}.",
+            source="planner",
+        )
+    except Exception:
+        pass
+    return catalog
+
+
 def plan_catalog(run_id: str) -> Catalog:
     """Generate a multi-level catalog of test cases from app map and spec with 100% coverage guarantee."""
     storage.set_stage(run_id, "planning", step="Designing multi-level tests and edge cases")
 
     run_input = storage.load_model(run_id, "input.json", RunInput)
     app_map = storage.load_model(run_id, "app_map.json", AppMap)
+
+    if run_input and run_input.specRaw:
+        from kawach.services.spec_structured import has_test_case_blocks
+        if has_test_case_blocks(run_input.specRaw):
+            return _plan_spec_driven(run_id, run_input)
 
     spec_items, all_spec_ids, spec_str = _get_spec_items(run_input)
     prompt_bg = run_input.prompt if run_input and run_input.prompt else "Web application under test."

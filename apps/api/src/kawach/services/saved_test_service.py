@@ -199,7 +199,20 @@ class SavedTestService:
 
         # Existing saved tests for project
         stmt = select(SavedTest).where(SavedTest.project_id == project_id)
-        existing_map = {st.source_test_case_id: st for st in self.db.scalars(stmt).all() if st.source_test_case_id}
+        # Spec-driven catalogs are versioned by spec hash: saved tests from another spec version
+        # (or from a non-spec run) are never silently reused for the same TC id.
+        meta = cat_data.get("meta") or {}
+        spec_tag = f"spec:{meta['specHash'][:10]}" if meta.get("mode") == "spec_driven" and meta.get("specHash") else None
+        existing_map = {}
+        for st in self.db.scalars(stmt).all():
+            if not st.source_test_case_id:
+                continue
+            has_tag = any(str(x).startswith("spec:") for x in (st.tags or []))
+            if spec_tag and spec_tag not in (st.tags or []):
+                continue
+            if not spec_tag and has_tag:
+                continue
+            existing_map[st.source_test_case_id] = st
 
         created_or_updated = []
         for test_item in cat_data.get("tests", []):
@@ -211,6 +224,8 @@ class SavedTestService:
             tags = list(test_item.get("tags") or test_item.get("edgeTags") or ["regression"])
             if test_item.get("category"):
                 tags.append(test_item["category"])
+            if spec_tag:
+                tags.append(spec_tag)
 
             outcome = outcome_map.get(t_id, "passed" if test_item.get("status") == "approved" else None)
 
@@ -266,7 +281,7 @@ class SavedTestService:
             for r_entry in storage.list_runs():
                 try:
                     r_json = storage.read_json(r_entry.runId, "run.json")
-                    if r_json and r_json.get("targetUrl") == project.target_url:
+                    if r_json and r_json.get("targetUrl") == project.target_url and not (storage.read_json(r_entry.runId, "catalog.json") or {}).get("meta"):
                         db_r = self.db.scalar(select(DbRun).where(DbRun.id == r_entry.runId))
                         if db_r and not db_r.project_id:
                             db_r.project_id = project_id

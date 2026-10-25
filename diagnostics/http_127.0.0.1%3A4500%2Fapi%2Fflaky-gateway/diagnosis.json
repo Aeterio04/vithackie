@@ -1,0 +1,173 @@
+{
+  "target_url": "http://127.0.0.1:4500/api/flaky-gateway",
+  "hostname": "127.0.0.1",
+  "timestamp": "2026-10-25T03:17:55.098326+00:00",
+  "probe_a_dns_tcp_tls": {
+    "ipv4": [
+      "127.0.0.1"
+    ],
+    "ipv6": [],
+    "dns_time_ms": 0.92,
+    "tcp_connect_ms": 0.84,
+    "tls_handshake_ms": null,
+    "tls_version": null,
+    "cipher": null,
+    "cert_subject": null,
+    "cert_issuer": null,
+    "cert_expiry": null,
+    "san": [],
+    "error": null
+  },
+  "probe_b_http_legacy": {
+    "head": {
+      "method": "HEAD",
+      "status": 502,
+      "final_url": "http://127.0.0.1:4500/api/flaky-gateway",
+      "redirect_chain": [],
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "cookies": [],
+      "body_snippet": "",
+      "body_len": 0,
+      "duration_ms": 38.24,
+      "error": null
+    },
+    "get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "http://127.0.0.1:4500/api/flaky-gateway",
+      "redirect_chain": [],
+      "headers": {
+        "content-type": "application/json"
+      },
+      "cookies": [],
+      "body_snippet": "{\"status\":\"ok\",\"requestNum\":2,\"message\":\"Gateway recovered on retry\"}",
+      "body_len": 69,
+      "duration_ms": 15.67,
+      "error": null
+    },
+    "class_head": "bad_gateway_from_target",
+    "class_get": "ok"
+  },
+  "probe_c_http_chrome": {
+    "get": {
+      "method": "GET",
+      "status": 502,
+      "final_url": "http://127.0.0.1:4500/api/flaky-gateway",
+      "redirect_chain": [],
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "cookies": [],
+      "body_snippet": "<h1>502 Bad Gateway</h1><p>Origin web server returned an invalid response.</p>",
+      "body_len": 78,
+      "duration_ms": 8.04,
+      "error": null
+    },
+    "class": "bad_gateway_from_target"
+  },
+  "probe_d_playwright": {
+    "current": {
+      "profile": "current",
+      "url": "http://127.0.0.1:4500/api/flaky-gateway",
+      "finalUrl": "http://127.0.0.1:4500/api/flaky-gateway",
+      "title": "",
+      "status": 502,
+      "hasContent": true,
+      "textLength": 64,
+      "visibleElements": 2,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+      ],
+      "failedRequests": [],
+      "httpErrors": [
+        {
+          "url": "http://127.0.0.1:4500/api/flaky-gateway",
+          "status": 502,
+          "method": "GET"
+        }
+      ],
+      "domContentLoadedMs": 14,
+      "loadMs": 23,
+      "networkIdleReached": true,
+      "networkIdleMs": 507,
+      "screenshotPath": "diagnostics\\http_127.0.0.1%3A4500%2Fapi%2Fflaky-gateway\\screenshot_current.png",
+      "error": null
+    },
+    "new_standard": {
+      "profile": "new_standard",
+      "url": "http://127.0.0.1:4500/api/flaky-gateway",
+      "finalUrl": "http://127.0.0.1:4500/api/flaky-gateway",
+      "title": "",
+      "status": 200,
+      "hasContent": true,
+      "textLength": 69,
+      "visibleElements": 0,
+      "consoleErrors": [],
+      "failedRequests": [],
+      "httpErrors": [],
+      "domContentLoadedMs": 14,
+      "loadMs": 17,
+      "networkIdleReached": true,
+      "networkIdleMs": 509,
+      "screenshotPath": "diagnostics\\http_127.0.0.1%3A4500%2Fapi%2Fflaky-gateway\\screenshot_new_standard.png",
+      "error": null
+    },
+    "headed": {
+      "profile": "headed",
+      "url": "http://127.0.0.1:4500/api/flaky-gateway",
+      "finalUrl": "http://127.0.0.1:4500/api/flaky-gateway",
+      "title": "",
+      "status": 502,
+      "hasContent": true,
+      "textLength": 64,
+      "visibleElements": 2,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+      ],
+      "failedRequests": [],
+      "httpErrors": [
+        {
+          "url": "http://127.0.0.1:4500/api/flaky-gateway",
+          "status": 502,
+          "method": "GET"
+        }
+      ],
+      "domContentLoadedMs": 115,
+      "loadMs": 121,
+      "networkIdleReached": true,
+      "networkIdleMs": 502,
+      "screenshotPath": "diagnostics\\http_127.0.0.1%3A4500%2Fapi%2Fflaky-gateway\\screenshot_headed.png",
+      "error": null
+    },
+    "class_current": "bad_gateway_from_target",
+    "class_new_standard": "ok"
+  },
+  "probe_e_proxy": {
+    "env": {
+      "HTTP_PROXY": null,
+      "HTTPS_PROXY": null,
+      "ALL_PROXY": null,
+      "NO_PROXY": null
+    },
+    "direct_get": {
+      "method": "GET",
+      "status": 200,
+      "final_url": "http://127.0.0.1:4500/api/flaky-gateway",
+      "redirect_chain": [],
+      "headers": {
+        "content-type": "application/json"
+      },
+      "cookies": [],
+      "body_snippet": "{\"status\":\"ok\",\"requestNum\":4,\"message\":\"Gateway recovered on retry\"}",
+      "body_len": 69,
+      "duration_ms": 6.34,
+      "error": null
+    }
+  },
+  "probe_g_verdict": {
+    "responsible_layer": "playwright_config",
+    "evidence": "Target fails under current aggressive off-domain route aborting, but renders cleanly under new standard configuration."
+  }
+}

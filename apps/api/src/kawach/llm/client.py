@@ -45,26 +45,18 @@ class LLM:
 
     def _get_groq_client(self):
         if self._groq_client is None:
-            try:
-                import openai
-            except ImportError:
-                raise LLMError("openai package is required for groq provider. Install openai>=1.0.0")
-
-            api_key = (
-                os.getenv("GROQ_API_KEY")
-                or getattr(settings, "GROQ_API_KEY", "")
-                or os.getenv("OPENAI_API_KEY")
-                or settings.OPENAI_API_KEY
-            )
-            if not api_key:
+            from kawach.llm.key_pool import get_key_pool
+            pool = get_key_pool()
+            if pool.size() == 0:
                 raise LLMError("Missing or invalid API key for provider groq (GROQ_API_KEY not set)")
-            self._groq_client = openai.OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
+            self._groq_client = pool.keys[0].client
         return self._groq_client
 
     def _get_groq_handler(self):
         if self._groq_handler is None:
             from kawach.llm.groq_handler import GroqHandler
             self._groq_handler = GroqHandler(self._get_groq_client)
+            self._groq_handler._custom_client = False
         return self._groq_handler
 
     def _get_openai_client(self):

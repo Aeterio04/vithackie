@@ -55,6 +55,9 @@ export const API_ENDPOINTS = {
 
   // Reports & Exports
   RUN_REPORT: (runId: string) => `${API_BASE_PREFIX}/runs/${runId}/report`,
+  RUN_REPORT_PDF: (runId: string) => `${API_BASE_PREFIX}/runs/${runId}/report.pdf`,
+  RUN_REPORT_MD: (runId: string) => `${API_BASE_PREFIX}/runs/${runId}/report.md`,
+  RUN_REPORT_REGENERATE: (runId: string) => `${API_BASE_PREFIX}/runs/${runId}/report/regenerate`,
   RUN_REPORT_EXPORT: (
     runId: string,
     format: "html" | "pdf" | "json" | "csv" = "json"

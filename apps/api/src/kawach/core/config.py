@@ -5,9 +5,10 @@ Grouped settings management powered by pydantic-settings.
 
 import logging
 import os
+import re
 import secrets
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -62,7 +63,7 @@ class Settings(BaseSettings):
     # 5. Security & Network Sandboxing
     SECRET_ENCRYPTION_KEY: str = ""
     ALLOWED_HOSTS: Union[List[str], str] = Field(
-        default_factory=lambda: ["localhost", "127.0.0.1"]
+        default_factory=lambda: ["*"]
     )
 
     # 6. LLM Engine & Provider
@@ -70,12 +71,14 @@ class Settings(BaseSettings):
     LLM_MODEL: str = "qwen/qwen3.8-27b"
     GROQ_DEFAULT_MODEL: str = "qwen/qwen3.8-27b"
     GROQ_FALLBACK_MODEL: str = "qwen/qwen3.8-27b"
+    GROQ_API_KEYS: str = ""
     GROQ_API_KEY: str = ""
+    GROQ_API_KEY_1: str = ""
+    GROQ_API_KEY_2: str = ""
+    GROQ_API_KEY_3: str = ""
     GROQ_RPM_LIMIT: int = 30
     GROQ_TPM_LIMIT: int = 6000
     GROQ_MIN_INTERVAL: float = 2.0
-    GROQ_DEFAULT_MODEL: str = "llama-3.3-70b-versatile"
-    GROQ_FALLBACK_MODEL: str = "llama-3.1-8b-instant"
     GEMINI_API_KEY: str = ""
     GEMINI_DEFAULT_MODEL: str = "gemini-3.8-flash"
     ANTHROPIC_API_KEY: str = ""
@@ -109,8 +112,9 @@ class Settings(BaseSettings):
     @classmethod
     def _parse_allowed_hosts(cls, val: Union[List[str], str]) -> List[str]:
         if isinstance(val, str):
-            return [h.strip() for h in val.split(",") if h.strip()]
-        return val
+            parsed = [h.strip() for h in val.split(",") if h.strip()]
+            return parsed if parsed else ["*"]
+        return val if val else ["*"]
 
     @field_validator("FIX_POLICY_FORBIDDEN_PATHS", mode="after")
     @classmethod
@@ -215,16 +219,55 @@ class Settings(BaseSettings):
             target_path = (self.repo_root / rel).resolve()
             target_path.parent.mkdir(parents=True, exist_ok=True)
             return f"sqlite:///{target_path.as_posix()}"
-        return self.DATABASE_URL
+    def get_groq_api_keys(self) -> List[str]:
+        """Resolve Groq API keys in priority order:
+        1. GROQ_API_KEYS (comma-separated list)
+        2. GROQ_API_KEY_1, GROQ_API_KEY_2, GROQ_API_KEY_3 ... (numbered keys)
+        3. GROQ_API_KEY (legacy single key)
+        Trim whitespace, drop empties, de-duplicate identical keys preserving order.
+        """
+        raw_keys: List[str] = []
+        val = self.GROQ_API_KEYS or os.environ.get("GROQ_API_KEYS", "")
+        if val and val.strip():
+            raw_keys.extend([k.strip() for k in val.split(",") if k.strip()])
 
+        if not raw_keys:
+            numbered: List[Tuple[int, str]] = []
+            for env_k, env_v in os.environ.items():
+                m = re.match(r"^GROQ_API_KEY_(\d+)$", env_k)
+                if m and env_v and env_v.strip():
+                    numbered.append((int(m.group(1)), env_v.strip()))
+            numbered.sort(key=lambda x: x[0])
+            raw_keys.extend([k for _, k in numbered])
 
-import os
+        if not raw_keys:
+            legacy = (
+                self.GROQ_API_KEY
+                or os.environ.get("GROQ_API_KEY", "")
+                or os.environ.get("OPENAI_API_KEY", "")
+                or self.OPENAI_API_KEY
+            )
+            if legacy and legacy.strip():
+                raw_keys.append(legacy.strip())
+
+        cleaned: List[str] = []
+        for k in raw_keys:
+            k_clean = k.strip()
+            if k_clean and k_clean not in cleaned:
+                cleaned.append(k_clean)
+        return cleaned
+
 
 settings = Settings()
 
 # Propagate LLM and provider keys into os.environ for fix_pipeline clients
-if settings.GROQ_API_KEY and not os.environ.get("GROQ_API_KEY"):
-    os.environ["GROQ_API_KEY"] = settings.GROQ_API_KEY
+groq_keys = settings.get_groq_api_keys()
+if groq_keys:
+    if not settings.GROQ_API_KEY:
+        settings.GROQ_API_KEY = groq_keys[0]
+    if not os.environ.get("GROQ_API_KEY"):
+        os.environ["GROQ_API_KEY"] = groq_keys[0]
+
 if settings.GEMINI_API_KEY and not os.environ.get("GEMINI_API_KEY"):
     os.environ["GEMINI_API_KEY"] = settings.GEMINI_API_KEY
 if settings.ANTHROPIC_API_KEY and not os.environ.get("ANTHROPIC_API_KEY"):

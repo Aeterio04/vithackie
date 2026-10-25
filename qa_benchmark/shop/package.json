@@ -1,0 +1,12 @@
+{
+  "name": "qa-benchmark-shop",
+  "version": "1.0.0",
+  "description": "Deterministic benchmark shop test target for QA platform validation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

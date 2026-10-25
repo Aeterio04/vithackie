@@ -136,14 +136,33 @@ export const CatalogTestSchema = z.object({
 export type CatalogTest = z.infer<typeof CatalogTestSchema>;
 
 // --- Test Execution Status ---
-export const TestStatusSchema = z.enum([
-  "queued",
-  "running",
-  "passed",
-  "failed",
-  "skipped",
-  "error", // Infrastructure failure, never counted as a bug
-]);
+export const TestStatusSchema = z.preprocess(
+  (val) => {
+    if (typeof val === "string") {
+      const s = val.toLowerCase();
+      if (s === "environment_error") return "error";
+      if (
+        s === "assertion_failure" ||
+        s === "test_error" ||
+        s === "script_error" ||
+        s === "setup_error"
+      )
+        return "failed";
+      if (s === "passed_with_issues") return "passed";
+      if (s === "not_run") return "skipped";
+      return s;
+    }
+    return val;
+  },
+  z.enum([
+    "queued",
+    "running",
+    "passed",
+    "failed",
+    "skipped",
+    "error", // Infrastructure failure, never counted as a bug
+  ])
+);
 export type TestStatus = z.infer<typeof TestStatusSchema>;
 
 export const ExecutionTestSchema = z.object({
@@ -362,6 +381,12 @@ export const ReportMetricsSchema = z.object({
 
 export const ReportSchema = z.object({
   run: RunSchema,
+  report_status: z.string().optional(),
+  report_error: z.string().nullable().optional(),
+  has_pdf: z.boolean().optional(),
+  has_md: z.boolean().optional(),
+  pdf_url: z.string().optional(),
+  md_url: z.string().optional(),
   summary_counts: RunCountsSchema,
   verification_funnel: ReportVerificationFunnelSchema,
   spec_coverage: ReportSpecCoverageSchema,

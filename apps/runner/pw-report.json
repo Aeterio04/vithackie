@@ -6,11 +6,11 @@
       "test",
       "--config",
       "playwright.config.ts",
-      "T11.spec.ts",
+      "T13.spec.ts",
       "--list"
     ],
     "configFile": "D:\\Soham\\Vit Hackathon\\vithackie\\apps\\runner\\playwright.config.ts",
-    "rootDir": "D:/Soham/Vit Hackathon/vithackie/runs/20261024-164748-ec1b/scripts",
+    "rootDir": "D:/Soham/Vit Hackathon/vithackie/runs/20261025-042923-88d0/scripts",
     "failOnFlakyTests": false,
     "forbidOnly": true,
     "fullyParallel": true,
@@ -30,12 +30,12 @@
         "metadata": {},
         "id": "chromium",
         "name": "chromium",
-        "testDir": "D:/Soham/Vit Hackathon/vithackie/runs/20261024-164748-ec1b/scripts",
+        "testDir": "D:/Soham/Vit Hackathon/vithackie/runs/20261025-042923-88d0/scripts",
         "testIgnore": [],
         "testMatch": [
           "**/*.spec.ts"
         ],
-        "timeout": 30000
+        "timeout": 45000
       }
     ],
     "filteredProjects": [
@@ -47,24 +47,39 @@
         "retries": 0,
         "metadata": {},
         "name": "chromium",
-        "testDir": "D:\\Soham\\Vit Hackathon\\vithackie\\runs\\20261024-164748-ec1b\\scripts",
-        "snapshotDir": "D:\\Soham\\Vit Hackathon\\vithackie\\runs\\20261024-164748-ec1b\\scripts",
+        "testDir": "D:\\Soham\\Vit Hackathon\\vithackie\\runs\\20261025-042923-88d0\\scripts",
+        "snapshotDir": "D:\\Soham\\Vit Hackathon\\vithackie\\runs\\20261025-042923-88d0\\scripts",
         "testIgnore": [],
         "testMatch": "**/*.spec.ts",
-        "timeout": 30000,
+        "timeout": 45000,
         "use": {
           "headless": true,
           "viewport": {
             "width": 1280,
             "height": 720
           },
-          "actionTimeout": 8000,
-          "navigationTimeout": 15000,
-          "trace": "retain-on-failure",
-          "video": "retain-on-failure",
+          "locale": "en-US",
+          "timezoneId": "UTC",
+          "actionTimeout": 15000,
+          "navigationTimeout": 30000,
+          "trace": "on",
           "screenshot": "on",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1366,
+              "height": 768
+            }
+          },
+          "launchOptions": {
+            "slowMo": 0
+          },
           "ignoreHTTPSErrors": false,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "extraHTTPHeaders": {
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
+          },
           "screen": {
             "width": 1920,
             "height": 1080
@@ -101,23 +116,23 @@
     "updateSnapshots": "default",
     "updateSourceMethod": "patch",
     "version": "1.64.1",
-    "workers": 4,
+    "workers": 2,
     "webServer": null
   },
   "suites": [
     {
-      "title": "T11.spec.ts",
-      "file": "T11.spec.ts",
+      "title": "T13.spec.ts",
+      "file": "T13.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "T11: Verify: With several items in the list, clicking Delete on an item r",
+          "title": "T13: Verify: /profile allows editing name, phone number, and avatar acc",
           "ok": true,
           "tags": [],
           "tests": [
             {
-              "timeout": 30000,
+              "timeout": 45000,
               "annotations": [],
               "expectedStatus": "passed",
               "projectId": "chromium",
@@ -126,8 +141,8 @@
               "status": "skipped"
             }
           ],
-          "id": "54b2856eadfd9d6ef3de-e55ccebfa05e6e5d720a",
-          "file": "T11.spec.ts",
+          "id": "9c829ab780de7535f3ab-82fa22f6668980f78fc5",
+          "file": "T13.spec.ts",
           "line": 3,
           "column": 5
         }
@@ -136,8 +151,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-24T16:51:26.563Z",
-    "duration": 224.20600000000002,
+    "startTime": "2026-10-25T04:34:06.514Z",
+    "duration": 79.21300000000002,
     "expected": 0,
     "skipped": 1,
     "unexpected": 0,

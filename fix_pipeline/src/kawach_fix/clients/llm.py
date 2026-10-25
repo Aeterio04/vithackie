@@ -52,51 +52,23 @@ class HttpxGroqClient:
             or os.environ.get("LLM_MODEL")
             or os.environ.get("GROQ_MODEL")
             or os.environ.get("GROQ_DEFAULT_MODEL")
-            or "qwen/qwen3.8-27b"
+            or "llama-3.3-70b-versatile"
         )
-        self.base_url = "https://api.groq.com/openai/v1/chat/completions"
 
     async def generate(self, system_prompt: str, user_prompt: str, temperature: float = 0.0) -> str:
-        if not self.api_key:
-            raise LLMClientError("GROQ_API_KEY is not set.")
-
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0 (KAWACH-Fix-Pipeline)",
-        }
-
-        # Build list of candidate models with preferred model first
-        models_to_try = [self.model] + [m for m in GROQ_CANDIDATE_MODELS if m != self.model]
-
-        last_error = None
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            for candidate in models_to_try:
-                payload = {
-                    "model": candidate,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt},
-                    ],
-                    "temperature": temperature,
-                    "response_format": {"type": "json_object"},
-                }
-                try:
-                    res = await client.post(self.base_url, headers=headers, json=payload)
-                    if res.status_code == 404 and "model_not_found" in res.text:
-                        last_error = f"Model '{candidate}' not accessible on this Groq key, trying fallback..."
-                        continue
-                    if res.is_error:
-                        raise LLMClientError(f"Groq API error ({res.status_code}): {res.text}")
-                    data = res.json()
-                    return data["choices"][0]["message"]["content"]
-                except LLMClientError:
-                    raise
-                except Exception as e:
-                    last_error = str(e)
-                    continue
-
-        raise LLMClientError(f"Failed to communicate with Groq: {last_error}")
+        try:
+            from kawach.llm.key_pool import complete_with_pool
+            text, _, _ = complete_with_pool(
+                system=system_prompt,
+                prompt=user_prompt,
+                model=self.model,
+                temperature=temperature,
+                is_json=True,
+                schema_name="fix_pipeline",
+            )
+            return text
+        except Exception as e:
+            raise LLMClientError(f"Failed to communicate with Groq: {e}")
 
 
 class HttpxGeminiClient:
