@@ -114,7 +114,7 @@ def submit_review(
     # Start execution once every test has a decision. Non-blocking, idempotent (a repeated review
     # submission while a run is already executing is ignored by resume_run).
     started = False
-    if approved_count > 0 and remaining_pending == 0:
+    if approved_count > 0:  # approving a subset runs just those tests; resume_run ignores repeats
         from kawach.services.run_service import SpecAlignmentError, resume_run
         try:
             resume_run(run_id, tier=payload.priority_tier)
